@@ -8,7 +8,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "generate": "tsx src/cli.ts",
-    "remotion:studio": "remotion studio src/remotion/index.ts"
+    "remotion:studio": "remotion studio src/remotion/index.ts",
+    "smoke:render": "tsx scripts/smoke-render.ts"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.509",

@@ -4,6 +4,7 @@ import {Scene, SCENE_FADE_FRAMES} from './Scene';
 
 export type ShortCompositionProps = {
   video: ResolvedVideo;
+  assetBaseUrl?: string;
 };
 
 export type SceneTimelineItem = {
@@ -28,7 +29,7 @@ export const createSceneTimeline = (video: ResolvedVideo): SceneTimelineItem[] =
   });
 };
 
-export const ShortComposition = ({video}: ShortCompositionProps) => {
+export const ShortComposition = ({video, assetBaseUrl}: ShortCompositionProps) => {
   const frame = useCurrentFrame();
   const {durationInFrames} = useVideoConfig();
   const progress = durationInFrames <= 1 ? 1 : frame / (durationInFrames - 1);
@@ -37,7 +38,11 @@ export const ShortComposition = ({video}: ShortCompositionProps) => {
     <AbsoluteFill style={{backgroundColor: '#080808'}}>
       {createSceneTimeline(video).map(({scene, from, durationInFrames: sceneDuration}) => (
         <Sequence key={scene.id} from={from} durationInFrames={sceneDuration} name={scene.id}>
-          <Scene scene={scene} durationInFrames={sceneDuration} />
+          <Scene
+            scene={scene}
+            durationInFrames={sceneDuration}
+            assetBaseUrl={assetBaseUrl}
+          />
         </Sequence>
       ))}
 

@@ -5,6 +5,7 @@ import {layoutSceneText} from './text-layout';
 type SceneProps = {
   scene: ResolvedScene;
   durationInFrames: number;
+  assetBaseUrl?: string;
 };
 
 export const SCENE_FADE_FRAMES = 6;
@@ -14,12 +15,17 @@ const clamped = {
   extrapolateRight: 'clamp',
 } as const;
 
-const getVideoSource = (path: string): string => {
+export const getVideoSource = (path: string, assetBaseUrl?: string): string => {
+  if (assetBaseUrl && path.startsWith('/')) {
+    const url = new URL('/asset', assetBaseUrl);
+    url.searchParams.set('path', path);
+    return url.href;
+  }
   if (!path.startsWith('/')) return path;
   return `file://${path.split('/').map(encodeURIComponent).join('/')}`;
 };
 
-export const Scene = ({scene, durationInFrames}: SceneProps) => {
+export const Scene = ({scene, durationInFrames, assetBaseUrl}: SceneProps) => {
   const frame = useCurrentFrame();
   const layout = layoutSceneText(scene.text);
   const sceneOpacity = Math.min(
@@ -42,7 +48,7 @@ export const Scene = ({scene, durationInFrames}: SceneProps) => {
   return (
     <AbsoluteFill style={{opacity: sceneOpacity}}>
       <OffthreadVideo
-        src={getVideoSource(scene.localVideoPath)}
+        src={getVideoSource(scene.localVideoPath, assetBaseUrl)}
         muted
         style={{
           width: '100%',
