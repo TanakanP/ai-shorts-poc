@@ -1,0 +1,72 @@
+{
+  "videos": [
+    {
+      "id": 401,
+      "url": "https://www.pexels.com/video/city-lights-401/",
+      "duration": 8,
+      "user": {
+        "name": "Ari Chen",
+        "url": "https://www.pexels.com/@ari-chen"
+      },
+      "video_files": [
+        {
+          "id": 11,
+          "file_type": "video/mp4",
+          "width": 720,
+          "height": 1280,
+          "link": "https://videos.pexels.com/401-720.mp4"
+        },
+        {
+          "id": 12,
+          "file_type": "video/mp4",
+          "width": 1080,
+          "height": 1920,
+          "link": "https://videos.pexels.com/401-1080.mp4"
+        },
+        {
+          "id": 13,
+          "file_type": "video/hls",
+          "width": 2160,
+          "height": 3840,
+          "link": "https://videos.pexels.com/401-stream.m3u8"
+        }
+      ]
+    },
+    {
+      "id": 402,
+      "url": "https://www.pexels.com/video/city-rain-402/",
+      "duration": 8,
+      "user": {
+        "name": "Bea Diaz",
+        "url": "https://www.pexels.com/@bea-diaz"
+      },
+      "video_files": [
+        {
+          "id": 21,
+          "file_type": "video/mp4",
+          "width": 1440,
+          "height": 2560,
+          "link": "https://videos.pexels.com/402-1440.mp4"
+        }
+      ]
+    },
+    {
+      "id": 403,
+      "url": "https://www.pexels.com/video/short-rain-403/",
+      "duration": 4,
+      "user": {
+        "name": "Cam Fox",
+        "url": "https://www.pexels.com/@cam-fox"
+      },
+      "video_files": [
+        {
+          "id": 31,
+          "file_type": "video/mp4",
+          "width": 2160,
+          "height": 3840,
+          "link": "https://videos.pexels.com/403-2160.mp4"
+        }
+      ]
+    }
+  ]
+}
