@@ -1,0 +1,175 @@
+import {describe, expect, it} from 'vitest';
+import type {ResolvedScene, ResolvedVideo} from '../../src/domain/resolved-video';
+import type {VideoPlan} from '../../src/domain/video-plan';
+import {createShort, type CreateShortDeps} from '../../src/pipeline/create-short';
+
+const topic = 'Why supermarkets put milk at the back';
+const runId = '20260813-120000-deadbeef';
+const runDir = `/tmp/runs/${runId}`;
+
+const plan: VideoPlan = {
+  topic,
+  title: 'Why Milk Is Always at the Back',
+  scenes: [
+    {id: 'hook', durationSeconds: 6, text: 'The milk is hiding.', searchQuery: 'milk supermarket'},
+    {id: 'walk', durationSeconds: 6, text: 'You cross the whole store.', searchQuery: 'supermarket aisle'},
+    {id: 'see', durationSeconds: 6, text: 'That exposes more products.', searchQuery: 'grocery shelves'},
+    {id: 'buy', durationSeconds: 6, text: 'Some become impulse buys.', searchQuery: 'shopping cart'},
+    {id: 'fresh', durationSeconds: 6, text: 'Deliveries also stay efficient.', searchQuery: 'grocery delivery'},
+  ],
+};
+
+const resolvedScenes: ResolvedScene[] = plan.scenes.map((scene, index) => ({
+  ...scene,
+  sourcePageUrl: `https://example.com/videos/${index + 1}`,
+  creatorName: `Creator ${index + 1}`,
+  creatorUrl: `https://example.com/creators/${index + 1}`,
+  localVideoPath: `${runDir}/scene-${String(index + 1).padStart(2, '0')}.mp4`,
+}));
+
+function fakeDeps(events: string[], failAt?: 'generation' | 'stock-resolution' | 'render') {
+  const persisted: Array<{path: string; value: unknown}> = [];
+  const failure = failAt ? new Error(`${failAt} failed`) : undefined;
+
+  const deps: CreateShortDeps = {
+    createRunDirectory: async () => {
+      events.push('create run dir');
+      return {runId, runDir};
+    },
+    generateVideoPlan: async () => {
+      events.push('generate plan');
+      if (failAt === 'generation') throw failure;
+      return plan;
+    },
+    persistJson: async (path, value) => {
+      const name = path.slice(path.lastIndexOf('/') + 1);
+      const status = name === 'run.json' ? `:${(value as {status: string}).status}` : '';
+      events.push(`persist ${name}${status}`);
+      persisted.push({path, value});
+    },
+    resolveSceneAssets: async (receivedPlan, receivedRunDir) => {
+      events.push('resolve assets');
+      expect(receivedPlan).toBe(plan);
+      expect(receivedRunDir).toBe(runDir);
+      if (failAt === 'stock-resolution') throw failure;
+      return resolvedScenes;
+    },
+    renderShort: async (video, outputPath) => {
+      events.push('render');
+      expect(video).toEqual<ResolvedVideo>({
+        runId,
+        title: plan.title,
+        fps: 30,
+        width: 1080,
+        height: 1920,
+        scenes: resolvedScenes,
+      });
+      expect(outputPath).toBe(`${runDir}/output.mp4`);
+      if (failAt === 'render') throw failure;
+    },
+  };
+
+  return {deps, failure, persisted};
+}
+
+describe('createShort', () => {
+  it('runs each stage in order and persists the completed artifacts', async () => {
+    const events: string[] = [];
+    const {deps, persisted} = fakeDeps(events);
+
+    await expect(createShort(topic, deps)).resolves.toEqual({
+      runId,
+      outputPath: `${runDir}/output.mp4`,
+      planPath: `${runDir}/plan.json`,
+      resolvedPath: `${runDir}/resolved.json`,
+    });
+
+    expect(events).toEqual([
+      'create run dir',
+      'generate plan',
+      'persist plan.json',
+      'resolve assets',
+      'persist resolved.json',
+      'render',
+      'persist run.json:rendered',
+    ]);
+    expect(persisted[0]).toEqual({path: `${runDir}/plan.json`, value: plan});
+    expect(persisted[1]).toEqual({
+      path: `${runDir}/resolved.json`,
+      value: {
+        runId,
+        title: plan.title,
+        fps: 30,
+        width: 1080,
+        height: 1920,
+        scenes: resolvedScenes,
+      },
+    });
+    expect(persisted[2]).toEqual({
+      path: `${runDir}/run.json`,
+      value: {
+        runId,
+        topic,
+        status: 'rendered',
+        startedAt: expect.any(String),
+        finishedAt: expect.any(String),
+        attribution: resolvedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
+          sourcePageUrl,
+          creatorName,
+          creatorUrl,
+        })),
+      },
+    });
+  });
+
+  it.each(['generation', 'stock-resolution', 'render'] as const)(
+    'persists a failed %s run and rethrows the original error',
+    async (stage) => {
+      const events: string[] = [];
+      const {deps, failure, persisted} = fakeDeps(events, stage);
+
+      await expect(createShort(topic, deps)).rejects.toBe(failure);
+
+      const expectedEvents = {
+        generation: ['create run dir', 'generate plan', 'persist run.json:failed'],
+        'stock-resolution': [
+          'create run dir',
+          'generate plan',
+          'persist plan.json',
+          'resolve assets',
+          'persist run.json:failed',
+        ],
+        render: [
+          'create run dir',
+          'generate plan',
+          'persist plan.json',
+          'resolve assets',
+          'persist resolved.json',
+          'render',
+          'persist run.json:failed',
+        ],
+      };
+      expect(events).toEqual(expectedEvents[stage]);
+      expect(persisted.at(-1)).toEqual({
+        path: `${runDir}/run.json`,
+        value: {
+          runId,
+          topic,
+          status: 'failed',
+          startedAt: expect.any(String),
+          finishedAt: expect.any(String),
+          error: {stage, message: `${stage} failed`},
+          ...(stage === 'render'
+            ? {
+                attribution: resolvedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
+                  sourcePageUrl,
+                  creatorName,
+                  creatorUrl,
+                })),
+              }
+            : {}),
+        },
+      });
+    },
+  );
+});
