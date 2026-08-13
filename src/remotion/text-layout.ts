@@ -28,8 +28,25 @@ export const layoutSceneText = (text: string): TextLayout => {
   }
 
   const lines: string[] = [];
+  const normalized = text.trim().replace(/\s+/g, ' ');
+  const sourceWords = normalized.split(' ');
 
-  for (const word of text.trim().split(/\s+/).filter(Boolean)) {
+  if (sourceWords.some((word) => Array.from(word).length > tier.lineCharacterBudget)) {
+    let remaining = Array.from(normalized);
+    while (remaining.length > tier.lineCharacterBudget && lines.length < tier.maxLines - 1) {
+      const remainingLineCapacity = (tier.maxLines - lines.length - 1) * tier.lineCharacterBudget;
+      const minimumBreak = Math.max(1, remaining.length - remainingLineCapacity);
+      let breakAt = remaining.lastIndexOf(' ', tier.lineCharacterBudget);
+      if (breakAt < minimumBreak) breakAt = tier.lineCharacterBudget;
+      lines.push(remaining.slice(0, breakAt).join('').trim());
+      remaining = remaining.slice(breakAt);
+      while (remaining[0] === ' ') remaining.shift();
+    }
+    if (remaining.length) lines.push(remaining.join(''));
+    return {lines, fontSize: tier.fontSize};
+  }
+
+  for (const word of sourceWords) {
     const previousLine = lines.at(-1);
     const candidate = previousLine ? `${previousLine} ${word}` : word;
 

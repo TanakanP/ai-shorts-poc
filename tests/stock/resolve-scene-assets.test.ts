@@ -146,9 +146,102 @@ describe('resolveSceneAssets', () => {
 
     expect(resolved.map((item) => item.id)).toEqual(['third', 'first']);
   });
+
+  it('requires nonfirst source clips to cover the six-frame transition overlap', async () => {
+    const runDirectory = await createRunDirectory();
+    const deps = resolverDeps();
+    deps.searchVideos
+      .mockResolvedValueOnce([video('https://videos.pexels.com/first.mp4', {duration: 6})])
+      .mockResolvedValueOnce([video('https://videos.pexels.com/too-short.mp4', {duration: 6})])
+      .mockResolvedValueOnce([video('https://videos.pexels.com/long-enough.mp4', {duration: 6.2})]);
+
+    await resolveSceneAssets(plan([scene('first'), scene('second')]), runDirectory, deps);
+
+    expect(deps.searchVideos).toHaveBeenNthCalledWith(3, 'second footage', {
+      orientation: 'landscape',
+      perPage: 15,
+    });
+    expect(deps.download).toHaveBeenLastCalledWith(
+      'https://videos.pexels.com/long-enough.mp4',
+      join(runDirectory, 'scene-02.mp4'),
+    );
+  });
 });
 
 describe('downloadFile', () => {
+  it('rejects non-Pexels media URLs and redirects', async () => {
+    const runDirectory = await createRunDirectory();
+    const fetch = vi.fn().mockResolvedValue(
+      new Response(null, {status: 302, headers: {location: 'https://internal.example/scene.mp4'}}),
+    );
+
+    await expect(
+      downloadFile('https://example.com/scene.mp4', join(runDirectory, 'initial.mp4'), {fetchImpl: fetch}),
+    ).rejects.toThrow(/Pexels media URL/i);
+    expect(fetch).not.toHaveBeenCalled();
+
+    await expect(
+      downloadFile('https://videos.pexels.com/scene.mp4', join(runDirectory, 'redirect.mp4'), {
+        fetchImpl: fetch,
+      }),
+    ).rejects.toThrow(/Pexels media URL/i);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith(
+      'https://videos.pexels.com/scene.mp4',
+      expect.objectContaining({redirect: 'manual'}),
+    );
+  });
+
+  it('aborts downloads after the configured timeout', async () => {
+    const runDirectory = await createRunDirectory();
+    const fetch = vi.fn((_url: string | URL | Request, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(new Error('aborted')));
+      }),
+    );
+
+    await expect(
+      downloadFile('https://videos.pexels.com/slow.mp4', join(runDirectory, 'slow.mp4'), {
+        fetchImpl: fetch as typeof globalThis.fetch,
+        timeoutMs: 1,
+      }),
+    ).rejects.toMatchObject({diagnostic: {provider: 'pexels', kind: 'transport', code: 'timeout'}});
+  });
+
+  it('types download network and malformed redirect failures as provider transport errors', async () => {
+    const runDirectory = await createRunDirectory();
+    const destination = join(runDirectory, 'network.mp4');
+    const networkFetch = vi.fn().mockRejectedValue(new TypeError('secret DNS detail'));
+    await expect(
+      downloadFile('https://videos.pexels.com/network.mp4', destination, {fetchImpl: networkFetch}),
+    ).rejects.toMatchObject({diagnostic: {provider: 'pexels', kind: 'transport'}});
+
+    const redirectFetch = vi.fn().mockResolvedValue(
+      new Response(null, {status: 302, headers: {location: 'http://['}}),
+    );
+    await expect(
+      downloadFile('https://videos.pexels.com/redirect.mp4', destination, {fetchImpl: redirectFetch}),
+    ).rejects.toMatchObject({diagnostic: {provider: 'pexels', kind: 'transport'}});
+  });
+
+  it('removes partial files when the streamed byte ceiling is exceeded', async () => {
+    const runDirectory = await createRunDirectory();
+    const destination = join(runDirectory, 'large.mp4');
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new Uint8Array(6));
+        controller.close();
+      },
+    });
+    const fetch = vi.fn().mockResolvedValue(new Response(stream, {status: 200}));
+
+    await expect(
+      downloadFile('https://videos.pexels.com/large.mp4', destination, {fetchImpl: fetch, maxBytes: 5}),
+    ).rejects.toThrow(/size limit/i);
+    await expect(access(destination)).rejects.toThrow();
+    await expect(access(`${destination}.partial`)).rejects.toThrow();
+  });
+
   it('keeps the destination unchanged until a streamed download finishes', async () => {
     const runDirectory = await createRunDirectory();
     const destination = join(runDirectory, 'scene-01.mp4');

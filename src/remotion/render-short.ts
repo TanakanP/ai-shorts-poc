@@ -120,10 +120,12 @@ export const renderShort = async (
   deps: RenderDeps = defaultDeps,
 ): Promise<void> => {
   try {
+    if (video.scenes.some((scene) => isRemoteHttpUrl(scene.localVideoPath))) {
+      throw new Error('Scene assets must be local files before rendering');
+    }
     const localAssetPaths = Object.fromEntries(
       video.scenes
         .map((scene) => scene.localVideoPath)
-        .filter((path) => !isRemoteHttpUrl(path))
         // POC npm commands establish the package root as cwd for relative run paths.
         .map((path) => [path, resolve(path)]),
     );

@@ -3,6 +3,9 @@ import type {ResolvedScene} from '../src/domain/resolved-video';
 import type {VideoPlan} from '../src/domain/video-plan';
 import type {CreateShortDeps} from '../src/pipeline/create-short';
 import {runCli} from '../src/cli';
+import {ProviderError} from '../src/domain/provider-error';
+import {PexelsApiError} from '../src/stock/pexels-client';
+import {VideoDownloadError} from '../src/stock/download-file';
 
 const runId = '20260813-120000-deadbeef';
 const runDir = `runs/${runId}`;
@@ -24,12 +27,14 @@ const resolvedScenes: ResolvedScene[] = plan.scenes.map((scene, index) => ({
   localVideoPath: `${runDir}/scene-${String(index + 1).padStart(2, '0')}.mp4`,
 }));
 
-function createHarness(failAt?: 'generation' | 'stock-resolution' | 'render') {
+function createHarness(
+  failAt?: 'generation' | 'stock-resolution' | 'render',
+  failure: Error = new Error('oa-secret-key px-secret-key https://vendor.example/raw'),
+) {
   const output: string[] = [];
   const errors: string[] = [];
   const persisted: unknown[] = [];
   let receivedTopic: string | undefined;
-  const failure = new Error('oa-secret-key px-secret-key https://vendor.example/raw');
 
   const deps: CreateShortDeps = {
     createRunDirectory: async (topic) => {
@@ -118,5 +123,66 @@ describe('runCli', () => {
     expect([...harness.output, ...harness.errors, JSON.stringify(harness.persisted)].join('\n')).not.toMatch(
       /oa-secret-key|px-secret-key|vendor\.example/,
     );
+  });
+
+  it.each([
+    ['generation', new ProviderError('secret auth payload', {provider: 'openai', kind: 'auth', status: 401}), 'openai', 'auth', 401, undefined],
+    [
+      'generation',
+      new ProviderError('secret quota payload', {provider: 'openai', kind: 'quota', status: 429, code: 'insufficient_quota'}),
+      'openai',
+      'quota',
+      429,
+      'insufficient_quota',
+    ],
+    ['generation', new ProviderError('secret transport payload', {provider: 'openai', kind: 'transport', code: 'econnreset'}), 'openai', 'transport', undefined, 'econnreset'],
+    ['stock-resolution', new ProviderError('secret validation payload', {provider: 'pexels', kind: 'validation'}), 'pexels', 'validation', undefined, undefined],
+  ] as const)(
+    'persists sanitized %s provider diagnostics without raw error content',
+    async (stage, failure, provider, kind, status, code) => {
+      const harness = createHarness(stage, failure);
+
+      await expect(harness.run([plan.topic])).resolves.toBe(1);
+
+      expect(harness.persisted.at(-1)).toMatchObject({
+        status: 'failed',
+        error: {
+          stage,
+          message: stage === 'generation' ? 'Video plan generation failed' : 'Stock clip resolution failed',
+          provider,
+          kind,
+          ...(status ? {status} : {}),
+          ...(code ? {code} : {}),
+        },
+      });
+      expect(JSON.stringify(harness.persisted)).not.toMatch(/secret|payload/i);
+    },
+  );
+
+  it('keeps typed Pexels status diagnostics while leaving local filesystem errors unattributed', async () => {
+    const providerHarness = createHarness('stock-resolution', new PexelsApiError(503));
+    await providerHarness.run([plan.topic]);
+    expect(providerHarness.persisted.at(-1)).toMatchObject({
+      error: {provider: 'pexels', kind: 'transport', status: 503},
+    });
+
+    const downloadHarness = createHarness(
+      'stock-resolution',
+      new VideoDownloadError('transport', {status: 403, code: 'timeout'}),
+    );
+    await downloadHarness.run([plan.topic]);
+    expect(downloadHarness.persisted.at(-1)).toMatchObject({
+      error: {provider: 'pexels', kind: 'transport', status: 403, code: 'timeout'},
+    });
+
+    const localHarness = createHarness(
+      'stock-resolution',
+      Object.assign(new Error('secret local path'), {code: 'ENOSPC'}),
+    );
+    await localHarness.run([plan.topic]);
+    expect((localHarness.persisted.at(-1) as {error: object}).error).toEqual({
+      stage: 'stock-resolution',
+      message: 'Stock clip resolution failed',
+    });
   });
 });

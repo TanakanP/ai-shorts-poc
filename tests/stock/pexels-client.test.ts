@@ -76,4 +76,12 @@ describe('PexelsClient', () => {
       new PexelsClient('pexels-test-key').searchVideos('city lights'),
     ).rejects.toBeInstanceOf(PexelsResponseValidationError);
   });
+
+  it('types provider network failures as transport diagnostics', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('secret DNS detail')));
+
+    await expect(new PexelsClient('pexels-test-key').searchVideos('city lights')).rejects.toMatchObject({
+      diagnostic: {provider: 'pexels', kind: 'transport'},
+    });
+  });
 });

@@ -137,7 +137,7 @@ describe('renderShort', () => {
     );
     const relativeVideo: ResolvedVideo = {
       ...video,
-      scenes: [...localClassifierPaths, ...remoteClassifierUrls].map((localVideoPath, index) => ({
+      scenes: localClassifierPaths.map((localVideoPath, index) => ({
         ...video.scenes[0],
         id: `scene-classifier-${index}`,
         localVideoPath,
@@ -177,8 +177,25 @@ describe('renderShort', () => {
     expect(renderedVideo).toBe(relativeVideo);
     expect(relativeVideo.scenes.map((scene) => scene.localVideoPath)).toEqual([
       ...localClassifierPaths,
-      ...remoteClassifierUrls,
     ]);
+  });
+
+  it.each(remoteClassifierUrls)('rejects remote scene asset %s before starting the asset server', async (localVideoPath) => {
+    const startAssetServer = vi.fn();
+    const remoteVideo: ResolvedVideo = {
+      ...video,
+      scenes: [{...video.scenes[0], localVideoPath}],
+    };
+
+    await expect(
+      renderShort(remoteVideo, '/tmp/output.mp4', {
+        bundle: vi.fn(),
+        selectComposition: vi.fn(),
+        renderMedia: vi.fn(),
+        startAssetServer,
+      }),
+    ).rejects.toThrow(/local files/i);
+    expect(startAssetServer).not.toHaveBeenCalled();
   });
 
   it('adds context to renderer failures while preserving the cause', async () => {
@@ -262,9 +279,6 @@ describe('render asset serving', () => {
       'http://127.0.0.1:43210/asset?path=%2Ftmp%2Fscene+one.mp4',
     );
     expect(getVideoSource('/tmp/scene one.mp4')).toBe('file:///tmp/scene%20one.mp4');
-    for (const url of remoteClassifierUrls) {
-      expect(getVideoSource(url, 'http://127.0.0.1:43210')).toBe(url);
-    }
   });
 
   it('serves only allowlisted absolute files and closes the listener', async () => {

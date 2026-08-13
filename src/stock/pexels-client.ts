@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {ProviderError} from '../domain/provider-error';
 
 export type SearchOptions = {
   orientation: 'portrait' | 'landscape';
@@ -44,19 +45,26 @@ const searchResponseSchema = z.object({
   ),
 });
 
-export class PexelsApiError extends Error {
+export class PexelsApiError extends ProviderError {
   readonly status: number;
 
   constructor(status: number) {
-    super(`Pexels API request failed with status ${status}`);
+    super(`Pexels API request failed with status ${status}`, {
+      provider: 'pexels',
+      kind: status === 401 || status === 403 ? 'auth' : status === 429 ? 'quota' : 'transport',
+      status,
+    });
     this.name = 'PexelsApiError';
     this.status = status;
   }
 }
 
-export class PexelsResponseValidationError extends Error {
+export class PexelsResponseValidationError extends ProviderError {
   constructor() {
-    super('Pexels API returned an invalid response payload');
+    super('Pexels API returned an invalid response payload', {
+      provider: 'pexels',
+      kind: 'validation',
+    });
     this.name = 'PexelsResponseValidationError';
   }
 }
@@ -78,10 +86,20 @@ export class PexelsClient {
       per_page: String(perPage),
       locale: 'en-US',
     });
-    const response = await this.fetchImpl(
-      `https://api.pexels.com/v1/videos/search?${params}`,
-      {headers: {Authorization: this.apiKey}},
-    );
+    let response: Response;
+    try {
+      response = await this.fetchImpl(
+        `https://api.pexels.com/v1/videos/search?${params}`,
+        {headers: {Authorization: this.apiKey}},
+      );
+    } catch (cause) {
+      if (cause instanceof ProviderError) throw cause;
+      throw new ProviderError(
+        'Pexels API transport failed',
+        {provider: 'pexels', kind: 'transport'},
+        {cause},
+      );
+    }
 
     if (!response.ok) throw new PexelsApiError(response.status);
 

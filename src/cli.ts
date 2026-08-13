@@ -2,12 +2,17 @@ import {resolve as resolvePath} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {config as loadDotenv} from 'dotenv';
 import {loadConfig} from './config';
+import {ProviderError} from './domain/provider-error';
 import {
   createOpenAIStructuredPlanGenerator,
   generateVideoPlan,
 } from './generation/generate-video-plan';
 import {createRunDirectory} from './pipeline/create-run-directory';
-import {createShort, type CreateShortDeps} from './pipeline/create-short';
+import {
+  createShort,
+  SafeStageError,
+  type CreateShortDeps,
+} from './pipeline/create-short';
 import {persistJson} from './pipeline/persist-json';
 import {renderShort} from './remotion/render-short';
 import {downloadFile} from './stock/download-file';
@@ -26,11 +31,18 @@ const consoleIo: CliIo = {
   error: (message) => console.error(message),
 };
 
-async function withSafeFailure<T>(message: string, operation: () => Promise<T>): Promise<T> {
+async function withSafeFailure<T>(
+  message: string,
+  operation: () => Promise<T>,
+): Promise<T> {
   try {
     return await operation();
   } catch (cause) {
-    throw new Error(message, {cause});
+    throw new SafeStageError(
+      message,
+      cause instanceof ProviderError ? cause.diagnostic : undefined,
+      {cause},
+    );
   }
 }
 

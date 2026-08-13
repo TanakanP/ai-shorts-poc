@@ -1,10 +1,18 @@
 import {join} from 'node:path';
 import type {ResolvedScene, ResolvedVideo} from '../domain/resolved-video';
 import type {VideoPlan} from '../domain/video-plan';
+import type {ProviderDiagnostic} from '../domain/provider-error';
 
 type RunStage = 'generation' | 'stock-resolution' | 'render';
 
 type RunDirectory = {runId: string; runDir: string};
+
+export class SafeStageError extends Error {
+  constructor(message: string, readonly diagnostic?: ProviderDiagnostic, options?: ErrorOptions) {
+    super(message, options);
+    this.name = 'SafeStageError';
+  }
+}
 
 export type CreateShortDeps = {
   createRunDirectory: (topic: string) => Promise<RunDirectory>;
@@ -71,6 +79,7 @@ export async function createShort(
     return {runId, outputPath, planPath, resolvedPath};
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    const diagnostic = error instanceof SafeStageError ? error.diagnostic : undefined;
     try {
       await deps.persistJson(runPath, {
         runId,
@@ -78,7 +87,7 @@ export async function createShort(
         status: 'failed',
         startedAt,
         finishedAt: new Date().toISOString(),
-        error: {stage, message},
+        error: {stage, message, ...diagnostic},
         ...(attribution ? {attribution} : {}),
       });
     } finally {

@@ -58,6 +58,31 @@ describe('layoutSceneText', () => {
     expect(layout.lines.every((line) => line.trim().length > 0)).toBe(true);
   });
 
+  it('emergency-splits a valid overlong token without adding characters', () => {
+    const text = 'x'.repeat(100);
+    const layout = layoutSceneText(text);
+
+    expect(layout.lines).toHaveLength(4);
+    expect(layout.lines.every((line) => line.length <= 25)).toBe(true);
+    expect(layout.lines.join('')).toBe(text);
+  });
+
+  it('keeps every line within budget across multiple overlong tokens', () => {
+    const text = `${'a'.repeat(26)} ${'b'.repeat(26)} ${'c'.repeat(26)}`;
+    const layout = layoutSceneText(text);
+
+    expect(layout.lines.every((line) => Array.from(line).length <= 25)).toBe(true);
+    expect(layout.lines.join(' ').replaceAll(' ', '')).toBe(text.replaceAll(' ', ''));
+  });
+
+  it('does not split non-BMP characters into invalid halves', () => {
+    const text = '😀'.repeat(40);
+    const layout = layoutSceneText(text);
+
+    expect(layout.lines.join('')).toBe(text);
+    expect(layout.lines.every((line) => !/[\uD800-\uDBFF]$|^[\uDC00-\uDFFF]/.test(line))).toBe(true);
+  });
+
   it('rejects text longer than 100 characters', () => {
     expect(() => layoutSceneText('x'.repeat(101))).toThrow('Scene text must be 100 characters or fewer');
   });

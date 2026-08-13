@@ -11,6 +11,7 @@ export type ResolveDeps = {
 
 const portraitSearch: SearchOptions = {orientation: 'portrait', perPage: 15};
 const landscapeSearch: SearchOptions = {orientation: 'landscape', perPage: 15};
+const transitionSeconds = 6 / 30;
 
 export async function resolveSceneAssets(
   plan: VideoPlan,
@@ -20,14 +21,15 @@ export async function resolveSceneAssets(
   const resolved: ResolvedScene[] = [];
 
   for (const [index, scene] of plan.scenes.entries()) {
+    const requiredSeconds = scene.durationSeconds + (index === 0 ? 0 : transitionSeconds);
     let candidate = selectBestVideo(
       await deps.searchVideos(scene.searchQuery, portraitSearch),
-      scene.durationSeconds,
+      requiredSeconds,
     );
     if (!candidate) {
       candidate = selectBestVideo(
         await deps.searchVideos(scene.searchQuery, landscapeSearch),
-        scene.durationSeconds,
+        requiredSeconds,
       );
     }
     if (!candidate) throw new Error(`No usable video for scene ${scene.id}: ${scene.searchQuery}`);
