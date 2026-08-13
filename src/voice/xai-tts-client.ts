@@ -104,23 +104,34 @@ export function createXaiSpeechSynthesizer(
       });
     }
 
-    const times: Array<readonly [number, number]> = [];
-    for (const pair of parsed.data.audio_timestamps.graph_times) {
-      const start = pair[0];
-      const end = pair[1];
-      if (start === undefined || end === undefined) {
-        throw new ProviderError('xAI speech synthesis failed', {
-          provider: 'xai',
-          kind: 'validation',
-        });
+    let words: VoiceWord[];
+    try {
+      const times: Array<readonly [number, number]> = [];
+      for (const pair of parsed.data.audio_timestamps.graph_times) {
+        const start = pair[0];
+        const end = pair[1];
+        if (start === undefined || end === undefined) {
+          throw new ProviderError('xAI speech synthesis failed', {
+            provider: 'xai',
+            kind: 'validation',
+          });
+        }
+        times.push([start, end] as const);
       }
-      times.push([start, end] as const);
+      words = charactersToWords(parsed.data.audio_timestamps.graph_chars, times);
+    } catch (cause) {
+      if (cause instanceof ProviderError) throw cause;
+      throw new ProviderError(
+        'xAI speech synthesis failed',
+        {provider: 'xai', kind: 'validation'},
+        {cause},
+      );
     }
 
     return {
       audio,
       durationSeconds: parsed.data.duration,
-      words: charactersToWords(parsed.data.audio_timestamps.graph_chars, times),
+      words,
     };
   };
 }

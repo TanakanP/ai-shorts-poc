@@ -77,4 +77,35 @@ describe('createXaiSpeechSynthesizer', () => {
       diagnostic: {provider: 'xai', kind: 'validation'},
     });
   });
+
+  it('maps graph_chars/graph_times length mismatch to xAI validation without leaking the key', async () => {
+    const apiKey = 'xai-secret-should-not-leak';
+    const mismatched = {
+      audio: Buffer.from('fake-mp3').toString('base64'),
+      content_type: 'audio/mpeg',
+      duration: 1.5,
+      audio_timestamps: {
+        graph_chars: ['H', 'i'],
+        graph_times: [[0, 0.12]],
+      },
+    };
+    const synthesize = createXaiSpeechSynthesizer(
+      apiKey,
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify(mismatched), {
+          headers: {'content-type': 'application/json'},
+        }),
+      ),
+    );
+
+    const error = await synthesize({text: 'Hi', voiceId: 'eve'}).catch((e: unknown) => e);
+    expect(error).toMatchObject({
+      name: 'ProviderError',
+      message: 'xAI speech synthesis failed',
+      diagnostic: {provider: 'xai', kind: 'validation'},
+    });
+    const serialized = JSON.stringify(error);
+    expect(serialized).not.toContain(apiKey);
+    expect((error as Error).message).not.toContain(apiKey);
+  });
 });
