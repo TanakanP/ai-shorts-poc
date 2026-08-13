@@ -1,0 +1,31 @@
+{
+  "name": "ai-shorts-poc",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "generate": "tsx src/cli.ts",
+    "remotion:studio": "remotion studio src/remotion/index.ts"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.509",
+    "@remotion/renderer": "^4.0.509",
+    "dotenv": "^17.4.2",
+    "openai": "^7.4.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "^4.0.509",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  }
+}

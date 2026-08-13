@@ -1,2 +1,8 @@
 .worktrees/
+.env
 .env.local
+node_modules/
+runs/*
+!runs/.gitkeep
+.remotion/
+remotion-bundle/
