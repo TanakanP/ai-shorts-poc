@@ -1,7 +1,7 @@
 import {mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
 import {request} from 'node:http';
 import {tmpdir} from 'node:os';
-import {join} from 'node:path';
+import {join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import type {VideoConfig} from 'remotion/no-react';
 import {describe, expect, it, vi} from 'vitest';
@@ -49,6 +49,33 @@ const composition: VideoConfig = {
   defaultSampleRate: null,
 };
 
+const localClassifierPaths = [
+  'runs/20260813-180438-638e819a/scene-01.mp4',
+  'clips:scene-01.mp4',
+  'http:scene.mp4',
+  'http:/local.mp4',
+  'http://',
+  'https://',
+  'http:///local.mp4',
+  'http:////local.mp4',
+  'http:\\local.mp4',
+  'http:\\\\local.mp4',
+  'http://\\local.mp4',
+  'http://example.com\\local.mp4',
+  'http://?query',
+  'https://#hash',
+] as const;
+
+const remoteClassifierUrls = [
+  'http://example.com/video.mp4',
+  'HTTPS://EXAMPLE.COM/video.mp4',
+  'https://user:pass@example.com/video.mp4',
+  'http://example.com:8080/video.mp4',
+  'https://example.com/video.mp4?q=1#part',
+  'http://[::1]:8080/video.mp4',
+  'https://例え.テスト/video.mp4',
+] as const;
+
 describe('renderShort', () => {
   it('bundles and renders the SilentShort composition as H.264 with the supplied video', async () => {
     const bundle = vi.fn(async () => 'http://localhost:3000');
@@ -80,18 +107,78 @@ describe('renderShort', () => {
     expect(selectComposition).toHaveBeenCalledWith({
       serveUrl: 'http://localhost:3000',
       id: 'SilentShort',
-      inputProps: {video, assetBaseUrl: 'http://127.0.0.1:43210'},
+      inputProps: {
+        video,
+        assetBaseUrl: 'http://127.0.0.1:43210',
+        localAssetPaths: {'/tmp/test-video.mp4': '/tmp/test-video.mp4'},
+      },
     });
     expect(renderMedia).toHaveBeenCalledWith({
       serveUrl: 'http://localhost:3000',
       composition,
       codec: 'h264',
       outputLocation: '/tmp/output.mp4',
-      inputProps: {video, assetBaseUrl: 'http://127.0.0.1:43210'},
+      inputProps: {
+        video,
+        assetBaseUrl: 'http://127.0.0.1:43210',
+        localAssetPaths: {'/tmp/test-video.mp4': '/tmp/test-video.mp4'},
+      },
     });
     expect(selectedVideo).toBe(video);
     expect(renderedVideo).toBe(video);
     expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it('allowlists relative local paths as absolute without changing the supplied video', async () => {
+    const packageRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
+    expect(process.cwd()).toBe(packageRoot);
+    const expectedLocalAssetPaths = Object.fromEntries(
+      localClassifierPaths.map((path) => [path, resolve(packageRoot, path)]),
+    );
+    const relativeVideo: ResolvedVideo = {
+      ...video,
+      scenes: [...localClassifierPaths, ...remoteClassifierUrls].map((localVideoPath, index) => ({
+        ...video.scenes[0],
+        id: `scene-classifier-${index}`,
+        localVideoPath,
+      })),
+    };
+    let selectedVideo: ResolvedVideo | undefined;
+    let renderedVideo: ResolvedVideo | undefined;
+    const startAssetServer = vi.fn(async () => ({
+      origin: 'http://127.0.0.1:43210',
+      close: vi.fn(async () => undefined),
+    }));
+    const deps: RenderDeps = {
+      bundle: vi.fn(async () => 'http://localhost:3000'),
+      selectComposition: vi.fn(async (options) => {
+        selectedVideo = options.inputProps.video;
+        return composition;
+      }),
+      renderMedia: vi.fn(async (options) => {
+        renderedVideo = options.inputProps.video;
+      }),
+      startAssetServer,
+    };
+
+    await renderShort(relativeVideo, '/tmp/output.mp4', deps);
+
+    expect(startAssetServer).toHaveBeenCalledWith(Object.values(expectedLocalAssetPaths));
+    expect(deps.selectComposition).toHaveBeenCalledWith(
+      expect.objectContaining({
+        inputProps: {
+          video: relativeVideo,
+          assetBaseUrl: 'http://127.0.0.1:43210',
+          localAssetPaths: expectedLocalAssetPaths,
+        },
+      }),
+    );
+    expect(selectedVideo).toBe(relativeVideo);
+    expect(renderedVideo).toBe(relativeVideo);
+    expect(relativeVideo.scenes.map((scene) => scene.localVideoPath)).toEqual([
+      ...localClassifierPaths,
+      ...remoteClassifierUrls,
+    ]);
   });
 
   it('adds context to renderer failures while preserving the cause', async () => {
@@ -159,14 +246,25 @@ describe('renderShort', () => {
 });
 
 describe('render asset serving', () => {
+  it('maps relative paths through the approved loopback origin using their resolved asset path', () => {
+    const relativePath = 'runs/20260813-180438-638e819a/scene-01.mp4';
+    const absolutePath = resolve(relativePath);
+
+    expect(
+      getVideoSource(relativePath, 'http://127.0.0.1:43210', {
+        [relativePath]: absolutePath,
+      }),
+    ).toBe(`http://127.0.0.1:43210/asset?path=${encodeURIComponent(absolutePath)}`);
+  });
+
   it('maps absolute paths to the approved loopback origin only when supplied', () => {
     expect(getVideoSource('/tmp/scene one.mp4', 'http://127.0.0.1:43210')).toBe(
       'http://127.0.0.1:43210/asset?path=%2Ftmp%2Fscene+one.mp4',
     );
     expect(getVideoSource('/tmp/scene one.mp4')).toBe('file:///tmp/scene%20one.mp4');
-    expect(getVideoSource('https://example.com/video.mp4', 'http://127.0.0.1:43210')).toBe(
-      'https://example.com/video.mp4',
-    );
+    for (const url of remoteClassifierUrls) {
+      expect(getVideoSource(url, 'http://127.0.0.1:43210')).toBe(url);
+    }
   });
 
   it('serves only allowlisted absolute files and closes the listener', async () => {

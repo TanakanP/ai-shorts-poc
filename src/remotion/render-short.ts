@@ -9,7 +9,19 @@ import {renderMedia, selectComposition} from '@remotion/renderer';
 import type {VideoConfig} from 'remotion/no-react';
 import type {ResolvedVideo} from '../domain/resolved-video.js';
 
-type InputProps = {video: ResolvedVideo; assetBaseUrl: string};
+type InputProps = {
+  video: ResolvedVideo;
+  assetBaseUrl: string;
+  localAssetPaths: Record<string, string>;
+};
+
+const isRemoteHttpUrl = (path: string): boolean => {
+  if (!/^https?:\/\/[^/\\]/i.test(path) || path.includes('\\') || !URL.canParse(path)) {
+    return false;
+  }
+  const url = new URL(path);
+  return (url.protocol === 'http:' || url.protocol === 'https:') && url.hostname.length > 0;
+};
 
 export type AssetServer = {
   origin: string;
@@ -108,13 +120,18 @@ export const renderShort = async (
   deps: RenderDeps = defaultDeps,
 ): Promise<void> => {
   try {
-    const assetServer = await deps.startAssetServer(
-      video.scenes.map((scene) => scene.localVideoPath).filter(isAbsolute),
+    const localAssetPaths = Object.fromEntries(
+      video.scenes
+        .map((scene) => scene.localVideoPath)
+        .filter((path) => !isRemoteHttpUrl(path))
+        // POC npm commands establish the package root as cwd for relative run paths.
+        .map((path) => [path, resolve(path)]),
     );
+    const assetServer = await deps.startAssetServer(Object.values(localAssetPaths));
     let operationFailed = false;
     let operationError: unknown;
     try {
-      const inputProps = {video, assetBaseUrl: assetServer.origin};
+      const inputProps = {video, assetBaseUrl: assetServer.origin, localAssetPaths};
       const serveUrl = await deps.bundle({
         entryPoint: fileURLToPath(new URL('./index.ts', import.meta.url)),
       });

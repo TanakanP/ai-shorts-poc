@@ -6,6 +6,7 @@ type SceneProps = {
   scene: ResolvedScene;
   durationInFrames: number;
   assetBaseUrl?: string;
+  localAssetPaths?: Record<string, string>;
 };
 
 export const SCENE_FADE_FRAMES = 6;
@@ -15,17 +16,22 @@ const clamped = {
   extrapolateRight: 'clamp',
 } as const;
 
-export const getVideoSource = (path: string, assetBaseUrl?: string): string => {
-  if (assetBaseUrl && path.startsWith('/')) {
+export const getVideoSource = (
+  path: string,
+  assetBaseUrl?: string,
+  localAssetPaths?: Record<string, string>,
+): string => {
+  const localAssetPath = localAssetPaths?.[path] ?? (path.startsWith('/') ? path : undefined);
+  if (assetBaseUrl && localAssetPath) {
     const url = new URL('/asset', assetBaseUrl);
-    url.searchParams.set('path', path);
+    url.searchParams.set('path', localAssetPath);
     return url.href;
   }
   if (!path.startsWith('/')) return path;
   return `file://${path.split('/').map(encodeURIComponent).join('/')}`;
 };
 
-export const Scene = ({scene, durationInFrames, assetBaseUrl}: SceneProps) => {
+export const Scene = ({scene, durationInFrames, assetBaseUrl, localAssetPaths}: SceneProps) => {
   const frame = useCurrentFrame();
   const layout = layoutSceneText(scene.text);
   const sceneOpacity = Math.min(
@@ -48,7 +54,7 @@ export const Scene = ({scene, durationInFrames, assetBaseUrl}: SceneProps) => {
   return (
     <AbsoluteFill style={{opacity: sceneOpacity}}>
       <OffthreadVideo
-        src={getVideoSource(scene.localVideoPath, assetBaseUrl)}
+        src={getVideoSource(scene.localVideoPath, assetBaseUrl, localAssetPaths)}
         muted
         style={{
           width: '100%',
