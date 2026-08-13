@@ -18,9 +18,11 @@ const plan: VideoPlan = {
 
 describe('synthesizeSceneVoices', () => {
   it('writes deterministic mp3s, overwrites durations, and keeps plan order', async () => {
+    const audioDurationSeconds = 5.2;
+    const timedDurationSeconds = audioDurationSeconds + VOICE_TAIL_PAD_SECONDS;
     const synthesize = vi.fn(async ({text}: {text: string}) => ({
       audio: Buffer.from(text),
-      durationSeconds: 5.7,
+      durationSeconds: audioDurationSeconds,
       words: [{text: text.split(' ')[0] ?? text, startMs: 0, endMs: 400}],
     }));
     const writeAudioFile = vi.fn(async (_path: string, _bytes: Buffer) => undefined);
@@ -41,7 +43,11 @@ describe('synthesizeSceneVoices', () => {
       '/tmp/run/voice-05.mp3',
     ]);
     expect(result.timedPlan.scenes.map((scene) => scene.durationSeconds)).toEqual(
-      Array(5).fill(5.7 + VOICE_TAIL_PAD_SECONDS),
+      Array(5).fill(timedDurationSeconds),
+    );
+    expect(timedDurationSeconds).toBe(5.5);
+    expect(result.timedPlan.scenes.map((scene) => scene.durationSeconds)).not.toEqual(
+      plan.scenes.map((scene) => scene.durationSeconds),
     );
     expect(result.timedPlan.scenes[0]?.text).toBe(plan.scenes[0]?.text);
     expect(result.manifest).toEqual({
@@ -51,8 +57,8 @@ describe('synthesizeSceneVoices', () => {
         sceneId: scene.id,
         localAudioPath: join('/tmp/run', `voice-${String(index + 1).padStart(2, '0')}.mp3`),
         voiceId: 'eve',
-        audioDurationSeconds: 5.7,
-        durationSeconds: 5.7 + VOICE_TAIL_PAD_SECONDS,
+        audioDurationSeconds,
+        durationSeconds: timedDurationSeconds,
         words: [{text: scene.text.split(' ')[0] ?? scene.text, startMs: 0, endMs: 400}],
       })),
     });
@@ -72,6 +78,28 @@ describe('synthesizeSceneVoices', () => {
     await expect(
       synthesizeSceneVoices(plan, '/tmp/run', 'eve', {synthesize, writeAudioFile}),
     ).rejects.toThrow('xAI down');
+    expect(synthesize).toHaveBeenCalledTimes(2);
+    expect(writeAudioFile).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not write later scenes when audio duration is unusable', async () => {
+    const synthesize = vi
+      .fn()
+      .mockResolvedValueOnce({
+        audio: Buffer.from('ok'),
+        durationSeconds: 5.7,
+        words: [{text: 'Ever', startMs: 0, endMs: 400}],
+      })
+      .mockResolvedValueOnce({
+        audio: Buffer.from('short'),
+        durationSeconds: 2.4,
+        words: [{text: 'The', startMs: 0, endMs: 200}],
+      });
+    const writeAudioFile = vi.fn(async (_path: string, _bytes: Buffer) => undefined);
+
+    await expect(
+      synthesizeSceneVoices(plan, '/tmp/run', 'eve', {synthesize, writeAudioFile}),
+    ).rejects.toThrow(/2\.5/);
     expect(synthesize).toHaveBeenCalledTimes(2);
     expect(writeAudioFile).toHaveBeenCalledTimes(1);
   });
