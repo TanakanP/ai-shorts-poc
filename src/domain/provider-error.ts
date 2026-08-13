@@ -1,5 +1,5 @@
 export type ProviderDiagnostic = {
-  provider: 'openai' | 'pexels';
+  provider: 'openai' | 'pexels' | 'xai';
   kind: 'auth' | 'quota' | 'transport' | 'validation';
   status?: number;
   code?: string;
