@@ -22,6 +22,8 @@ const fixtureVideo: ResolvedVideo = {
     creatorName: 'Fixture footage',
     creatorUrl: 'https://www.pexels.com/',
     localVideoPath: fixtureVideoUrl,
+    localAudioPath: '/tmp/voice-01.mp3',
+    audioDurationSeconds: 5,
   })),
 };
 

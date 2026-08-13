@@ -19,6 +19,8 @@ const video: ResolvedVideo = {
       creatorName: 'Creator One',
       creatorUrl: 'https://example.com/creators/one',
       localVideoPath: '/tmp/scene one.mp4',
+      localAudioPath: '/tmp/voice-01.mp3',
+      audioDurationSeconds: 5,
     },
     {
       id: 'payoff',
@@ -29,6 +31,8 @@ const video: ResolvedVideo = {
       creatorName: 'Creator Two',
       creatorUrl: 'https://example.com/creators/two',
       localVideoPath: '/tmp/scene-two.mp4',
+      localAudioPath: '/tmp/voice-01.mp3',
+      audioDurationSeconds: 5,
     },
   ],
 };

@@ -1,5 +1,5 @@
 import {join} from 'node:path';
-import type {ResolvedScene} from '../domain/resolved-video';
+import type {StockScene} from '../domain/resolved-video';
 import type {VideoPlan} from '../domain/video-plan';
 import type {PexelsVideo, SearchOptions} from './pexels-client';
 import {selectBestVideo} from './select-video-file';
@@ -17,8 +17,8 @@ export async function resolveSceneAssets(
   plan: VideoPlan,
   runDir: string,
   deps: ResolveDeps,
-): Promise<ResolvedScene[]> {
-  const resolved: ResolvedScene[] = [];
+): Promise<StockScene[]> {
+  const resolved: StockScene[] = [];
 
   for (const [index, scene] of plan.scenes.entries()) {
     const requiredSeconds = scene.durationSeconds + (index === 0 ? 0 : transitionSeconds);

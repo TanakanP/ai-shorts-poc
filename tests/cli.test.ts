@@ -25,6 +25,8 @@ const resolvedScenes: ResolvedScene[] = plan.scenes.map((scene, index) => ({
   creatorName: `Creator ${index + 1}`,
   creatorUrl: `https://example.test/creators/${index + 1}`,
   localVideoPath: `${runDir}/scene-${String(index + 1).padStart(2, '0')}.mp4`,
+  localAudioPath: '/tmp/voice-01.mp3',
+  audioDurationSeconds: 5,
 }));
 
 function createHarness(
@@ -48,6 +50,21 @@ function createHarness(
     persistJson: async (_path, value) => {
       persisted.push(value);
     },
+    synthesizeSceneVoices: async (receivedPlan) => ({
+      timedPlan: receivedPlan,
+      manifest: {
+        voiceId: 'eve',
+        language: 'en',
+        scenes: receivedPlan.scenes.map((scene, index) => ({
+          sceneId: scene.id,
+          localAudioPath: `${runDir}/voice-${String(index + 1).padStart(2, '0')}.mp3`,
+          voiceId: 'eve',
+          audioDurationSeconds: 5,
+          durationSeconds: scene.durationSeconds,
+          words: [],
+        })),
+      },
+    }),
     resolveSceneAssets: async () => {
       if (failAt === 'stock-resolution') throw failure;
       return resolvedScenes;

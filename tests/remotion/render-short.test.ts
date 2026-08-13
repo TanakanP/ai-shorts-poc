@@ -29,6 +29,8 @@ const video: ResolvedVideo = {
       creatorName: 'Test Creator',
       creatorUrl: 'https://example.com/creator',
       localVideoPath: '/tmp/test-video.mp4',
+      localAudioPath: '/tmp/voice-01.mp3',
+      audioDurationSeconds: 5,
     },
   ],
 };

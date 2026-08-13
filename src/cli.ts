@@ -112,6 +112,9 @@ function createProductionDeps(): CreateShortDeps {
     createRunDirectory,
     generateVideoPlan: (topic) => generateVideoPlan(topic, {generateStructured}),
     persistJson,
+    synthesizeSceneVoices: async () => {
+      throw new Error('Voice synthesis is not wired');
+    },
     resolveSceneAssets: (plan, runDir) =>
       resolveSceneAssets(plan, runDir, {
         searchVideos: (query, options) => pexels.searchVideos(query, options),

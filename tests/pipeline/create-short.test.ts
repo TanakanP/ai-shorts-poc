@@ -1,7 +1,8 @@
 import {describe, expect, it} from 'vitest';
-import type {ResolvedScene, ResolvedVideo} from '../../src/domain/resolved-video';
+import type {ResolvedScene, ResolvedVideo, StockScene} from '../../src/domain/resolved-video';
 import type {VideoPlan} from '../../src/domain/video-plan';
 import {createShort, type CreateShortDeps} from '../../src/pipeline/create-short';
+import type {SynthesizeSceneVoicesResult} from '../../src/voice/synthesize-scene-voices';
 
 const topic = 'Why supermarkets put milk at the back';
 const runId = '20260813-120000-deadbeef';
@@ -19,7 +20,26 @@ const plan: VideoPlan = {
   ],
 };
 
-const resolvedScenes: ResolvedScene[] = plan.scenes.map((scene, index) => ({
+const voiceResult: SynthesizeSceneVoicesResult = {
+  timedPlan: {
+    ...plan,
+    scenes: plan.scenes.map((scene) => ({...scene, durationSeconds: 6.3})),
+  },
+  manifest: {
+    voiceId: 'eve',
+    language: 'en',
+    scenes: plan.scenes.map((scene, index) => ({
+      sceneId: scene.id,
+      localAudioPath: `${runDir}/voice-${String(index + 1).padStart(2, '0')}.mp3`,
+      voiceId: 'eve',
+      audioDurationSeconds: 6,
+      durationSeconds: 6.3,
+      words: [{text: scene.text.split(' ')[0] ?? scene.text, startMs: 0, endMs: 400}],
+    })),
+  },
+};
+
+const stockScenes: StockScene[] = voiceResult.timedPlan.scenes.map((scene, index) => ({
   ...scene,
   sourcePageUrl: `https://example.com/videos/${index + 1}`,
   creatorName: `Creator ${index + 1}`,
@@ -27,7 +47,13 @@ const resolvedScenes: ResolvedScene[] = plan.scenes.map((scene, index) => ({
   localVideoPath: `${runDir}/scene-${String(index + 1).padStart(2, '0')}.mp4`,
 }));
 
-function fakeDeps(events: string[], failAt?: 'generation' | 'stock-resolution' | 'render') {
+const resolvedScenes: ResolvedScene[] = stockScenes.map((scene, index) => ({
+  ...scene,
+  localAudioPath: `${runDir}/voice-${String(index + 1).padStart(2, '0')}.mp3`,
+  audioDurationSeconds: 6,
+}));
+
+function fakeDeps(events: string[], failAt?: 'generation' | 'voice' | 'stock-resolution' | 'render') {
   const persisted: Array<{path: string; value: unknown}> = [];
   const failure = failAt ? new Error(`${failAt} failed`) : undefined;
 
@@ -47,12 +73,19 @@ function fakeDeps(events: string[], failAt?: 'generation' | 'stock-resolution' |
       events.push(`persist ${name}${status}`);
       persisted.push({path, value});
     },
-    resolveSceneAssets: async (receivedPlan, receivedRunDir) => {
-      events.push('resolve assets');
+    synthesizeSceneVoices: async (receivedPlan, receivedRunDir) => {
+      events.push('synthesize voice');
       expect(receivedPlan).toBe(plan);
       expect(receivedRunDir).toBe(runDir);
+      if (failAt === 'voice') throw failure;
+      return voiceResult;
+    },
+    resolveSceneAssets: async (receivedPlan, receivedRunDir) => {
+      events.push('resolve assets');
+      expect(receivedPlan).toBe(voiceResult.timedPlan);
+      expect(receivedRunDir).toBe(runDir);
       if (failAt === 'stock-resolution') throw failure;
-      return resolvedScenes;
+      return stockScenes;
     },
     renderShort: async (video, outputPath) => {
       events.push('render');
@@ -81,6 +114,7 @@ describe('createShort', () => {
       runId,
       outputPath: `${runDir}/output.mp4`,
       planPath: `${runDir}/plan.json`,
+      voicePath: `${runDir}/voice.json`,
       resolvedPath: `${runDir}/resolved.json`,
     });
 
@@ -88,13 +122,16 @@ describe('createShort', () => {
       'create run dir',
       'generate plan',
       'persist plan.json',
+      'synthesize voice',
+      'persist voice.json',
       'resolve assets',
       'persist resolved.json',
       'render',
       'persist run.json:rendered',
     ]);
     expect(persisted[0]).toEqual({path: `${runDir}/plan.json`, value: plan});
-    expect(persisted[1]).toEqual({
+    expect(persisted[1]).toEqual({path: `${runDir}/voice.json`, value: voiceResult.manifest});
+    expect(persisted[2]).toEqual({
       path: `${runDir}/resolved.json`,
       value: {
         runId,
@@ -105,7 +142,7 @@ describe('createShort', () => {
         scenes: resolvedScenes,
       },
     });
-    expect(persisted[2]).toEqual({
+    expect(persisted[3]).toEqual({
       path: `${runDir}/run.json`,
       value: {
         runId,
@@ -122,7 +159,7 @@ describe('createShort', () => {
     });
   });
 
-  it.each(['generation', 'stock-resolution', 'render'] as const)(
+  it.each(['generation', 'voice', 'stock-resolution', 'render'] as const)(
     'persists a failed %s run and rethrows the original error',
     async (stage) => {
       const events: string[] = [];
@@ -132,10 +169,19 @@ describe('createShort', () => {
 
       const expectedEvents = {
         generation: ['create run dir', 'generate plan', 'persist run.json:failed'],
+        voice: [
+          'create run dir',
+          'generate plan',
+          'persist plan.json',
+          'synthesize voice',
+          'persist run.json:failed',
+        ],
         'stock-resolution': [
           'create run dir',
           'generate plan',
           'persist plan.json',
+          'synthesize voice',
+          'persist voice.json',
           'resolve assets',
           'persist run.json:failed',
         ],
@@ -143,6 +189,8 @@ describe('createShort', () => {
           'create run dir',
           'generate plan',
           'persist plan.json',
+          'synthesize voice',
+          'persist voice.json',
           'resolve assets',
           'persist resolved.json',
           'render',
