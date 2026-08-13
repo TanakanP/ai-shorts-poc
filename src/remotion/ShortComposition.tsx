@@ -1,6 +1,6 @@
-import {AbsoluteFill, Sequence, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Html5Audio, Sequence, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {ResolvedScene, ResolvedVideo} from '../domain/resolved-video';
-import {Scene, SCENE_FADE_FRAMES} from './Scene';
+import {getVideoSource, Scene, SCENE_FADE_FRAMES} from './Scene';
 
 export type ShortCompositionProps = {
   video: ResolvedVideo;
@@ -30,6 +30,21 @@ export const createSceneTimeline = (video: ResolvedVideo): SceneTimelineItem[] =
   });
 };
 
+export const createVoiceTimeline = (video: ResolvedVideo): SceneTimelineItem[] => {
+  let from = 0;
+
+  return video.scenes.map((scene) => {
+    const durationInFrames = Math.round(scene.durationSeconds * video.fps);
+    const item = {
+      scene,
+      from,
+      durationInFrames,
+    };
+    from += durationInFrames;
+    return item;
+  });
+};
+
 export const ShortComposition = ({video, assetBaseUrl, localAssetPaths}: ShortCompositionProps) => {
   const frame = useCurrentFrame();
   const {durationInFrames} = useVideoConfig();
@@ -45,6 +60,12 @@ export const ShortComposition = ({video, assetBaseUrl, localAssetPaths}: ShortCo
             assetBaseUrl={assetBaseUrl}
             localAssetPaths={localAssetPaths}
           />
+        </Sequence>
+      ))}
+
+      {createVoiceTimeline(video).map(({scene, from, durationInFrames: voiceDuration}) => (
+        <Sequence key={`${scene.id}-voice`} from={from} durationInFrames={voiceDuration} name={`${scene.id}-voice`}>
+          <Html5Audio src={getVideoSource(scene.localAudioPath, assetBaseUrl, localAssetPaths)} />
         </Sequence>
       ))}
 

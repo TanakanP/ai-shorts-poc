@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import type {ResolvedVideo} from '../../src/domain/resolved-video';
 import {calculateVideoMetadata} from '../../src/remotion/Root';
-import {createSceneTimeline} from '../../src/remotion/ShortComposition';
+import {createSceneTimeline, createVoiceTimeline} from '../../src/remotion/ShortComposition';
 
 const video: ResolvedVideo = {
   runId: 'fixture-run',
@@ -46,6 +46,13 @@ describe('SilentShort composition timing', () => {
     expect(createSceneTimeline(video)).toEqual([
       {scene: video.scenes[0], from: 0, durationInFrames: 120},
       {scene: video.scenes[1], from: 114, durationInFrames: 216},
+    ]);
+  });
+
+  it('places voice clips sequentially with no fade overlap', () => {
+    expect(createVoiceTimeline(video)).toEqual([
+      {scene: video.scenes[0], from: 0, durationInFrames: 120},
+      {scene: video.scenes[1], from: 120, durationInFrames: 210},
     ]);
   });
 });
