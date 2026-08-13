@@ -132,6 +132,13 @@ describe('generateVideoPlan', () => {
   });
 });
 
+describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
+  it('asks for spoken narration instead of a silent card story', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/spoken narration/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).not.toMatch(/without narration/i);
+  });
+});
+
 describe('createOpenAIStructuredPlanGenerator', () => {
   afterEach(() => vi.unstubAllGlobals());
 
