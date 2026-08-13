@@ -1,0 +1,42 @@
+{
+  "topic": "Why supermarkets put milk at the back",
+  "title": "Why Milk Is Always at the Back",
+  "scenes": [
+    {
+      "id": "milk-at-the-back",
+      "durationSeconds": 6,
+      "text": "Why is milk always so far from the entrance?",
+      "searchQuery": "supermarket milk aisle"
+    },
+    {
+      "id": "daily-essential",
+      "durationSeconds": 6,
+      "text": "Milk is a staple many shoppers buy regularly.",
+      "searchQuery": "shopper picking milk carton"
+    },
+    {
+      "id": "longer-route",
+      "durationSeconds": 6,
+      "text": "Putting it at the back creates a longer route.",
+      "searchQuery": "shopping cart supermarket aisle"
+    },
+    {
+      "id": "more-products",
+      "durationSeconds": 6,
+      "text": "That route exposes shoppers to more products.",
+      "searchQuery": "supermarket shelves products"
+    },
+    {
+      "id": "extra-purchases",
+      "durationSeconds": 6,
+      "text": "More exposure can encourage extra purchases.",
+      "searchQuery": "shopper adding groceries cart"
+    },
+    {
+      "id": "store-layout-payoff",
+      "durationSeconds": 6,
+      "text": "The milk trip doubles as a tour of the store.",
+      "searchQuery": "supermarket aisle wide view"
+    }
+  ]
+}
