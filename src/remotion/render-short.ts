@@ -23,6 +23,12 @@ const isRemoteHttpUrl = (path: string): boolean => {
   return (url.protocol === 'http:' || url.protocol === 'https:') && url.hostname.length > 0;
 };
 
+const contentTypeForAsset = (path: string): string => {
+  if (path.endsWith('.mp3')) return 'audio/mpeg';
+  if (path.endsWith('.mp4')) return 'video/mp4';
+  return 'application/octet-stream';
+};
+
 export type AssetServer = {
   origin: string;
   close: () => Promise<void>;
@@ -55,7 +61,7 @@ export const startAssetServer = async (allowedPaths: string[]): Promise<AssetSer
         }
         response.writeHead(200, {
           'Content-Length': file.size,
-          'Content-Type': 'video/mp4',
+          'Content-Type': contentTypeForAsset(path),
         });
         if (request.method === 'HEAD') {
           response.end();
@@ -120,12 +126,16 @@ export const renderShort = async (
   deps: RenderDeps = defaultDeps,
 ): Promise<void> => {
   try {
-    if (video.scenes.some((scene) => isRemoteHttpUrl(scene.localVideoPath))) {
+    if (
+      video.scenes.some(
+        (scene) => isRemoteHttpUrl(scene.localVideoPath) || isRemoteHttpUrl(scene.localAudioPath),
+      )
+    ) {
       throw new Error('Scene assets must be local files before rendering');
     }
     const localAssetPaths = Object.fromEntries(
       video.scenes
-        .map((scene) => scene.localVideoPath)
+        .flatMap((scene) => [scene.localVideoPath, scene.localAudioPath])
         // POC npm commands establish the package root as cwd for relative run paths.
         .map((path) => [path, resolve(path)]),
     );

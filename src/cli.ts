@@ -1,3 +1,4 @@
+import {writeFile} from 'node:fs/promises';
 import {resolve as resolvePath} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {config as loadDotenv} from 'dotenv';
@@ -18,13 +19,15 @@ import {renderShort} from './remotion/render-short';
 import {downloadFile} from './stock/download-file';
 import {PexelsClient} from './stock/pexels-client';
 import {resolveSceneAssets} from './stock/resolve-scene-assets';
+import {synthesizeSceneVoices} from './voice/synthesize-scene-voices';
+import {createXaiSpeechSynthesizer} from './voice/xai-tts-client';
 
 type CliIo = {
   log: (message: string) => void;
   error: (message: string) => void;
 };
 
-type CliStage = 'setup' | 'generation' | 'stock-resolution' | 'render';
+type CliStage = 'setup' | 'generation' | 'voice' | 'stock-resolution' | 'render';
 
 const consoleIo: CliIo = {
   log: (message) => console.log(message),
@@ -76,22 +79,33 @@ export async function runCli(
         const plan = await withSafeFailure('Video plan generation failed', () =>
           deps.generateVideoPlan(runTopic),
         );
-        const duration = plan.scenes.reduce((total, scene) => total + scene.durationSeconds, 0);
-        io.log(`[1/3] Generated ${plan.scenes.length}-scene plan (${duration}s)`);
+        io.log(`[1/4] Generated ${plan.scenes.length}-scene plan`);
         return plan;
+      },
+      synthesizeSceneVoices: async (plan, directory) => {
+        stage = 'voice';
+        const voiced = await withSafeFailure('Voice synthesis failed', () =>
+          deps.synthesizeSceneVoices(plan, directory),
+        );
+        const total = voiced.timedPlan.scenes.reduce(
+          (sum, scene) => sum + scene.durationSeconds,
+          0,
+        );
+        io.log(`[2/4] Synthesized voice (${Number(total.toFixed(1))}s)`);
+        return voiced;
       },
       resolveSceneAssets: async (plan, directory) => {
         stage = 'stock-resolution';
         const scenes = await withSafeFailure('Stock clip resolution failed', () =>
           deps.resolveSceneAssets(plan, directory),
         );
-        io.log(`[2/3] Resolved ${scenes.length} stock clips`);
+        io.log(`[3/4] Resolved ${scenes.length} stock clips`);
         return scenes;
       },
       renderShort: async (video, outputPath) => {
         stage = 'render';
         await withSafeFailure('Video rendering failed', () => deps.renderShort(video, outputPath));
-        io.log('[3/3] Rendered video');
+        io.log('[4/4] Rendered video');
       },
     });
 
@@ -107,11 +121,19 @@ function createProductionDeps(): CreateShortDeps {
   const config = loadConfig();
   const generateStructured = createOpenAIStructuredPlanGenerator(config.openAiApiKey);
   const pexels = new PexelsClient(config.pexelsApiKey);
+  const synthesize = createXaiSpeechSynthesizer(config.xaiApiKey);
 
   return {
     createRunDirectory,
     generateVideoPlan: (topic) => generateVideoPlan(topic, {generateStructured}),
     persistJson,
+    synthesizeSceneVoices: (plan, runDir) =>
+      synthesizeSceneVoices(plan, runDir, config.xaiVoiceId, {
+        synthesize,
+        writeAudioFile: async (path, bytes) => {
+          await writeFile(path, bytes);
+        },
+      }),
     resolveSceneAssets: (plan, runDir) =>
       resolveSceneAssets(plan, runDir, {
         searchVideos: (query, options) => pexels.searchVideos(query, options),

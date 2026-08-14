@@ -5,6 +5,7 @@ import {ShortComposition, type ShortCompositionProps} from './ShortComposition';
 
 const FPS = 30;
 const fixtureVideoUrl = new URL('../../tests/fixtures/tiny-video.mp4', import.meta.url).href;
+const fixtureAudioUrl = new URL('../../tests/fixtures/tiny-audio.mp3', import.meta.url).href;
 
 const fixtureVideo: ResolvedVideo = {
   runId: 'fixture-preview',
@@ -22,6 +23,8 @@ const fixtureVideo: ResolvedVideo = {
     creatorName: 'Fixture footage',
     creatorUrl: 'https://www.pexels.com/',
     localVideoPath: fixtureVideoUrl,
+    localAudioPath: fixtureAudioUrl,
+    audioDurationSeconds: 1,
   })),
 };
 

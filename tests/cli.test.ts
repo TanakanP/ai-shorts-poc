@@ -25,10 +25,12 @@ const resolvedScenes: ResolvedScene[] = plan.scenes.map((scene, index) => ({
   creatorName: `Creator ${index + 1}`,
   creatorUrl: `https://example.test/creators/${index + 1}`,
   localVideoPath: `${runDir}/scene-${String(index + 1).padStart(2, '0')}.mp4`,
+  localAudioPath: '/tmp/voice-01.mp3',
+  audioDurationSeconds: 5,
 }));
 
 function createHarness(
-  failAt?: 'generation' | 'stock-resolution' | 'render',
+  failAt?: 'generation' | 'voice' | 'stock-resolution' | 'render',
   failure: Error = new Error('oa-secret-key px-secret-key https://vendor.example/raw'),
 ) {
   const output: string[] = [];
@@ -47,6 +49,27 @@ function createHarness(
     },
     persistJson: async (_path, value) => {
       persisted.push(value);
+    },
+    synthesizeSceneVoices: async (receivedPlan) => {
+      if (failAt === 'voice') throw failure;
+      return {
+        timedPlan: {
+          ...receivedPlan,
+          scenes: receivedPlan.scenes.map((scene) => ({...scene, durationSeconds: 6.3})),
+        },
+        manifest: {
+          voiceId: 'eve',
+          language: 'en',
+          scenes: receivedPlan.scenes.map((scene, index) => ({
+            sceneId: scene.id,
+            localAudioPath: `${runDir}/voice-${String(index + 1).padStart(2, '0')}.mp3`,
+            voiceId: 'eve',
+            audioDurationSeconds: 6,
+            durationSeconds: 6.3,
+            words: [],
+          })),
+        },
+      };
     },
     resolveSceneAssets: async () => {
       if (failAt === 'stock-resolution') throw failure;
@@ -97,9 +120,10 @@ describe('runCli', () => {
 
     expect(harness.output).toEqual([
       `Creating short: ${plan.topic}`,
-      '[1/3] Generated 5-scene plan (30s)',
-      '[2/3] Resolved 5 stock clips',
-      '[3/3] Rendered video',
+      '[1/4] Generated 5-scene plan',
+      '[2/4] Synthesized voice (31.5s)',
+      '[3/4] Resolved 5 stock clips',
+      '[4/4] Rendered video',
       `Done: ${runDir}/output.mp4`,
     ]);
     expect(harness.output.join('\n')).toContain(runId);
@@ -108,6 +132,7 @@ describe('runCli', () => {
 
   it.each([
     ['generation', 'Video plan generation failed'],
+    ['voice', 'Voice synthesis failed'],
     ['stock-resolution', 'Stock clip resolution failed'],
     ['render', 'Video rendering failed'],
   ] as const)('safely reports and persists a failed %s stage', async (stage, safeMessage) => {
@@ -137,6 +162,7 @@ describe('runCli', () => {
     ],
     ['generation', new ProviderError('secret transport payload', {provider: 'openai', kind: 'transport', code: 'econnreset'}), 'openai', 'transport', undefined, 'econnreset'],
     ['stock-resolution', new ProviderError('secret validation payload', {provider: 'pexels', kind: 'validation'}), 'pexels', 'validation', undefined, undefined],
+    ['voice', new ProviderError('secret tts payload', {provider: 'xai', kind: 'quota', status: 429}), 'xai', 'quota', 429, undefined],
   ] as const)(
     'persists sanitized %s provider diagnostics without raw error content',
     async (stage, failure, provider, kind, status, code) => {
@@ -144,11 +170,18 @@ describe('runCli', () => {
 
       await expect(harness.run([plan.topic])).resolves.toBe(1);
 
+      const safeMessage =
+        stage === 'generation'
+          ? 'Video plan generation failed'
+          : stage === 'voice'
+            ? 'Voice synthesis failed'
+            : 'Stock clip resolution failed';
+
       expect(harness.persisted.at(-1)).toMatchObject({
         status: 'failed',
         error: {
           stage,
-          message: stage === 'generation' ? 'Video plan generation failed' : 'Stock clip resolution failed',
+          message: safeMessage,
           provider,
           kind,
           ...(status ? {status} : {}),

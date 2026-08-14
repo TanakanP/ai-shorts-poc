@@ -29,6 +29,8 @@ const video: ResolvedVideo = {
       creatorName: 'Test Creator',
       creatorUrl: 'https://example.com/creator',
       localVideoPath: '/tmp/test-video.mp4',
+      localAudioPath: '/tmp/test-voice.mp3',
+      audioDurationSeconds: 5,
     },
   ],
 };
@@ -103,14 +105,17 @@ describe('renderShort', () => {
     expect(bundle).toHaveBeenCalledWith({
       entryPoint: fileURLToPath(new URL('../../src/remotion/index.ts', import.meta.url)),
     });
-    expect(startAssetServer).toHaveBeenCalledWith(['/tmp/test-video.mp4']);
+    expect(startAssetServer).toHaveBeenCalledWith(['/tmp/test-video.mp4', '/tmp/test-voice.mp3']);
     expect(selectComposition).toHaveBeenCalledWith({
       serveUrl: 'http://localhost:3000',
       id: 'SilentShort',
       inputProps: {
         video,
         assetBaseUrl: 'http://127.0.0.1:43210',
-        localAssetPaths: {'/tmp/test-video.mp4': '/tmp/test-video.mp4'},
+        localAssetPaths: {
+          '/tmp/test-video.mp4': '/tmp/test-video.mp4',
+          '/tmp/test-voice.mp3': '/tmp/test-voice.mp3',
+        },
       },
     });
     expect(renderMedia).toHaveBeenCalledWith({
@@ -121,7 +126,10 @@ describe('renderShort', () => {
       inputProps: {
         video,
         assetBaseUrl: 'http://127.0.0.1:43210',
-        localAssetPaths: {'/tmp/test-video.mp4': '/tmp/test-video.mp4'},
+        localAssetPaths: {
+          '/tmp/test-video.mp4': '/tmp/test-video.mp4',
+          '/tmp/test-voice.mp3': '/tmp/test-voice.mp3',
+        },
       },
     });
     expect(selectedVideo).toBe(video);
@@ -133,7 +141,10 @@ describe('renderShort', () => {
     const packageRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
     expect(process.cwd()).toBe(packageRoot);
     const expectedLocalAssetPaths = Object.fromEntries(
-      localClassifierPaths.map((path) => [path, resolve(packageRoot, path)]),
+      localClassifierPaths.flatMap((path) => [
+        [path, resolve(packageRoot, path)],
+        [video.scenes[0].localAudioPath, resolve(packageRoot, video.scenes[0].localAudioPath)],
+      ]),
     );
     const relativeVideo: ResolvedVideo = {
       ...video,
@@ -189,6 +200,24 @@ describe('renderShort', () => {
 
     await expect(
       renderShort(remoteVideo, '/tmp/output.mp4', {
+        bundle: vi.fn(),
+        selectComposition: vi.fn(),
+        renderMedia: vi.fn(),
+        startAssetServer,
+      }),
+    ).rejects.toThrow(/local files/i);
+    expect(startAssetServer).not.toHaveBeenCalled();
+  });
+
+  it('rejects remote scene audio before starting the asset server', async () => {
+    const startAssetServer = vi.fn();
+    const remoteAudio: ResolvedVideo = {
+      ...video,
+      scenes: [{...video.scenes[0], localAudioPath: 'http://example.com/voice.mp3'}],
+    };
+
+    await expect(
+      renderShort(remoteAudio, '/tmp/output.mp4', {
         bundle: vi.fn(),
         selectComposition: vi.fn(),
         renderMedia: vi.fn(),
@@ -306,6 +335,23 @@ describe('render asset serving', () => {
     }
 
     await expect(fetch(allowedUrl)).rejects.toThrow();
+  });
+
+  it('serves tiny-audio.mp3 as audio/mpeg', async () => {
+    const fixturePath = fileURLToPath(new URL('../fixtures/tiny-audio.mp3', import.meta.url));
+    const fixture = await readFile(fixturePath);
+    const server = await startAssetServer([fixturePath]);
+    const allowedUrl = new URL('/asset', server.origin);
+    allowedUrl.searchParams.set('path', fixturePath);
+
+    try {
+      const allowed = await fetch(allowedUrl);
+      expect(allowed.status).toBe(200);
+      expect(allowed.headers.get('content-type')).toBe('audio/mpeg');
+      expect(Buffer.from(await allowed.arrayBuffer())).toEqual(fixture);
+    } finally {
+      await server.close();
+    }
   });
 
   it('closes after a client aborts an in-flight asset response', async () => {

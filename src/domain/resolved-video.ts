@@ -5,7 +5,11 @@ export type ResolvedScene = VideoScene & {
   creatorName: string;
   creatorUrl: string;
   localVideoPath: string;
+  localAudioPath: string;
+  audioDurationSeconds: number;
 };
+
+export type StockScene = Omit<ResolvedScene, 'localAudioPath' | 'audioDurationSeconds'>;
 
 export type ResolvedVideo = {
   runId: string;

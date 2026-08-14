@@ -1,9 +1,10 @@
 import {join} from 'node:path';
-import type {ResolvedScene, ResolvedVideo} from '../domain/resolved-video';
+import type {ResolvedVideo, StockScene} from '../domain/resolved-video';
 import type {VideoPlan} from '../domain/video-plan';
 import type {ProviderDiagnostic} from '../domain/provider-error';
+import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices';
 
-type RunStage = 'generation' | 'stock-resolution' | 'render';
+type RunStage = 'generation' | 'voice' | 'stock-resolution' | 'render';
 
 type RunDirectory = {runId: string; runDir: string};
 
@@ -18,7 +19,8 @@ export type CreateShortDeps = {
   createRunDirectory: (topic: string) => Promise<RunDirectory>;
   generateVideoPlan: (topic: string) => Promise<VideoPlan>;
   persistJson: (path: string, value: unknown) => Promise<void>;
-  resolveSceneAssets: (plan: VideoPlan, runDir: string) => Promise<ResolvedScene[]>;
+  synthesizeSceneVoices: (plan: VideoPlan, runDir: string) => Promise<SynthesizeSceneVoicesResult>;
+  resolveSceneAssets: (plan: VideoPlan, runDir: string) => Promise<StockScene[]>;
   renderShort: (video: ResolvedVideo, outputPath: string) => Promise<void>;
 };
 
@@ -26,6 +28,7 @@ export type CreateShortResult = {
   runId: string;
   outputPath: string;
   planPath: string;
+  voicePath: string;
   resolvedPath: string;
 };
 
@@ -36,6 +39,7 @@ export async function createShort(
   const startedAt = new Date().toISOString();
   const {runId, runDir} = await deps.createRunDirectory(topic);
   const planPath = join(runDir, 'plan.json');
+  const voicePath = join(runDir, 'voice.json');
   const resolvedPath = join(runDir, 'resolved.json');
   const outputPath = join(runDir, 'output.mp4');
   const runPath = join(runDir, 'run.json');
@@ -48,8 +52,23 @@ export async function createShort(
     const plan = await deps.generateVideoPlan(topic);
     await deps.persistJson(planPath, plan);
 
+    stage = 'voice';
+    const {timedPlan, manifest} = await deps.synthesizeSceneVoices(plan, runDir);
+    await deps.persistJson(voicePath, manifest);
+
     stage = 'stock-resolution';
-    const resolvedScenes = await deps.resolveSceneAssets(plan, runDir);
+    const stockScenes = await deps.resolveSceneAssets(timedPlan, runDir);
+    const resolvedScenes = stockScenes.map((scene, index) => {
+      const voice = manifest.scenes[index];
+      if (!voice || voice.sceneId !== scene.id) {
+        throw new Error(`Voice manifest missing scene ${scene.id}`);
+      }
+      return {
+        ...scene,
+        localAudioPath: voice.localAudioPath,
+        audioDurationSeconds: voice.audioDurationSeconds,
+      };
+    });
     const resolvedVideo: ResolvedVideo = {
       runId,
       title: plan.title,
@@ -76,7 +95,7 @@ export async function createShort(
       attribution,
     });
 
-    return {runId, outputPath, planPath, resolvedPath};
+    return {runId, outputPath, planPath, voicePath, resolvedPath};
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const diagnostic = error instanceof SafeStageError ? error.diagnostic : undefined;

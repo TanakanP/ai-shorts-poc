@@ -23,6 +23,8 @@ const video: ResolvedVideo = {
       creatorName: 'Fixture footage',
       creatorUrl: 'https://www.pexels.com/',
       localVideoPath: fixturePath,
+      localAudioPath: fileURLToPath(new URL('../tests/fixtures/tiny-audio.mp3', import.meta.url)),
+      audioDurationSeconds: 1,
     },
   ],
 };
