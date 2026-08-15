@@ -3,7 +3,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import type {VideoPlan, VideoScene} from '../../src/domain/video-plan';
-import {downloadFile} from '../../src/stock/download-file';
+import {DEFAULT_TIMEOUT_MS, downloadFile} from '../../src/stock/download-file';
 import {resolveSceneAssets, type ResolveDeps} from '../../src/stock/resolve-scene-assets';
 import type {PexelsVideo} from '../../src/stock/pexels-client';
 
@@ -206,6 +206,10 @@ describe('downloadFile', () => {
         timeoutMs: 1,
       }),
     ).rejects.toMatchObject({diagnostic: {provider: 'pexels', kind: 'transport', code: 'timeout'}});
+  });
+
+  it('gives Pexels downloads two minutes by default', () => {
+    expect(DEFAULT_TIMEOUT_MS).toBe(120_000);
   });
 
   it('types download network and malformed redirect failures as provider transport errors', async () => {

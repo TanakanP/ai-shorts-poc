@@ -5,7 +5,7 @@ import {Transform} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import {ProviderError} from '../domain/provider-error';
 
-const DEFAULT_TIMEOUT_MS = 30_000;
+export const DEFAULT_TIMEOUT_MS = 120_000;
 const DEFAULT_MAX_BYTES = 250 * 1024 * 1024;
 const MAX_REDIRECTS = 5;
 
