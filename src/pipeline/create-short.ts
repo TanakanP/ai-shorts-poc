@@ -3,6 +3,7 @@ import type {ResolvedVideo, StockScene} from '../domain/resolved-video';
 import type {VideoPlan} from '../domain/video-plan';
 import type {ProviderDiagnostic} from '../domain/provider-error';
 import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices';
+import {bookendLastScene} from './bookend-last-scene';
 
 type RunStage = 'generation' | 'voice' | 'stock-resolution' | 'render';
 
@@ -73,15 +74,16 @@ export async function createShort(
         words: voice.words,
       };
     });
+    const loopedScenes = bookendLastScene(resolvedScenes);
     const resolvedVideo: ResolvedVideo = {
       runId,
       title: plan.title,
       fps: 30,
       width: 1080,
       height: 1920,
-      scenes: resolvedScenes,
+      scenes: loopedScenes,
     };
-    attribution = resolvedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
+    attribution = loopedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
       sourcePageUrl,
       creatorName,
       creatorUrl,

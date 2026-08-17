@@ -54,6 +54,19 @@ const resolvedScenes: ResolvedScene[] = stockScenes.map((scene, index) => ({
   words: voiceResult.manifest.scenes[index].words,
 }));
 
+const firstResolved = resolvedScenes[0];
+const lastResolved = resolvedScenes.at(-1);
+const loopedScenes: ResolvedScene[] = [
+  ...resolvedScenes.slice(0, -1),
+  {
+    ...lastResolved!,
+    localVideoPath: firstResolved.localVideoPath,
+    sourcePageUrl: firstResolved.sourcePageUrl,
+    creatorName: firstResolved.creatorName,
+    creatorUrl: firstResolved.creatorUrl,
+  },
+];
+
 function fakeDeps(events: string[], failAt?: 'generation' | 'voice' | 'stock-resolution' | 'render') {
   const persisted: Array<{path: string; value: unknown}> = [];
   const failure = failAt ? new Error(`${failAt} failed`) : undefined;
@@ -96,7 +109,7 @@ function fakeDeps(events: string[], failAt?: 'generation' | 'voice' | 'stock-res
         fps: 30,
         width: 1080,
         height: 1920,
-        scenes: resolvedScenes,
+        scenes: loopedScenes,
       });
       expect(outputPath).toBe(`${runDir}/output.mp4`);
       if (failAt === 'render') throw failure;
@@ -140,9 +153,13 @@ describe('createShort', () => {
         fps: 30,
         width: 1080,
         height: 1920,
-        scenes: resolvedScenes,
+        scenes: loopedScenes,
       },
     });
+    const persistedResolved = persisted[2]?.value as ResolvedVideo;
+    const lastPersistedScene = persistedResolved.scenes.at(-1);
+    expect(lastPersistedScene?.localVideoPath).toBe(`${runDir}/scene-01.mp4`);
+    expect(lastPersistedScene?.creatorName).toBe('Creator 1');
     expect(persisted[3]).toEqual({
       path: `${runDir}/run.json`,
       value: {
@@ -151,12 +168,22 @@ describe('createShort', () => {
         status: 'rendered',
         startedAt: expect.any(String),
         finishedAt: expect.any(String),
-        attribution: resolvedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
+        attribution: loopedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
           sourcePageUrl,
           creatorName,
           creatorUrl,
         })),
       },
+    });
+    const persistedAttribution = (
+      persisted[3]?.value as {
+        attribution: Array<{sourcePageUrl: string; creatorName: string; creatorUrl: string}>;
+      }
+    ).attribution;
+    expect(persistedAttribution.at(-1)).toEqual({
+      sourcePageUrl: firstResolved.sourcePageUrl,
+      creatorName: firstResolved.creatorName,
+      creatorUrl: firstResolved.creatorUrl,
     });
   });
 
@@ -228,7 +255,7 @@ describe('createShort', () => {
           error: {stage, message: `${stage} failed`},
           ...(stage === 'render'
             ? {
-                attribution: resolvedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
+                attribution: loopedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
                   sourcePageUrl,
                   creatorName,
                   creatorUrl,
