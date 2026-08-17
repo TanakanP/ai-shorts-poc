@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {SCENE_FADE_FRAMES, sceneOpacity} from '../../src/remotion/Scene';
+import {SCENE_FADE_FRAMES, SCENE_WASH_OPACITY, sceneOpacity} from '../../src/remotion/Scene';
 
 describe('sceneOpacity', () => {
   it('fades in from black and out to black when both edges are enabled', () => {
@@ -23,5 +23,11 @@ describe('sceneOpacity', () => {
     expect(sceneOpacity(0, 150, {fadeIn: false, fadeOut: false})).toBe(1);
     expect(sceneOpacity(75, 150, {fadeIn: false, fadeOut: false})).toBe(1);
     expect(sceneOpacity(149, 150, {fadeIn: false, fadeOut: false})).toBe(1);
+  });
+});
+
+describe('scene wash', () => {
+  it('leaves footage undimmed', () => {
+    expect(SCENE_WASH_OPACITY).toBe(0);
   });
 });

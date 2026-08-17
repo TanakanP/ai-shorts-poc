@@ -1,5 +1,5 @@
 export const VIDEO_PLAN_SYSTEM_PROMPT = `You create concise vertical educational videos with spoken narration.
-Each scene.text is the exact line a narrator will speak. On screen the spoken line builds in short phrases, then the next phrase replaces it.
+Each scene.text is the exact line a narrator will speak. On screen the full spoken line is visible, and the current word is highlighted.
 Create 5–7 scenes totaling 30–45 seconds as a writing target.
 Each scene lasts 4–8 seconds as a writing target; keep each line speakable in that window.
 Each scene text is one short thought readable on a phone and natural when spoken aloud.

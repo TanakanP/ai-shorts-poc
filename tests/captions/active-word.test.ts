@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {activeWordsAt} from '../../src/captions/active-word';
+import {activeWordsAt, currentWordIndexAt} from '../../src/captions/active-word';
 import type {VoiceWord} from '../../src/domain/voice';
 
 const words: VoiceWord[] = [
@@ -39,5 +39,27 @@ describe('activeWordsAt', () => {
 
   it('returns an empty list for no words', () => {
     expect(activeWordsAt([], 0)).toEqual([]);
+  });
+});
+
+describe('currentWordIndexAt', () => {
+  it('returns null before the first start', () => {
+    expect(currentWordIndexAt(words, 79)).toBeNull();
+  });
+
+  it('returns the first word index at its start', () => {
+    expect(currentWordIndexAt(words, 80)).toBe(0);
+  });
+
+  it('advances to the newly started word', () => {
+    expect(currentWordIndexAt(words, 300)).toBe(1);
+  });
+
+  it('holds the last word after the last endMs', () => {
+    expect(currentWordIndexAt(words, 2000)).toBe(3);
+  });
+
+  it('returns null for no words', () => {
+    expect(currentWordIndexAt([], 0)).toBeNull();
   });
 });

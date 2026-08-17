@@ -6,3 +6,11 @@ export function activeWordsAt(words: readonly VoiceWord[], timeMs: number): Voic
   if (!first || timeMs < first.startMs) return [];
   return words.filter((word) => timeMs >= word.startMs);
 }
+
+export function currentWordIndexAt(words: readonly VoiceWord[], timeMs: number): number | null {
+  let current: number | null = null;
+  for (const [index, word] of words.entries()) {
+    if (timeMs >= word.startMs) current = index;
+  }
+  return current;
+}

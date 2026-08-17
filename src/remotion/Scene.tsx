@@ -11,6 +11,7 @@ type SceneProps = {
 };
 
 export const SCENE_FADE_FRAMES = 6;
+export const SCENE_WASH_OPACITY = 0;
 
 const clamped = {
   extrapolateLeft: 'clamp',
@@ -77,7 +78,9 @@ export const Scene = ({
         }}
       />
 
-      <AbsoluteFill style={{backgroundColor: 'rgba(0, 0, 0, 0.46)'}} />
+      {SCENE_WASH_OPACITY > 0 ? (
+        <AbsoluteFill style={{backgroundColor: `rgba(0, 0, 0, ${SCENE_WASH_OPACITY})`}} />
+      ) : null}
     </AbsoluteFill>
   );
 };

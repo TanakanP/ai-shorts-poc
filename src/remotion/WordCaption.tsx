@@ -1,5 +1,5 @@
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
-import {activeCaptionChunk, chunkCaptionWords} from '../captions/caption-chunk';
+import {currentWordIndexAt} from '../captions/active-word';
 import type {ResolvedScene} from '../domain/resolved-video';
 import {captionFontFamily} from './caption-font';
 
@@ -10,6 +10,7 @@ export const WORD_CAPTION_JUSTIFY = 'flex-end' as const;
 export const WORD_CAPTION_PADDING = '0 86px 280px';
 
 export const CAPTION_FILL = '#f5f5f5';
+export const CAPTION_KARAOKE_FILL = '#ffe14d';
 export const CAPTION_FONT_WEIGHT = 900;
 export const CAPTION_FONT_SIZE = 72;
 export const CAPTION_STROKE = '6px #000';
@@ -18,9 +19,8 @@ export const CAPTION_SHADOW = '0 4px 12px rgba(0,0,0,0.65)';
 export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const live = activeCaptionChunk(chunkCaptionWords(scene.words), captionTimeMs(frame, fps));
-  if (live.length === 0) return null;
-  const texts = live.map((word) => word.text);
+  if (scene.words.length === 0) return null;
+  const currentIndex = currentWordIndexAt(scene.words, captionTimeMs(frame, fps));
 
   return (
     <AbsoluteFill
@@ -39,7 +39,6 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
           columnGap: '0.35em',
           rowGap: 4,
           maxWidth: 908,
-          color: CAPTION_FILL,
           fontFamily: captionFontFamily,
           fontSize: CAPTION_FONT_SIZE,
           fontWeight: CAPTION_FONT_WEIGHT,
@@ -50,9 +49,12 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
           textAlign: 'center',
         }}
       >
-        {texts.map((text, index) => (
-          <span key={`${index}-${text}`} style={{opacity: index === texts.length - 1 ? 1 : 0.85}}>
-            {text}
+        {scene.words.map((word, index) => (
+          <span
+            key={`${index}-${word.text}`}
+            style={{color: index === currentIndex ? CAPTION_KARAOKE_FILL : CAPTION_FILL}}
+          >
+            {word.text}
           </span>
         ))}
       </div>

@@ -1,18 +1,17 @@
 # Project Instructions
 
-This project implements voiced AI Shorts with chunked accumulating captions, stroked Montserrat type, and a visual bookend loop.
+This branch experiments with undimmed footage and full-sentence karaoke captions.
 
 Primary implementation plan:
-docs/superpowers/plans/2026-08-17-chunked-captions.md
+docs/superpowers/plans/2026-08-17-karaoke-experiment.md
 
 Rules:
 - Follow the implementation plan task-by-task and in order.
 - Use test-driven development.
-- Do not add features outside this plan.
+- Do not add features outside this experiment.
 - Output is still a locally rendered MP4.
 - No YouTube upload.
 - No background music.
-- No karaoke full-line highlight.
 - No scheduler.
 - No database.
 - No analytics.

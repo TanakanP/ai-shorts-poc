@@ -6,6 +6,7 @@ import {
   CAPTION_FONT_WEIGHT,
   CAPTION_STROKE,
   CAPTION_SHADOW,
+  CAPTION_KARAOKE_FILL,
   WORD_CAPTION_JUSTIFY,
   WORD_CAPTION_PADDING,
 } from '../../src/remotion/WordCaption';
@@ -37,5 +38,11 @@ describe('caption style', () => {
 describe('caption size', () => {
   it('keeps a fixed large size instead of shrinking to the full sentence', () => {
     expect(CAPTION_FONT_SIZE).toBe(72);
+  });
+});
+
+describe('karaoke highlight', () => {
+  it('uses yellow for the current spoken word', () => {
+    expect(CAPTION_KARAOKE_FILL).toBe('#ffe14d');
   });
 });
