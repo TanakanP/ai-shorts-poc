@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {activeWordAt} from '../../src/captions/active-word';
+import {activeWordsAt} from '../../src/captions/active-word';
 import type {VoiceWord} from '../../src/domain/voice';
 
 const words: VoiceWord[] = [
@@ -9,30 +9,35 @@ const words: VoiceWord[] = [
   {text: 'wonder', startMs: 760, endMs: 1100},
 ];
 
-describe('activeWordAt', () => {
-  it('returns null before the first word starts', () => {
-    expect(activeWordAt(words, 79)).toBeNull();
+describe('activeWordsAt', () => {
+  it('returns no words before the first start', () => {
+    expect(activeWordsAt(words, 79)).toEqual([]);
   });
 
-  it('returns the first word at its start', () => {
-    expect(activeWordAt(words, 80)).toBe('Did');
+  it('returns only the first word at its start', () => {
+    expect(activeWordsAt(words, 80).map((word) => word.text)).toEqual(['Did']);
   });
 
-  it('holds a short word until the next word starts', () => {
-    expect(activeWordAt(words, 280)).toBe('Did');
-    expect(activeWordAt(words, 299)).toBe('Did');
-    expect(activeWordAt(words, 300)).toBe('you');
+  it('keeps earlier words after the next word starts', () => {
+    expect(activeWordsAt(words, 300).map((word) => word.text)).toEqual(['Did', 'you']);
   });
 
-  it('holds the last word after its endMs', () => {
-    expect(activeWordAt(words, 2000)).toBe('wonder');
+  it('keeps the full phrase after the last endMs', () => {
+    expect(activeWordsAt(words, 2000).map((word) => word.text)).toEqual([
+      'Did',
+      'you',
+      'ever',
+      'wonder',
+    ]);
   });
 
-  it('keeps punctuation on the token', () => {
-    expect(activeWordAt([{text: 'reason,', startMs: 0, endMs: 200}], 50)).toBe('reason,');
+  it('keeps punctuation on tokens', () => {
+    expect(activeWordsAt([{text: 'reason,', startMs: 0, endMs: 200}], 50).map((word) => word.text)).toEqual([
+      'reason,',
+    ]);
   });
 
-  it('returns null for an empty word list', () => {
-    expect(activeWordAt([], 0)).toBeNull();
+  it('returns an empty list for no words', () => {
+    expect(activeWordsAt([], 0)).toEqual([]);
   });
 });
