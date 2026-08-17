@@ -17,7 +17,11 @@ plan, synthesizes spoken narration, downloads stock footage from Pexels, and ren
 2. Create a local environment file: `cp .env.example .env`
 3. Add `OPENAI_API_KEY`, `PEXELS_API_KEY`, `XAI_API_KEY`, `CHANNEL_BRAND`, and `CHANNEL_SIGNOFF` (and optional `XAI_VOICE_ID`) to `.env`.
 4. Run the offline test suite: `npm test`
-5. Generate a short: `npm run generate -- "Why supermarkets put milk at the back"`
+5. Generate a short with a topic and a research brief:
+
+```bash
+npm run generate -- "Why Supermarkets Put Milk at the Back" "Explain why supermarkets often place milk and other staples toward the back. Research retail-layout strategy and separate well-supported practice from myth."
+```
 
 ## Expected output
 

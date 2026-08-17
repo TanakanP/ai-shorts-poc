@@ -54,9 +54,10 @@ export async function runCli(
   getDeps: () => CreateShortDeps,
   io: CliIo = consoleIo,
 ): Promise<number> {
-  const topic = args.join(' ').trim();
-  if (!topic) {
-    io.error('Usage: npm run generate -- "<topic>"');
+  const topic = args[0]?.trim() ?? '';
+  const research = args.slice(1).join(' ').trim();
+  if (!topic || !research) {
+    io.error('Usage: npm run generate -- "<topic>" "<research>"');
     return 1;
   }
 
@@ -120,7 +121,7 @@ export async function runCli(
   }
 }
 
-function createProductionDeps(): CreateShortDeps {
+function createProductionDeps(research: string): CreateShortDeps {
   const config = loadConfig();
   const generateStructured = createOpenAIStructuredPlanGenerator(config.openAiApiKey);
   const pexels = new PexelsClient(config.pexelsApiKey);
@@ -128,7 +129,8 @@ function createProductionDeps(): CreateShortDeps {
 
   return {
     createRunDirectory,
-    generateVideoPlan: (topic) => generateVideoPlan(topic, {generateStructured}),
+    research,
+    generateVideoPlan: (topic) => generateVideoPlan(topic, {generateStructured, research}),
     persistJson,
     synthesizeSceneVoices: (plan, runDir) =>
       synthesizeSceneVoices(plan, runDir, config.xaiVoiceId, {
@@ -151,7 +153,9 @@ const entryPath = process.argv[1] ? pathToFileURL(resolvePath(process.argv[1])).
 if (import.meta.url === entryPath) {
   const envPath = findEnvFile(process.cwd());
   loadDotenv(envPath ? {path: envPath, quiet: true} : {quiet: true});
-  void runCli(process.argv.slice(2), createProductionDeps).then((exitCode) => {
+  const argv = process.argv.slice(2);
+  const research = argv.slice(1).join(' ').trim();
+  void runCli(argv, () => createProductionDeps(research)).then((exitCode) => {
     process.exitCode = exitCode;
   });
 }

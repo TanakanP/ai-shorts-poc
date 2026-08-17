@@ -3,6 +3,7 @@ import {afterEach, describe, expect, it, vi} from 'vitest';
 import {parseVideoPlan, videoPlanSchema} from '../../src/domain/video-plan';
 import {
   createOpenAIStructuredPlanGenerator,
+  formatPlanInput,
   generateVideoPlan,
 } from '../../src/generation/generate-video-plan';
 import {VIDEO_PLAN_SYSTEM_PROMPT} from '../../src/generation/prompt';
@@ -121,26 +122,44 @@ describe('generateVideoPlan', () => {
   it('trims the topic before generation', async () => {
     const generateStructured = vi.fn().mockResolvedValue(copyFixture());
 
-    await generateVideoPlan(`  ${fixture.topic}  `, {generateStructured});
+    await generateVideoPlan(`  ${fixture.topic}  `, {
+      generateStructured,
+      research: '  Explain supermarket staple placement.  ',
+    });
 
     expect(generateStructured).toHaveBeenCalledWith({
       system: VIDEO_PLAN_SYSTEM_PROMPT,
-      input: fixture.topic,
+      input: formatPlanInput(fixture.topic, 'Explain supermarket staple placement.'),
     });
+  });
+
+  it('rejects a research brief that is too short', async () => {
+    const generateStructured = vi.fn();
+
+    await expect(
+      generateVideoPlan(fixture.topic, {generateStructured, research: 'too short'}),
+    ).rejects.toThrow(/research/i);
+    expect(generateStructured).not.toHaveBeenCalled();
   });
 
   it('rejects topics shorter than 3 characters', async () => {
     const generateStructured = vi.fn();
 
-    await expect(generateVideoPlan('  no  ', {generateStructured})).rejects.toThrow(
-      'Topic must be at least 3 characters',
-    );
+    await expect(
+      generateVideoPlan('  no  ', {
+        generateStructured,
+        research: 'Explain supermarket staple placement in enough detail.',
+      }),
+    ).rejects.toThrow('Topic must be at least 3 characters');
     expect(generateStructured).not.toHaveBeenCalled();
   });
 
   it('returns valid generated data', async () => {
     await expect(
-      generateVideoPlan(fixture.topic, {generateStructured: async () => copyFixture()}),
+      generateVideoPlan(fixture.topic, {
+        generateStructured: async () => copyFixture(),
+        research: 'Explain supermarket staple placement in enough detail.',
+      }),
     ).resolves.toEqual(fixture);
   });
 
@@ -148,7 +167,10 @@ describe('generateVideoPlan', () => {
     const invalidPlan = {...copyFixture(), scenes: fixture.scenes.slice(0, 4)};
 
     await expect(
-      generateVideoPlan(fixture.topic, {generateStructured: async () => invalidPlan}),
+      generateVideoPlan(fixture.topic, {
+        generateStructured: async () => invalidPlan,
+        research: 'Explain supermarket staple placement in enough detail.',
+      }),
     ).rejects.toThrow();
   });
 });
@@ -166,6 +188,22 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
 
   it('tells the model not to write a channel sign-off', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not end with a brand name/i);
+  });
+
+  it('tells the model to follow the research brief', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/research brief/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/well-supported/i);
+  });
+});
+
+describe('formatPlanInput', () => {
+  it('sends topic and research brief as labeled blocks', () => {
+    expect(formatPlanInput('Why milk is at the back', 'Explain retail layout strategy.')).toContain(
+      'TOPIC:\nWhy milk is at the back',
+    );
+    expect(formatPlanInput('Why milk is at the back', 'Explain retail layout strategy.')).toContain(
+      'RESEARCH BRIEF:\nExplain retail layout strategy.',
+    );
   });
 });
 

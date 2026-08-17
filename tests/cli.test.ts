@@ -9,6 +9,7 @@ import {VideoDownloadError} from '../src/stock/download-file';
 
 const runId = '20260813-120000-deadbeef';
 const runDir = `runs/${runId}`;
+const research = 'Explain supermarket layout and staple placement.';
 const plan: VideoPlan = {
   topic: 'Why supermarkets put milk at the back',
   title: 'Why Milk Is Always at the Back',
@@ -41,6 +42,7 @@ function createHarness(
 
   const deps: CreateShortDeps = {
     channel: {brand: 'Curious Cart', signoff: 'If that made you look twice, follow along.'},
+    research,
     createRunDirectory: async (topic) => {
       receivedTopic = topic;
       return {runId, runDir};
@@ -98,12 +100,17 @@ function createHarness(
 }
 
 describe('runCli', () => {
-  it('joins all positional arguments into one topic', async () => {
+  it('takes the first argument as topic and the rest as research', async () => {
     const harness = createHarness();
 
-    await expect(harness.run(['Why', 'supermarkets', 'put', 'milk', 'at', 'the', 'back'])).resolves.toBe(0);
+    await expect(
+      harness.run([
+        'Why Supermarkets Put Milk at the Back',
+        research,
+      ]),
+    ).resolves.toBe(0);
 
-    expect(harness.receivedTopic).toBe('Why supermarkets put milk at the back');
+    expect(harness.receivedTopic).toBe('Why Supermarkets Put Milk at the Back');
   });
 
   it('reports a setup error before a run directory exists', async () => {
@@ -111,7 +118,7 @@ describe('runCli', () => {
 
     await expect(
       runCli(
-        ['Why milk is at the back'],
+        ['Why milk is at the back', research],
         () => {
           throw new Error('Missing or invalid env: OPENAI_API_KEY');
         },
@@ -133,14 +140,25 @@ describe('runCli', () => {
 
     await expect(harness.run([])).resolves.toBe(1);
 
-    expect(harness.errors).toEqual(['Usage: npm run generate -- "<topic>"']);
+    expect(harness.errors).toEqual(['Usage: npm run generate -- "<topic>" "<research>"']);
+    expect(harness.receivedTopic).toBeUndefined();
+  });
+
+  it('rejects a missing research brief with usage text', async () => {
+    const harness = createHarness();
+
+    await expect(harness.run([plan.topic])).resolves.toBe(1);
+
+    expect(harness.errors).toEqual(['Usage: npm run generate -- "<topic>" "<research>"']);
     expect(harness.receivedTopic).toBeUndefined();
   });
 
   it('prints compact progress, the run id, and output path on success', async () => {
     const harness = createHarness();
 
-    await expect(harness.run([plan.topic])).resolves.toBe(0);
+    await expect(
+      harness.run([plan.topic, research]),
+    ).resolves.toBe(0);
 
     expect(harness.output).toEqual([
       `Creating short: ${plan.topic}`,
@@ -162,7 +180,7 @@ describe('runCli', () => {
   ] as const)('safely reports and persists a failed %s stage', async (stage, safeMessage) => {
     const harness = createHarness(stage);
 
-    await expect(harness.run([plan.topic])).resolves.toBe(1);
+    await expect(harness.run([plan.topic, research])).resolves.toBe(1);
 
     expect(harness.errors).toEqual([`Failed during ${stage}. Run directory: ${runDir}`]);
     expect(harness.persisted.at(-1)).toMatchObject({
@@ -192,7 +210,7 @@ describe('runCli', () => {
     async (stage, failure, provider, kind, status, code) => {
       const harness = createHarness(stage, failure);
 
-      await expect(harness.run([plan.topic])).resolves.toBe(1);
+      await expect(harness.run([plan.topic, research])).resolves.toBe(1);
 
       const safeMessage =
         stage === 'generation'
@@ -218,7 +236,7 @@ describe('runCli', () => {
 
   it('keeps typed Pexels status diagnostics while leaving local filesystem errors unattributed', async () => {
     const providerHarness = createHarness('stock-resolution', new PexelsApiError(503));
-    await providerHarness.run([plan.topic]);
+    await providerHarness.run([plan.topic, research]);
     expect(providerHarness.persisted.at(-1)).toMatchObject({
       error: {provider: 'pexels', kind: 'transport', status: 503},
     });
@@ -227,7 +245,7 @@ describe('runCli', () => {
       'stock-resolution',
       new VideoDownloadError('transport', {status: 403, code: 'timeout'}),
     );
-    await downloadHarness.run([plan.topic]);
+    await downloadHarness.run([plan.topic, research]);
     expect(downloadHarness.persisted.at(-1)).toMatchObject({
       error: {provider: 'pexels', kind: 'transport', status: 403, code: 'timeout'},
     });
@@ -236,7 +254,7 @@ describe('runCli', () => {
       'stock-resolution',
       Object.assign(new Error('secret local path'), {code: 'ENOSPC'}),
     );
-    await localHarness.run([plan.topic]);
+    await localHarness.run([plan.topic, research]);
     expect((localHarness.persisted.at(-1) as {error: object}).error).toEqual({
       stage: 'stock-resolution',
       message: 'Stock clip resolution failed',

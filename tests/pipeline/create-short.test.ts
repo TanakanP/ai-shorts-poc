@@ -11,6 +11,7 @@ const channel = {
   brand: 'Curious Cart',
   signoff: 'If that made you look twice, follow along.',
 };
+const research = 'Explain supermarket layout and staple placement.';
 
 const plan: VideoPlan = {
   topic,
@@ -94,6 +95,7 @@ function fakeDeps(events: string[], failAt?: 'generation' | 'voice' | 'stock-res
       return {runId, runDir};
     },
     channel,
+    research,
     generateVideoPlan: async () => {
       events.push('generate plan');
       if (failAt === 'generation') throw failure;
@@ -183,6 +185,7 @@ describe('createShort', () => {
       value: {
         runId,
         topic,
+        research,
         channel,
         status: 'rendered',
         startedAt: expect.any(String),
@@ -268,6 +271,7 @@ describe('createShort', () => {
         value: {
           runId,
           topic,
+          research,
           channel,
           status: 'failed',
           startedAt: expect.any(String),

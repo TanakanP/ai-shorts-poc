@@ -25,6 +25,7 @@ export type CreateShortDeps = {
   resolveSceneAssets: (plan: VideoPlan, runDir: string) => Promise<StockScene[]>;
   renderShort: (video: ResolvedVideo, outputPath: string) => Promise<void>;
   channel: {brand: string; signoff: string};
+  research: string;
 };
 
 export type CreateShortResult = {
@@ -101,6 +102,7 @@ export async function createShort(
     await deps.persistJson(runPath, {
       runId,
       topic,
+      research: deps.research,
       channel: deps.channel,
       status: 'rendered',
       startedAt,
@@ -116,6 +118,7 @@ export async function createShort(
       await deps.persistJson(runPath, {
         runId,
         topic,
+        research: deps.research,
         channel: deps.channel,
         status: 'failed',
         startedAt,
