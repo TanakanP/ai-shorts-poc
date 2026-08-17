@@ -1,9 +1,9 @@
 # Project Instructions
 
-This project implements voiced AI Shorts with accumulating captions, stroked Montserrat type, and a visual bookend loop.
+This project implements voiced AI Shorts with chunked accumulating captions, stroked Montserrat type, and a visual bookend loop.
 
 Primary implementation plan:
-docs/superpowers/plans/2026-08-17-catchier-shorts.md
+docs/superpowers/plans/2026-08-17-chunked-captions.md
 
 Rules:
 - Follow the implementation plan task-by-task and in order.
