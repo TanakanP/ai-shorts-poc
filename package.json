@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.509",
+    "@remotion/google-fonts": "^4.0.509",
     "@remotion/renderer": "^4.0.509",
     "dotenv": "^17.4.2",
     "openai": "^7.4.0",
