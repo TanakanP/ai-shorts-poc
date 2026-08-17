@@ -60,6 +60,12 @@ describe('selectBestVideo', () => {
     });
   });
 
+  it('skips excluded video ids and picks the next best', () => {
+    expect(selectBestVideo(copyVideos(), 6, new Set([402]))).toMatchObject({
+      videoId: 401,
+    });
+  });
+
   it('returns null when no usable file exists', () => {
     const videos = copyVideos().slice(0, 1);
     videos[0].video_files = [videos[0].video_files[2]];

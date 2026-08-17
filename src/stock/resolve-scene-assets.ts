@@ -19,23 +19,40 @@ export async function resolveSceneAssets(
   deps: ResolveDeps,
 ): Promise<StockScene[]> {
   const resolved: StockScene[] = [];
+  const usedVideoIds = new Set<number>();
 
   for (const [index, scene] of plan.scenes.entries()) {
+    if (scene.id === 'channel-outro') {
+      const first = resolved[0];
+      if (!first) throw new Error('Channel outro requires a first scene clip');
+      resolved.push({
+        ...scene,
+        sourcePageUrl: first.sourcePageUrl,
+        creatorName: first.creatorName,
+        creatorUrl: first.creatorUrl,
+        localVideoPath: first.localVideoPath,
+      });
+      continue;
+    }
+
     const requiredSeconds = scene.durationSeconds + (index === 0 ? 0 : transitionSeconds);
     let candidate = selectBestVideo(
-      await deps.searchVideos(scene.searchQuery, portraitSearch),
+      (await deps.searchVideos(scene.searchQuery, portraitSearch)) ?? [],
       requiredSeconds,
+      usedVideoIds,
     );
     if (!candidate) {
       candidate = selectBestVideo(
-        await deps.searchVideos(scene.searchQuery, landscapeSearch),
+        (await deps.searchVideos(scene.searchQuery, landscapeSearch)) ?? [],
         requiredSeconds,
+        usedVideoIds,
       );
     }
     if (!candidate) throw new Error(`No usable video for scene ${scene.id}: ${scene.searchQuery}`);
 
     const localVideoPath = join(runDir, `scene-${String(index + 1).padStart(2, '0')}.mp4`);
     await deps.download(candidate.downloadUrl, localVideoPath);
+    usedVideoIds.add(candidate.videoId);
     resolved.push({
       ...scene,
       sourcePageUrl: candidate.sourcePageUrl,

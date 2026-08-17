@@ -104,12 +104,68 @@ describe('resolveSceneAssets', () => {
     expect(deps.download).not.toHaveBeenCalled();
   });
 
+  it('does not reuse a Pexels video already chosen for an earlier scene', async () => {
+    const runDirectory = await createRunDirectory();
+    const deps = resolverDeps();
+    const first = video('https://videos.pexels.com/one.mp4', {id: 101});
+    const second = video('https://videos.pexels.com/two.mp4', {
+      id: 202,
+      url: 'https://www.pexels.com/video/test-202/',
+    });
+    deps.searchVideos.mockResolvedValue([first, second]);
+
+    const resolved = await resolveSceneAssets(
+      plan([scene('one', 'same aisle'), scene('two', 'same aisle')]),
+      runDirectory,
+      deps,
+    );
+
+    expect(resolved.map((item) => item.sourcePageUrl)).toEqual([
+      'https://www.pexels.com/video/test-101/',
+      'https://www.pexels.com/video/test-202/',
+    ]);
+    expect(deps.download).toHaveBeenNthCalledWith(
+      1,
+      'https://videos.pexels.com/one.mp4',
+      join(runDirectory, 'scene-01.mp4'),
+    );
+    expect(deps.download).toHaveBeenNthCalledWith(
+      2,
+      'https://videos.pexels.com/two.mp4',
+      join(runDirectory, 'scene-02.mp4'),
+    );
+  });
+
+  it('reuses the first clip for the channel outro without another download', async () => {
+    const runDirectory = await createRunDirectory();
+    const deps = resolverDeps();
+    deps.searchVideos.mockResolvedValue([video('https://videos.pexels.com/hook.mp4')]);
+
+    const resolved = await resolveSceneAssets(
+      plan([
+        scene('hook', 'milk supermarket'),
+        {id: 'channel-outro', durationSeconds: 4, text: 'Curious Cart. Follow along.', searchQuery: 'milk supermarket'},
+      ]),
+      runDirectory,
+      deps,
+    );
+
+    expect(resolved[1]).toMatchObject({
+      id: 'channel-outro',
+      localVideoPath: join(runDirectory, 'scene-01.mp4'),
+      sourcePageUrl: 'https://www.pexels.com/video/test-101/',
+      creatorName: 'Test Creator',
+    });
+    expect(deps.searchVideos).toHaveBeenCalledTimes(1);
+    expect(deps.download).toHaveBeenCalledTimes(1);
+  });
+
   it('uses deterministic filenames for every scene', async () => {
     const runDirectory = await createRunDirectory();
     const deps = resolverDeps();
     deps.searchVideos
-      .mockResolvedValueOnce([video('https://videos.pexels.com/one.mp4')])
-      .mockResolvedValueOnce([video('https://videos.pexels.com/two.mp4')]);
+      .mockResolvedValueOnce([video('https://videos.pexels.com/one.mp4', {id: 101})])
+      .mockResolvedValueOnce([video('https://videos.pexels.com/two.mp4', {id: 202})]);
 
     const resolved = await resolveSceneAssets(plan([scene('one'), scene('two')]), runDirectory, deps);
 
@@ -139,8 +195,8 @@ describe('resolveSceneAssets', () => {
     const runDirectory = await createRunDirectory();
     const deps = resolverDeps();
     deps.searchVideos
-      .mockResolvedValueOnce([video('https://videos.pexels.com/third.mp4')])
-      .mockResolvedValueOnce([video('https://videos.pexels.com/first.mp4')]);
+      .mockResolvedValueOnce([video('https://videos.pexels.com/third.mp4', {id: 301})])
+      .mockResolvedValueOnce([video('https://videos.pexels.com/first.mp4', {id: 101})]);
 
     const resolved = await resolveSceneAssets(plan([scene('third'), scene('first')]), runDirectory, deps);
 
@@ -151,9 +207,13 @@ describe('resolveSceneAssets', () => {
     const runDirectory = await createRunDirectory();
     const deps = resolverDeps();
     deps.searchVideos
-      .mockResolvedValueOnce([video('https://videos.pexels.com/first.mp4', {duration: 6})])
-      .mockResolvedValueOnce([video('https://videos.pexels.com/too-short.mp4', {duration: 6})])
-      .mockResolvedValueOnce([video('https://videos.pexels.com/long-enough.mp4', {duration: 6.2})]);
+      .mockResolvedValueOnce([video('https://videos.pexels.com/first.mp4', {id: 101, duration: 6})])
+      .mockResolvedValueOnce([
+        video('https://videos.pexels.com/too-short.mp4', {id: 202, duration: 6}),
+      ])
+      .mockResolvedValueOnce([
+        video('https://videos.pexels.com/long-enough.mp4', {id: 303, duration: 6.2}),
+      ]);
 
     await resolveSceneAssets(plan([scene('first'), scene('second')]), runDirectory, deps);
 

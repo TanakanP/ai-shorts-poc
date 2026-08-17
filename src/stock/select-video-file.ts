@@ -40,9 +40,10 @@ function compareCandidates(left: Candidate, right: Candidate): number {
 export function selectBestVideo(
   videos: PexelsVideo[],
   requiredSeconds: number,
+  excludeVideoIds: ReadonlySet<number> = new Set(),
 ): SelectedVideo | null {
   const candidates = videos
-    .filter((video) => video.duration >= requiredSeconds)
+    .filter((video) => video.duration >= requiredSeconds && !excludeVideoIds.has(video.id))
     .flatMap((video) =>
       video.video_files.filter(isMp4).map((file) => ({video, file})),
     )
