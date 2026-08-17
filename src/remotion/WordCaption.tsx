@@ -1,5 +1,6 @@
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import {currentWordIndexAt} from '../captions/active-word';
+import {activeCaptionClause, chunkCaptionClauses} from '../captions/caption-clauses';
 import type {ResolvedScene} from '../domain/resolved-video';
 import {captionFontFamily} from './caption-font';
 
@@ -20,7 +21,10 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   if (scene.words.length === 0) return null;
-  const currentIndex = currentWordIndexAt(scene.words, captionTimeMs(frame, fps));
+  const timeMs = captionTimeMs(frame, fps);
+  const live = activeCaptionClause(chunkCaptionClauses(scene.words), timeMs);
+  const current = currentWordIndexAt(scene.words, timeMs);
+  const currentWord = current === null ? null : scene.words[current];
 
   return (
     <AbsoluteFill
@@ -49,10 +53,17 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
           textAlign: 'center',
         }}
       >
-        {scene.words.map((word, index) => (
+        {live.map((word, index) => (
           <span
-            key={`${index}-${word.text}`}
-            style={{color: index === currentIndex ? CAPTION_KARAOKE_FILL : CAPTION_FILL}}
+            key={`${index}-${word.startMs}-${word.text}`}
+            style={{
+              color:
+                currentWord !== null &&
+                word.startMs === currentWord.startMs &&
+                word.text === currentWord.text
+                  ? CAPTION_KARAOKE_FILL
+                  : CAPTION_FILL,
+            }}
           >
             {word.text}
           </span>

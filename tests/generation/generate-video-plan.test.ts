@@ -138,8 +138,8 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).not.toMatch(/without narration/i);
   });
 
-  it('says on-screen text shows the full line with a karaoke highlight', () => {
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/full spoken line/i);
+  it('says on-screen text shows short clauses with a karaoke highlight', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/short clauses/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/highlighted/i);
   });
 });

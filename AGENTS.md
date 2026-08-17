@@ -1,9 +1,9 @@
 # Project Instructions
 
-This branch experiments with undimmed footage and full-sentence karaoke captions.
+This branch experiments with undimmed footage and clause-window karaoke captions.
 
 Primary implementation plan:
-docs/superpowers/plans/2026-08-17-karaoke-experiment.md
+docs/superpowers/plans/2026-08-17-karaoke-clauses.md
 
 Rules:
 - Follow the implementation plan task-by-task and in order.
