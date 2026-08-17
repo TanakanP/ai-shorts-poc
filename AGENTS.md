@@ -1,18 +1,18 @@
 # Project Instructions
 
-This project implements voiced AI Shorts on top of the finished silent POC.
+This project implements voiced AI Shorts with one-word replace captions.
 
 Primary implementation plan:
-docs/superpowers/plans/2026-08-13-voiceover.md
+docs/superpowers/plans/2026-08-15-word-replace-captions.md
 
 Rules:
 - Follow the implementation plan task-by-task and in order.
 - Use test-driven development.
-- Do not add features outside the voiceover plan.
+- Do not add features outside the captions plan.
 - Output is still a locally rendered MP4.
 - No YouTube upload.
 - No background music.
-- No word-level caption rendering.
+- No karaoke or accumulating captions.
 - No scheduler.
 - No database.
 - No analytics.
