@@ -7,6 +7,8 @@ export type AppConfig = {
   pexelsApiKey: string;
   xaiApiKey: string;
   xaiVoiceId: string;
+  channelBrand: string;
+  channelSignoff: string;
 };
 
 const configSchema = z.object({
@@ -14,6 +16,8 @@ const configSchema = z.object({
   PEXELS_API_KEY: z.string().min(1),
   XAI_API_KEY: z.string().min(1),
   XAI_VOICE_ID: z.string().trim().min(1).regex(/^[a-z0-9-]+$/i).optional(),
+  CHANNEL_BRAND: z.string().trim().min(2).max(40),
+  CHANNEL_SIGNOFF: z.string().trim().min(8).max(80),
 });
 
 export function findEnvFile(startDir: string): string | undefined {
@@ -39,5 +43,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     pexelsApiKey: parsed.data.PEXELS_API_KEY,
     xaiApiKey: parsed.data.XAI_API_KEY,
     xaiVoiceId: parsed.data.XAI_VOICE_ID ?? 'eve',
+    channelBrand: parsed.data.CHANNEL_BRAND,
+    channelSignoff: parsed.data.CHANNEL_SIGNOFF,
   };
 }

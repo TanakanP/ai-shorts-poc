@@ -40,6 +40,7 @@ function createHarness(
   let receivedTopic: string | undefined;
 
   const deps: CreateShortDeps = {
+    channel: {brand: 'Curious Cart', signoff: 'If that made you look twice, follow along.'},
     createRunDirectory: async (topic) => {
       receivedTopic = topic;
       return {runId, runDir};

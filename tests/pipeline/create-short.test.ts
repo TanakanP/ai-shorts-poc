@@ -7,6 +7,10 @@ import type {SynthesizeSceneVoicesResult} from '../../src/voice/synthesize-scene
 const topic = 'Why supermarkets put milk at the back';
 const runId = '20260813-120000-deadbeef';
 const runDir = `/tmp/runs/${runId}`;
+const channel = {
+  brand: 'Curious Cart',
+  signoff: 'If that made you look twice, follow along.',
+};
 
 const plan: VideoPlan = {
   topic,
@@ -18,6 +22,18 @@ const plan: VideoPlan = {
     {id: 'buy', durationSeconds: 6, text: 'Some become impulse buys.', searchQuery: 'shopping cart'},
     {id: 'fresh', durationSeconds: 6, text: 'Deliveries also stay efficient.', searchQuery: 'grocery delivery'},
   ],
+};
+
+const planWithOutro: VideoPlan = {
+  ...plan,
+  scenes: plan.scenes.map((scene, index) =>
+    index === plan.scenes.length - 1
+      ? {
+          ...scene,
+          text: 'Deliveries also stay efficient. | Curious Cart. If that made you look twice, follow along.',
+        }
+      : scene,
+  ),
 };
 
 const voiceResult: SynthesizeSceneVoicesResult = {
@@ -76,6 +92,7 @@ function fakeDeps(events: string[], failAt?: 'generation' | 'voice' | 'stock-res
       events.push('create run dir');
       return {runId, runDir};
     },
+    channel,
     generateVideoPlan: async () => {
       events.push('generate plan');
       if (failAt === 'generation') throw failure;
@@ -89,7 +106,7 @@ function fakeDeps(events: string[], failAt?: 'generation' | 'voice' | 'stock-res
     },
     synthesizeSceneVoices: async (receivedPlan, receivedRunDir) => {
       events.push('synthesize voice');
-      expect(receivedPlan).toBe(plan);
+      expect(receivedPlan).toEqual(planWithOutro);
       expect(receivedRunDir).toBe(runDir);
       if (failAt === 'voice') throw failure;
       return voiceResult;
@@ -143,7 +160,7 @@ describe('createShort', () => {
       'render',
       'persist run.json:rendered',
     ]);
-    expect(persisted[0]).toEqual({path: `${runDir}/plan.json`, value: plan});
+    expect(persisted[0]).toEqual({path: `${runDir}/plan.json`, value: planWithOutro});
     expect(persisted[1]).toEqual({path: `${runDir}/voice.json`, value: voiceResult.manifest});
     expect(persisted[2]).toEqual({
       path: `${runDir}/resolved.json`,
@@ -165,6 +182,7 @@ describe('createShort', () => {
       value: {
         runId,
         topic,
+        channel,
         status: 'rendered',
         startedAt: expect.any(String),
         finishedAt: expect.any(String),
@@ -249,6 +267,7 @@ describe('createShort', () => {
         value: {
           runId,
           topic,
+          channel,
           status: 'failed',
           startedAt: expect.any(String),
           finishedAt: expect.any(String),

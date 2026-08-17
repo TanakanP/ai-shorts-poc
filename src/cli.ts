@@ -143,6 +143,7 @@ function createProductionDeps(): CreateShortDeps {
         download: downloadFile,
       }),
     renderShort,
+    channel: {brand: config.channelBrand, signoff: config.channelSignoff},
   };
 }
 

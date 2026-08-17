@@ -10,6 +10,13 @@ describe('loadConfig', () => {
     expect(() =>
       loadConfig({OPENAI_API_KEY: 'oa-test', PEXELS_API_KEY: 'px-test'}),
     ).toThrow(/XAI_API_KEY/);
+    expect(() =>
+      loadConfig({
+        OPENAI_API_KEY: 'oa-test',
+        PEXELS_API_KEY: 'px-test',
+        XAI_API_KEY: 'xai-test',
+      }),
+    ).toThrow(/CHANNEL_BRAND|CHANNEL_SIGNOFF/);
   });
 
   it('returns validated config with the default voice', () => {
@@ -18,12 +25,16 @@ describe('loadConfig', () => {
         OPENAI_API_KEY: 'oa-test',
         PEXELS_API_KEY: 'px-test',
         XAI_API_KEY: 'xai-test',
+        CHANNEL_BRAND: 'Curious Cart',
+        CHANNEL_SIGNOFF: 'If that made you look twice, follow along.',
       }),
     ).toEqual({
       openAiApiKey: 'oa-test',
       pexelsApiKey: 'px-test',
       xaiApiKey: 'xai-test',
       xaiVoiceId: 'eve',
+      channelBrand: 'Curious Cart',
+      channelSignoff: 'If that made you look twice, follow along.',
     });
   });
 
@@ -34,6 +45,8 @@ describe('loadConfig', () => {
         PEXELS_API_KEY: 'px-test',
         XAI_API_KEY: 'xai-test',
         XAI_VOICE_ID: 'leo',
+        CHANNEL_BRAND: 'Curious Cart',
+        CHANNEL_SIGNOFF: 'If that made you look twice, follow along.',
       }).xaiVoiceId,
     ).toBe('leo');
   });
@@ -60,6 +73,8 @@ describe('loadConfig', () => {
         PEXELS_API_KEY: 'px-test',
         XAI_API_KEY: 'xai-test',
         XAI_VOICE_ID: ' ',
+        CHANNEL_BRAND: 'Curious Cart',
+        CHANNEL_SIGNOFF: 'If that made you look twice, follow along.',
       }),
     ).toThrow(/XAI_VOICE_ID/);
   });

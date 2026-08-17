@@ -3,6 +3,7 @@ import type {ResolvedVideo, StockScene} from '../domain/resolved-video';
 import type {VideoPlan} from '../domain/video-plan';
 import type {ProviderDiagnostic} from '../domain/provider-error';
 import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices';
+import {attachChannelOutro} from './attach-channel-outro';
 import {bookendLastScene} from './bookend-last-scene';
 
 type RunStage = 'generation' | 'voice' | 'stock-resolution' | 'render';
@@ -23,6 +24,7 @@ export type CreateShortDeps = {
   synthesizeSceneVoices: (plan: VideoPlan, runDir: string) => Promise<SynthesizeSceneVoicesResult>;
   resolveSceneAssets: (plan: VideoPlan, runDir: string) => Promise<StockScene[]>;
   renderShort: (video: ResolvedVideo, outputPath: string) => Promise<void>;
+  channel: {brand: string; signoff: string};
 };
 
 export type CreateShortResult = {
@@ -50,7 +52,11 @@ export async function createShort(
     | undefined;
 
   try {
-    const plan = await deps.generateVideoPlan(topic);
+    const plan = attachChannelOutro(
+      await deps.generateVideoPlan(topic),
+      deps.channel.brand,
+      deps.channel.signoff,
+    );
     await deps.persistJson(planPath, plan);
 
     stage = 'voice';
@@ -95,6 +101,7 @@ export async function createShort(
     await deps.persistJson(runPath, {
       runId,
       topic,
+      channel: deps.channel,
       status: 'rendered',
       startedAt,
       finishedAt: new Date().toISOString(),
@@ -109,6 +116,7 @@ export async function createShort(
       await deps.persistJson(runPath, {
         runId,
         topic,
+        channel: deps.channel,
         status: 'failed',
         startedAt,
         finishedAt: new Date().toISOString(),

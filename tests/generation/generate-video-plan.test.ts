@@ -163,6 +163,10 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/\|/);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not speak the bar/i);
   });
+
+  it('tells the model not to write a channel sign-off', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not end with a brand name/i);
+  });
 });
 
 describe('createOpenAIStructuredPlanGenerator', () => {
