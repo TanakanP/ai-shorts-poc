@@ -1,4 +1,5 @@
 import type {VoiceWord} from '../domain/voice';
+import {activeWordsAt} from './active-word';
 
 export const CAPTION_CHUNK_MAX_WORDS = 5;
 export const CAPTION_CHUNK_MAX_CHARS = 28;
@@ -41,4 +42,16 @@ export function chunkCaptionWords(words: readonly VoiceWord[]): VoiceWord[][] {
 
   flush();
   return chunks;
+}
+
+export function activeCaptionChunk(
+  chunks: readonly VoiceWord[][],
+  timeMs: number,
+): VoiceWord[] {
+  const current = [...chunks].reverse().find((chunk) => {
+    const first = chunk[0];
+    return first !== undefined && timeMs >= first.startMs;
+  });
+  if (!current) return [];
+  return activeWordsAt(current, timeMs);
 }

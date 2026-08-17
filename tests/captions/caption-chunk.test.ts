@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {chunkCaptionWords} from '../../src/captions/caption-chunk';
+import {activeCaptionChunk, chunkCaptionWords} from '../../src/captions/caption-chunk';
 import type {VoiceWord} from '../../src/domain/voice';
 
 const timed = (texts: string[]): VoiceWord[] =>
@@ -91,5 +91,70 @@ describe('chunkCaptionWords', () => {
       ['the', 'more', 'chances', 'you', 'have'],
       ['to', 'add', 'extras.'],
     ]);
+  });
+});
+
+describe('activeCaptionChunk', () => {
+  const words = timed([
+    'The',
+    'longer',
+    'your',
+    'route,',
+    'the',
+    'more',
+    'chances',
+    'you',
+    'have',
+    'to',
+    'add',
+    'extras.',
+  ]);
+  const chunks = chunkCaptionWords(words);
+
+  it('returns no words before the first start', () => {
+    expect(activeCaptionChunk(chunks, -1)).toEqual([]);
+  });
+
+  it('grows the first chunk word by word', () => {
+    expect(activeCaptionChunk(chunks, 0).map((word) => word.text)).toEqual(['The']);
+    expect(activeCaptionChunk(chunks, 200).map((word) => word.text)).toEqual(['The', 'longer']);
+    expect(activeCaptionChunk(chunks, 600).map((word) => word.text)).toEqual([
+      'The',
+      'longer',
+      'your',
+      'route,',
+    ]);
+  });
+
+  it('holds the finished chunk until the next chunk starts', () => {
+    expect(activeCaptionChunk(chunks, 700).map((word) => word.text)).toEqual([
+      'The',
+      'longer',
+      'your',
+      'route,',
+    ]);
+  });
+
+  it('replaces with the next chunk when that chunk starts', () => {
+    expect(activeCaptionChunk(chunks, 800).map((word) => word.text)).toEqual(['the']);
+    expect(activeCaptionChunk(chunks, 1600).map((word) => word.text)).toEqual([
+      'the',
+      'more',
+      'chances',
+      'you',
+      'have',
+    ]);
+  });
+
+  it('holds the last chunk after the last word', () => {
+    expect(activeCaptionChunk(chunks, 4000).map((word) => word.text)).toEqual([
+      'to',
+      'add',
+      'extras.',
+    ]);
+  });
+
+  it('returns no words for no chunks', () => {
+    expect(activeCaptionChunk([], 0)).toEqual([]);
   });
 });
