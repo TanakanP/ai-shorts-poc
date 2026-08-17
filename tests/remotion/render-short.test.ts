@@ -31,6 +31,7 @@ const video: ResolvedVideo = {
       localVideoPath: '/tmp/test-video.mp4',
       localAudioPath: '/tmp/test-voice.mp3',
       audioDurationSeconds: 5,
+      words: [{text: 'Hello', startMs: 0, endMs: 400}],
     },
   ],
 };

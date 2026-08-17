@@ -25,6 +25,7 @@ const fixtureVideo: ResolvedVideo = {
     localVideoPath: fixtureVideoUrl,
     localAudioPath: fixtureAudioUrl,
     audioDurationSeconds: 1,
+    words: [{text: 'Hello', startMs: 0, endMs: 400}],
   })),
 };
 

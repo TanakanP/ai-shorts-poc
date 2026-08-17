@@ -25,6 +25,12 @@ const video: ResolvedVideo = {
       localVideoPath: fixturePath,
       localAudioPath: fileURLToPath(new URL('../tests/fixtures/tiny-audio.mp3', import.meta.url)),
       audioDurationSeconds: 1,
+      words: [
+        {text: 'A', startMs: 0, endMs: 200},
+        {text: 'five-second', startMs: 400, endMs: 1200},
+        {text: 'smoke', startMs: 1400, endMs: 2000},
+        {text: 'render.', startMs: 2200, endMs: 3000},
+      ],
     },
   ],
 };

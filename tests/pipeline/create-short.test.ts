@@ -51,6 +51,7 @@ const resolvedScenes: ResolvedScene[] = stockScenes.map((scene, index) => ({
   ...scene,
   localAudioPath: `${runDir}/voice-${String(index + 1).padStart(2, '0')}.mp3`,
   audioDurationSeconds: 6,
+  words: voiceResult.manifest.scenes[index].words,
 }));
 
 function fakeDeps(events: string[], failAt?: 'generation' | 'voice' | 'stock-resolution' | 'render') {
@@ -157,6 +158,24 @@ describe('createShort', () => {
         })),
       },
     });
+  });
+
+  it('fails stock-resolution when a voice scene has no words', async () => {
+    const events: string[] = [];
+    const {deps} = fakeDeps(events);
+    const empty = {
+      ...voiceResult,
+      manifest: {
+        ...voiceResult.manifest,
+        scenes: voiceResult.manifest.scenes.map((scene, index) =>
+          index === 0 ? {...scene, words: []} : scene,
+        ),
+      },
+    };
+    deps.synthesizeSceneVoices = async () => empty;
+
+    await expect(createShort(topic, deps)).rejects.toThrow(/words/i);
+    expect(events).toContain('persist run.json:failed');
   });
 
   it.each(['generation', 'voice', 'stock-resolution', 'render'] as const)(

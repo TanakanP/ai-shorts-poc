@@ -21,6 +21,7 @@ const video: ResolvedVideo = {
       localVideoPath: '/tmp/scene one.mp4',
       localAudioPath: '/tmp/voice-01.mp3',
       audioDurationSeconds: 5,
+      words: [{text: 'Hello', startMs: 0, endMs: 400}],
     },
     {
       id: 'payoff',
@@ -33,6 +34,7 @@ const video: ResolvedVideo = {
       localVideoPath: '/tmp/scene-two.mp4',
       localAudioPath: '/tmp/voice-01.mp3',
       audioDurationSeconds: 5,
+      words: [{text: 'Hello', startMs: 0, endMs: 400}],
     },
   ],
 };

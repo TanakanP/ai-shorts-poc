@@ -63,10 +63,14 @@ export async function createShort(
       if (!voice || voice.sceneId !== scene.id) {
         throw new Error(`Voice manifest missing scene ${scene.id}`);
       }
+      if (voice.words.length === 0) {
+        throw new Error(`Voice manifest has no words for scene ${scene.id}`);
+      }
       return {
         ...scene,
         localAudioPath: voice.localAudioPath,
         audioDurationSeconds: voice.audioDurationSeconds,
+        words: voice.words,
       };
     });
     const resolvedVideo: ResolvedVideo = {

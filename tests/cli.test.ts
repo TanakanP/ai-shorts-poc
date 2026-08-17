@@ -27,6 +27,7 @@ const resolvedScenes: ResolvedScene[] = plan.scenes.map((scene, index) => ({
   localVideoPath: `${runDir}/scene-${String(index + 1).padStart(2, '0')}.mp4`,
   localAudioPath: '/tmp/voice-01.mp3',
   audioDurationSeconds: 5,
+  words: [{text: 'Hello', startMs: 0, endMs: 400}],
 }));
 
 function createHarness(
@@ -66,7 +67,7 @@ function createHarness(
             voiceId: 'eve',
             audioDurationSeconds: 6,
             durationSeconds: 6.3,
-            words: [],
+            words: [{text: 'Hello', startMs: 0, endMs: 400}],
           })),
         },
       };
