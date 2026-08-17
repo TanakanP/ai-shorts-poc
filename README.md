@@ -27,9 +27,10 @@ The rendered video is written to:
 runs/<run-id>/output.mp4
 ```
 
-The MP4 includes spoken narration and on-screen captions that show **one spoken word at a
-time**, timed to the voice (each word replaces the previous; not karaoke and not a full-sentence
-title card). The same run directory contains intermediate JSON artifacts, per-scene voice clips,
+The MP4 includes spoken narration and on-screen captions that **build word by word** as each
+word is spoken (punctuation is kept). Type is **Montserrat Black** with a black stroke. The
+last shot reuses the opening clip, and the final frames fade toward that opening so replay feels
+continuous. The same run directory contains intermediate JSON artifacts, per-scene voice clips,
 and downloaded scene footage for local debugging. Creator and source attribution is recorded in
 `run.json`. Manually review the rendered video for factual accuracy, caption timing, legibility,
 footage relevance, and narration before any public upload. Before publishing, re-check Pexels
