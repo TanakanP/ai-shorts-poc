@@ -1,5 +1,6 @@
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import {activeWordAt} from '../captions/active-word';
+import {displaySpokenWord} from '../captions/display-word';
 import {layoutSpokenWord} from '../captions/word-layout';
 import type {ResolvedScene} from '../domain/resolved-video';
 
@@ -9,7 +10,9 @@ export const captionTimeMs = (frame: number, fps: number): number =>
 export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const word = activeWordAt(scene.words, captionTimeMs(frame, fps));
+  const spoken = activeWordAt(scene.words, captionTimeMs(frame, fps));
+  if (!spoken) return null;
+  const word = displaySpokenWord(spoken);
   if (!word) return null;
   const {fontSize} = layoutSpokenWord(word);
 
