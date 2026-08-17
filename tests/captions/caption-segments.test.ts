@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {
   alignCaptionSegments,
+  liveCaptionLines,
   parseCaptionSegments,
   spokenSceneText,
 } from '../../src/captions/caption-segments';
@@ -72,5 +73,39 @@ describe('alignCaptionSegments', () => {
         chunk.map((word) => word.text),
       ),
     ).toEqual([words.map((word) => word.text)]);
+  });
+});
+
+describe('liveCaptionLines', () => {
+  const outroWords = timed(['Curious', 'Cart.', 'Follow', 'along.']);
+
+  it('stacks brand and sign-off as two lines on the channel outro', () => {
+    expect(
+      liveCaptionLines(
+        {
+          id: 'channel-outro',
+          text: 'Curious Cart. | Follow along.',
+          words: outroWords,
+        },
+        0,
+      ).map((line) => line.map((word) => word.text)),
+    ).toEqual([
+      ['Curious', 'Cart.'],
+      ['Follow', 'along.'],
+    ]);
+  });
+
+  it('still shows only the current clause on a normal scene', () => {
+    const words = timed(['Milk', 'is', 'at', 'the', 'back', 'because', 'walks', 'pay.']);
+    expect(
+      liveCaptionLines(
+        {
+          id: 'hook',
+          text: 'Milk is at the back | because walks pay.',
+          words,
+        },
+        200,
+      ).map((line) => line.map((word) => word.text)),
+    ).toEqual([['Milk', 'is', 'at', 'the', 'back']]);
   });
 });

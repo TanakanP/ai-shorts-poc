@@ -20,7 +20,7 @@ describe('attachChannelOutro', () => {
         {
           id: 'channel-outro',
           durationSeconds: 4,
-          text: 'Curious Cart. If that made you look twice, follow along.',
+          text: 'Curious Cart. | If that made you look twice, follow along.',
           searchQuery: 'milk supermarket',
         },
       ],

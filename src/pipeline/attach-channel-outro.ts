@@ -12,7 +12,7 @@ export function attachChannelOutro(plan: VideoPlan, brand: string, signoff: stri
       {
         id: 'channel-outro',
         durationSeconds: 4,
-        text: `${name}. ${line}`,
+        text: `${name}. | ${line}`,
         searchQuery: first.searchQuery,
       },
     ],

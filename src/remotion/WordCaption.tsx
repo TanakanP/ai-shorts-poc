@@ -1,7 +1,6 @@
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import {currentWordIndexAt} from '../captions/active-word';
-import {activeCaptionClause} from '../captions/caption-clauses';
-import {alignCaptionSegments, parseCaptionSegments} from '../captions/caption-segments';
+import {liveCaptionLines} from '../captions/caption-segments';
 import type {ResolvedScene} from '../domain/resolved-video';
 import {captionFontFamily} from './caption-font';
 
@@ -23,10 +22,7 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   const {fps} = useVideoConfig();
   if (scene.words.length === 0) return null;
   const timeMs = captionTimeMs(frame, fps);
-  const live = activeCaptionClause(
-    alignCaptionSegments(parseCaptionSegments(scene.text), scene.words),
-    timeMs,
-  );
+  const lines = liveCaptionLines(scene, timeMs);
   const current = currentWordIndexAt(scene.words, timeMs);
   const currentWord = current === null ? null : scene.words[current];
 
@@ -42,10 +38,9 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
       <div
         style={{
           display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          columnGap: '0.35em',
-          rowGap: 4,
+          flexDirection: 'column',
+          alignItems: 'center',
+          rowGap: 8,
           maxWidth: 908,
           fontFamily: captionFontFamily,
           fontSize: CAPTION_FONT_SIZE,
@@ -57,20 +52,27 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
           textAlign: 'center',
         }}
       >
-        {live.map((word, index) => (
-          <span
-            key={`${index}-${word.startMs}-${word.text}`}
-            style={{
-              color:
-                currentWord !== null &&
-                word.startMs === currentWord.startMs &&
-                word.text === currentWord.text
-                  ? CAPTION_KARAOKE_FILL
-                  : CAPTION_FILL,
-            }}
+        {lines.map((line, lineIndex) => (
+          <div
+            key={`line-${lineIndex}`}
+            style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', columnGap: '0.35em', rowGap: 4}}
           >
-            {word.text}
-          </span>
+            {line.map((word, index) => (
+              <span
+                key={`${lineIndex}-${index}-${word.startMs}-${word.text}`}
+                style={{
+                  color:
+                    currentWord !== null &&
+                    word.startMs === currentWord.startMs &&
+                    word.text === currentWord.text
+                      ? CAPTION_KARAOKE_FILL
+                      : CAPTION_FILL,
+                }}
+              >
+                {word.text}
+              </span>
+            ))}
+          </div>
         ))}
       </div>
     </AbsoluteFill>

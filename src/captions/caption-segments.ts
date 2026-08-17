@@ -1,4 +1,7 @@
 import type {VoiceWord} from '../domain/voice';
+import {activeCaptionClause} from './caption-clauses';
+
+export const CHANNEL_OUTRO_SCENE_ID = 'channel-outro';
 
 const normalizeToken = (text: string): string => text.toLowerCase().replace(/[^a-z0-9']/g, '');
 
@@ -57,4 +60,14 @@ export function alignCaptionSegments(
   }
 
   return chunks;
+}
+
+export function liveCaptionLines(
+  scene: {id: string; text: string; words: readonly VoiceWord[]},
+  timeMs: number,
+): VoiceWord[][] {
+  const chunks = alignCaptionSegments(parseCaptionSegments(scene.text), scene.words);
+  if (scene.id === CHANNEL_OUTRO_SCENE_ID) return chunks;
+  const live = activeCaptionClause(chunks, timeMs);
+  return live.length === 0 ? [] : [live];
 }
