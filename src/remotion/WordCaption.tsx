@@ -1,7 +1,6 @@
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
-import {activeWordAt} from '../captions/active-word';
-import {displaySpokenWord} from '../captions/display-word';
-import {layoutSpokenWord} from '../captions/word-layout';
+import {activeWordsAt} from '../captions/active-word';
+import {layoutAccumulatedPhrase} from '../captions/phrase-layout';
 import type {ResolvedScene} from '../domain/resolved-video';
 import {captionFontFamily} from './caption-font';
 
@@ -19,11 +18,10 @@ export const CAPTION_SHADOW = '0 4px 12px rgba(0,0,0,0.65)';
 export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const spoken = activeWordAt(scene.words, captionTimeMs(frame, fps));
-  if (!spoken) return null;
-  const word = displaySpokenWord(spoken);
-  if (!word) return null;
-  const {fontSize} = layoutSpokenWord(word);
+  const live = activeWordsAt(scene.words, captionTimeMs(frame, fps));
+  if (live.length === 0) return null;
+  const texts = live.map((word) => word.text);
+  const {fontSize} = layoutAccumulatedPhrase(texts.join(' '));
 
   return (
     <AbsoluteFill
@@ -36,18 +34,28 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
     >
       <div
         style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          columnGap: '0.35em',
+          rowGap: 4,
+          maxWidth: 908,
           color: CAPTION_FILL,
           fontFamily: captionFontFamily,
           fontSize,
           fontWeight: CAPTION_FONT_WEIGHT,
-          lineHeight: 1.04,
-          textAlign: 'center',
           WebkitTextStroke: CAPTION_STROKE,
           paintOrder: 'stroke fill',
           textShadow: CAPTION_SHADOW,
+          lineHeight: 1.08,
+          textAlign: 'center',
         }}
       >
-        {word}
+        {texts.map((text, index) => (
+          <span key={`${index}-${text}`} style={{opacity: index === texts.length - 1 ? 1 : 0.85}}>
+            {text}
+          </span>
+        ))}
       </div>
     </AbsoluteFill>
   );
