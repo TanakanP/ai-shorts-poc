@@ -1,4 +1,4 @@
-import {AbsoluteFill, Html5Audio, Sequence, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Html5Audio, interpolate, Sequence, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {ResolvedScene, ResolvedVideo} from '../domain/resolved-video';
 import {getVideoSource, Scene, SCENE_FADE_FRAMES} from './Scene';
 import {WordCaption} from './WordCaption';
@@ -29,6 +29,26 @@ export const createSceneTimeline = (video: ResolvedVideo): SceneTimelineItem[] =
     from += sceneFrames;
     return item;
   });
+};
+
+export const BACKGROUND_MUSIC_VOLUME = 0.15;
+export const BACKGROUND_MUSIC_FADE_FRAMES = 12;
+
+const clamped = {
+  extrapolateLeft: 'clamp',
+  extrapolateRight: 'clamp',
+} as const;
+
+export const backgroundMusicVolume = (frame: number, durationInFrames: number): number => {
+  if (durationInFrames <= BACKGROUND_MUSIC_FADE_FRAMES * 2) return BACKGROUND_MUSIC_VOLUME;
+  const fadeIn = interpolate(frame, [0, BACKGROUND_MUSIC_FADE_FRAMES], [0, BACKGROUND_MUSIC_VOLUME], clamped);
+  const fadeOut = interpolate(
+    frame,
+    [durationInFrames - BACKGROUND_MUSIC_FADE_FRAMES, durationInFrames - 1],
+    [BACKGROUND_MUSIC_VOLUME, 0],
+    clamped,
+  );
+  return Math.min(fadeIn, fadeOut);
 };
 
 export const createVoiceTimeline = (video: ResolvedVideo): SceneTimelineItem[] => {
@@ -72,6 +92,14 @@ export const ShortComposition = ({video, assetBaseUrl, localAssetPaths}: ShortCo
           <WordCaption scene={scene} />
         </Sequence>
       ))}
+
+      {video.backgroundMusicPath ? (
+        <Html5Audio
+          src={getVideoSource(video.backgroundMusicPath, assetBaseUrl, localAssetPaths)}
+          loop
+          volume={backgroundMusicVolume(frame, durationInFrames)}
+        />
+      ) : null}
 
       <div
         style={{

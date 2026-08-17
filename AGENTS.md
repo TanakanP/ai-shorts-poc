@@ -1,9 +1,9 @@
 # Project Instructions
 
-This project implements voiced AI Shorts with karaoke captions, a channel sign-off, and a topic plus research brief.
+This project implements voiced AI Shorts with karaoke captions, a channel sign-off, a research brief, and a local music bed.
 
 Primary implementation plan:
-docs/superpowers/plans/2026-08-17-research-brief.md
+docs/superpowers/plans/2026-08-17-background-music.md
 
 Rules:
 - Follow the implementation plan task-by-task and in order.

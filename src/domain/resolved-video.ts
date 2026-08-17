@@ -22,5 +22,6 @@ export type ResolvedVideo = {
   fps: 30;
   width: 1080;
   height: 1920;
+  backgroundMusicPath?: string;
   scenes: ResolvedScene[];
 };

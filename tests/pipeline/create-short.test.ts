@@ -96,6 +96,7 @@ function fakeDeps(events: string[], failAt?: 'generation' | 'voice' | 'stock-res
     },
     channel,
     research,
+    backgroundMusicPath: 'assets/music/SOUNDTRACK.mp3',
     generateVideoPlan: async () => {
       events.push('generate plan');
       if (failAt === 'generation') throw failure;
@@ -129,6 +130,7 @@ function fakeDeps(events: string[], failAt?: 'generation' | 'voice' | 'stock-res
         fps: 30,
         width: 1080,
         height: 1920,
+        backgroundMusicPath: 'assets/music/SOUNDTRACK.mp3',
         scenes: loopedScenes,
       });
       expect(outputPath).toBe(`${runDir}/output.mp4`);
@@ -173,6 +175,7 @@ describe('createShort', () => {
         fps: 30,
         width: 1080,
         height: 1920,
+        backgroundMusicPath: 'assets/music/SOUNDTRACK.mp3',
         scenes: loopedScenes,
       },
     });

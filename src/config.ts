@@ -9,6 +9,7 @@ export type AppConfig = {
   xaiVoiceId: string;
   channelBrand: string;
   channelSignoff: string;
+  backgroundMusicPath: string;
 };
 
 const configSchema = z.object({
@@ -18,6 +19,7 @@ const configSchema = z.object({
   XAI_VOICE_ID: z.string().trim().min(1).regex(/^[a-z0-9-]+$/i).optional(),
   CHANNEL_BRAND: z.string().trim().min(2).max(40),
   CHANNEL_SIGNOFF: z.string().trim().min(8).max(80),
+  BACKGROUND_MUSIC_PATH: z.string().trim().min(1).optional(),
 });
 
 export function findEnvFile(startDir: string): string | undefined {
@@ -45,5 +47,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     xaiVoiceId: parsed.data.XAI_VOICE_ID ?? 'eve',
     channelBrand: parsed.data.CHANNEL_BRAND,
     channelSignoff: parsed.data.CHANNEL_SIGNOFF,
+    backgroundMusicPath: parsed.data.BACKGROUND_MUSIC_PATH ?? 'assets/music/SOUNDTRACK.mp3',
   };
 }

@@ -138,6 +138,23 @@ describe('renderShort', () => {
     expect(close).toHaveBeenCalledTimes(1);
   });
 
+  it('allowlists the background music bed with the scene assets', async () => {
+    const startAssetServer = vi.fn(async (allowed: string[]) => {
+      expect(allowed).toContain('/tmp/bed.mp3');
+      return {origin: 'http://127.0.0.1:43210', close: vi.fn(async () => undefined)};
+    });
+    const deps: RenderDeps = {
+      bundle: vi.fn(async () => 'http://localhost:3000'),
+      selectComposition: vi.fn(async () => composition),
+      renderMedia: vi.fn(async () => undefined),
+      startAssetServer,
+    };
+
+    await renderShort({...video, backgroundMusicPath: '/tmp/bed.mp3'}, '/tmp/output.mp4', deps);
+
+    expect(startAssetServer).toHaveBeenCalled();
+  });
+
   it('allowlists relative local paths as absolute without changing the supplied video', async () => {
     const packageRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)));
     expect(process.cwd()).toBe(packageRoot);

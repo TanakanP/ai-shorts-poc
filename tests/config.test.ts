@@ -35,6 +35,7 @@ describe('loadConfig', () => {
       xaiVoiceId: 'eve',
       channelBrand: 'Curious Cart',
       channelSignoff: 'If that made you look twice, follow along.',
+      backgroundMusicPath: 'assets/music/SOUNDTRACK.mp3',
     });
   });
 

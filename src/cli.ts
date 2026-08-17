@@ -146,6 +146,7 @@ function createProductionDeps(research: string): CreateShortDeps {
       }),
     renderShort,
     channel: {brand: config.channelBrand, signoff: config.channelSignoff},
+    backgroundMusicPath: config.backgroundMusicPath,
   };
 }
 

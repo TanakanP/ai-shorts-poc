@@ -2,7 +2,13 @@ import {describe, expect, it} from 'vitest';
 import type {ResolvedVideo} from '../../src/domain/resolved-video';
 import {calculateVideoMetadata} from '../../src/remotion/Root';
 import * as composition from '../../src/remotion/ShortComposition';
-import {createSceneTimeline, createVoiceTimeline} from '../../src/remotion/ShortComposition';
+import {
+  BACKGROUND_MUSIC_FADE_FRAMES,
+  BACKGROUND_MUSIC_VOLUME,
+  backgroundMusicVolume,
+  createSceneTimeline,
+  createVoiceTimeline,
+} from '../../src/remotion/ShortComposition';
 
 const video: ResolvedVideo = {
   runId: 'fixture-run',
@@ -62,5 +68,17 @@ describe('SilentShort composition timing', () => {
   it('does not fade the opening clip over the last frames', () => {
     expect(composition).not.toHaveProperty('LOOP_FADE_FRAMES');
     expect(composition).not.toHaveProperty('loopFadeOpacity');
+  });
+
+  it('keeps background music under the voice', () => {
+    expect(BACKGROUND_MUSIC_VOLUME).toBe(0.15);
+    expect(BACKGROUND_MUSIC_FADE_FRAMES).toBe(12);
+  });
+
+  it('fades the music bed in and out', () => {
+    expect(backgroundMusicVolume(0, 330)).toBe(0);
+    expect(backgroundMusicVolume(12, 330)).toBe(BACKGROUND_MUSIC_VOLUME);
+    expect(backgroundMusicVolume(200, 330)).toBe(BACKGROUND_MUSIC_VOLUME);
+    expect(backgroundMusicVolume(329, 330)).toBe(0);
   });
 });

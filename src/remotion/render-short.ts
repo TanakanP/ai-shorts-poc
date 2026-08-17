@@ -129,13 +129,16 @@ export const renderShort = async (
     if (
       video.scenes.some(
         (scene) => isRemoteHttpUrl(scene.localVideoPath) || isRemoteHttpUrl(scene.localAudioPath),
-      )
+      ) ||
+      (video.backgroundMusicPath !== undefined && isRemoteHttpUrl(video.backgroundMusicPath))
     ) {
       throw new Error('Scene assets must be local files before rendering');
     }
     const localAssetPaths = Object.fromEntries(
-      video.scenes
-        .flatMap((scene) => [scene.localVideoPath, scene.localAudioPath])
+      [
+        ...video.scenes.flatMap((scene) => [scene.localVideoPath, scene.localAudioPath]),
+        ...(video.backgroundMusicPath ? [video.backgroundMusicPath] : []),
+      ]
         // POC npm commands establish the package root as cwd for relative run paths.
         .map((path) => [path, resolve(path)]),
     );

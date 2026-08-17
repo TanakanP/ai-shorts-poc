@@ -43,6 +43,7 @@ function createHarness(
   const deps: CreateShortDeps = {
     channel: {brand: 'Curious Cart', signoff: 'If that made you look twice, follow along.'},
     research,
+    backgroundMusicPath: 'assets/music/SOUNDTRACK.mp3',
     createRunDirectory: async (topic) => {
       receivedTopic = topic;
       return {runId, runDir};

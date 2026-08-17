@@ -26,6 +26,7 @@ export type CreateShortDeps = {
   renderShort: (video: ResolvedVideo, outputPath: string) => Promise<void>;
   channel: {brand: string; signoff: string};
   research: string;
+  backgroundMusicPath: string;
 };
 
 export type CreateShortResult = {
@@ -88,6 +89,7 @@ export async function createShort(
       fps: 30,
       width: 1080,
       height: 1920,
+      backgroundMusicPath: deps.backgroundMusicPath,
       scenes: loopedScenes,
     };
     attribution = loopedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
