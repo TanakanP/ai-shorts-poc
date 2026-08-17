@@ -28,8 +28,7 @@ runs/<run-id>/output.mp4
 ```
 
 The MP4 includes spoken narration and on-screen captions that **build in short 3–5 word phrases**, then replace with the next phrase (punctuation is kept). Type is **Montserrat Black** with a black stroke at a fixed large size.
-The last shot reuses the opening clip, and the final frames fade toward that opening so replay feels
-continuous. The same run directory contains intermediate JSON artifacts, per-scene voice clips,
+The last shot reuses the opening clip so replay can loop without a fade overlay. The same run directory contains intermediate JSON artifacts, per-scene voice clips,
 and downloaded scene footage for local debugging. Creator and source attribution is recorded in
 `run.json`. Manually review the rendered video for factual accuracy, caption timing, legibility,
 footage relevance, and narration before any public upload. Before publishing, re-check Pexels

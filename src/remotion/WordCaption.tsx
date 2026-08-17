@@ -7,7 +7,7 @@ export const captionTimeMs = (frame: number, fps: number): number =>
   Math.round((frame / fps) * 1000);
 
 export const WORD_CAPTION_JUSTIFY = 'flex-end' as const;
-export const WORD_CAPTION_PADDING = '0 86px 360px';
+export const WORD_CAPTION_PADDING = '0 86px 280px';
 
 export const CAPTION_FILL = '#f5f5f5';
 export const CAPTION_FONT_WEIGHT = 900;
