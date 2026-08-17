@@ -1,7 +1,12 @@
 import {describe, expect, it} from 'vitest';
 import type {ResolvedVideo} from '../../src/domain/resolved-video';
 import {calculateVideoMetadata} from '../../src/remotion/Root';
-import {createSceneTimeline, createVoiceTimeline} from '../../src/remotion/ShortComposition';
+import {
+  createSceneTimeline,
+  createVoiceTimeline,
+  loopFadeOpacity,
+  LOOP_FADE_FRAMES,
+} from '../../src/remotion/ShortComposition';
 
 const video: ResolvedVideo = {
   runId: 'fixture-run',
@@ -56,5 +61,19 @@ describe('SilentShort composition timing', () => {
       {scene: video.scenes[0], from: 0, durationInFrames: 120},
       {scene: video.scenes[1], from: 120, durationInFrames: 210},
     ]);
+  });
+
+  it('exports an 8-frame loop fade', () => {
+    expect(LOOP_FADE_FRAMES).toBe(8);
+  });
+
+  it('keeps the opening overlay hidden until the last 8 frames', () => {
+    expect(loopFadeOpacity(0, 330)).toBe(0);
+    expect(loopFadeOpacity(321, 330)).toBe(0);
+  });
+
+  it('fades the opening overlay from 0 to 1 across the last 8 frames', () => {
+    expect(loopFadeOpacity(322, 330)).toBeGreaterThan(0);
+    expect(loopFadeOpacity(329, 330)).toBe(1);
   });
 });
