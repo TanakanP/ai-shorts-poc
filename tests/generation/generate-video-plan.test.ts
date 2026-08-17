@@ -142,6 +142,18 @@ describe('generateVideoPlan', () => {
     expect(generateStructured).not.toHaveBeenCalled();
   });
 
+  it('omits the research block when no brief is provided', async () => {
+    const generateStructured = vi.fn().mockResolvedValue(copyFixture());
+
+    await generateVideoPlan(fixture.topic, {generateStructured, research: '  '});
+
+    expect(generateStructured).toHaveBeenCalledWith({
+      system: VIDEO_PLAN_SYSTEM_PROMPT,
+      input: formatPlanInput(fixture.topic),
+    });
+    expect(generateStructured.mock.calls[0]?.[0]?.input).not.toMatch(/RESEARCH BRIEF/);
+  });
+
   it('rejects topics shorter than 3 characters', async () => {
     const generateStructured = vi.fn();
 
@@ -190,9 +202,10 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not end with a brand name/i);
   });
 
-  it('tells the model to follow the research brief', () => {
+  it('tells the model to follow a research brief when one is present', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/research brief/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/well-supported/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/optional/i);
   });
 });
 
@@ -204,6 +217,11 @@ describe('formatPlanInput', () => {
     expect(formatPlanInput('Why milk is at the back', 'Explain retail layout strategy.')).toContain(
       'RESEARCH BRIEF:\nExplain retail layout strategy.',
     );
+  });
+
+  it('sends only the topic when research is omitted', () => {
+    expect(formatPlanInput('Why milk is at the back')).toBe('TOPIC:\nWhy milk is at the back');
+    expect(formatPlanInput('Why milk is at the back', '   ')).toBe('TOPIC:\nWhy milk is at the back');
   });
 });
 

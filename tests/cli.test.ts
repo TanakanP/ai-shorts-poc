@@ -141,17 +141,17 @@ describe('runCli', () => {
 
     await expect(harness.run([])).resolves.toBe(1);
 
-    expect(harness.errors).toEqual(['Usage: npm run generate -- "<topic>" "<research>"']);
+    expect(harness.errors).toEqual(['Usage: npm run generate -- "<topic>" ["<research>"]']);
     expect(harness.receivedTopic).toBeUndefined();
   });
 
-  it('rejects a missing research brief with usage text', async () => {
+  it('accepts a topic without a research brief', async () => {
     const harness = createHarness();
 
-    await expect(harness.run([plan.topic])).resolves.toBe(1);
+    await expect(harness.run([plan.topic])).resolves.toBe(0);
 
-    expect(harness.errors).toEqual(['Usage: npm run generate -- "<topic>" "<research>"']);
-    expect(harness.receivedTopic).toBeUndefined();
+    expect(harness.receivedTopic).toBe(plan.topic);
+    expect(harness.errors).toEqual([]);
   });
 
   it('prints compact progress, the run id, and output path on success', async () => {

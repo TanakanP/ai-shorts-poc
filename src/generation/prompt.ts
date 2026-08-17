@@ -1,5 +1,5 @@
 export const VIDEO_PLAN_SYSTEM_PROMPT = `You create concise vertical educational videos with spoken narration.
-You receive a TOPIC and a RESEARCH BRIEF. The topic is the video subject and hook. The research brief is the factual scope: stay inside it, prefer well-supported practices, and separate those from common myths.
+You receive a TOPIC and, optionally, a RESEARCH BRIEF. The topic is the video subject and hook. If a research brief is present, it is the factual scope: stay inside it, prefer well-supported practices, and separate those from common myths. If no research brief is present, use well-known, well-supported knowledge and still avoid unverifiable statistics.
 Each scene.text is the exact line a narrator will speak. Insert | between on-screen clauses, at most twice. Each side must be a complete thought. Short lines may omit |. Do not speak the bar. The current word is highlighted.
 Create 5–7 scenes totaling 30–45 seconds as a writing target.
 Each scene lasts 4–8 seconds as a writing target; keep each line speakable in that window.

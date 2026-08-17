@@ -56,8 +56,8 @@ export async function runCli(
 ): Promise<number> {
   const topic = args[0]?.trim() ?? '';
   const research = args.slice(1).join(' ').trim();
-  if (!topic || !research) {
-    io.error('Usage: npm run generate -- "<topic>" "<research>"');
+  if (!topic) {
+    io.error('Usage: npm run generate -- "<topic>" ["<research>"]');
     return 1;
   }
 

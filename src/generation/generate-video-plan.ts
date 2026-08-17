@@ -12,13 +12,15 @@ export type StructuredPlanGenerator = (args: {
 
 export type GenerateVideoPlanDeps = {
   generateStructured: StructuredPlanGenerator;
-  research: string;
+  research?: string;
 };
 
 export const MIN_RESEARCH_CHARS = 20;
 
-export function formatPlanInput(topic: string, research: string): string {
-  return `TOPIC:\n${topic}\n\nRESEARCH BRIEF:\n${research}`;
+export function formatPlanInput(topic: string, research?: string): string {
+  const trimmedResearch = research?.trim() ?? '';
+  if (!trimmedResearch) return `TOPIC:\n${topic}`;
+  return `TOPIC:\n${topic}\n\nRESEARCH BRIEF:\n${trimmedResearch}`;
 }
 
 export async function generateVideoPlan(
@@ -27,8 +29,8 @@ export async function generateVideoPlan(
 ): Promise<VideoPlan> {
   const trimmedTopic = topic.trim();
   if (trimmedTopic.length < 3) throw new Error('Topic must be at least 3 characters');
-  const trimmedResearch = deps.research.trim();
-  if (trimmedResearch.length < MIN_RESEARCH_CHARS) {
+  const trimmedResearch = deps.research?.trim() ?? '';
+  if (trimmedResearch.length > 0 && trimmedResearch.length < MIN_RESEARCH_CHARS) {
     throw new Error(`Research brief must be at least ${MIN_RESEARCH_CHARS} characters`);
   }
 
