@@ -2,6 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {
   captionTimeMs,
   CAPTION_FILL,
+  CAPTION_FONT_SIZE,
   CAPTION_FONT_WEIGHT,
   CAPTION_STROKE,
   CAPTION_SHADOW,
@@ -30,5 +31,11 @@ describe('caption style', () => {
     expect(CAPTION_FONT_WEIGHT).toBe(900);
     expect(CAPTION_STROKE).toBe('6px #000');
     expect(CAPTION_SHADOW).toBe('0 4px 12px rgba(0,0,0,0.65)');
+  });
+});
+
+describe('caption size', () => {
+  it('keeps a fixed large size instead of shrinking to the full sentence', () => {
+    expect(CAPTION_FONT_SIZE).toBe(72);
   });
 });
