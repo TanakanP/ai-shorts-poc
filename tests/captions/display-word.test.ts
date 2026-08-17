@@ -9,9 +9,10 @@ describe('displaySpokenWord', () => {
     expect(displaySpokenWord('now;')).toBe('now');
   });
 
-  it('keeps apostrophes and question marks', () => {
-    expect(displaySpokenWord("That's")).toBe("That's");
-    expect(displaySpokenWord('door?')).toBe('door?');
+  it('strips apostrophes question marks and exclamation marks', () => {
+    expect(displaySpokenWord("That's")).toBe('Thats');
+    expect(displaySpokenWord('door?')).toBe('door');
+    expect(displaySpokenWord('Wait!')).toBe('Wait');
   });
 
   it('returns empty when the token is only stripped marks', () => {

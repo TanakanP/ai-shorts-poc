@@ -7,6 +7,9 @@ import type {ResolvedScene} from '../domain/resolved-video';
 export const captionTimeMs = (frame: number, fps: number): number =>
   Math.round((frame / fps) * 1000);
 
+export const WORD_CAPTION_JUSTIFY = 'flex-end' as const;
+export const WORD_CAPTION_PADDING = '0 86px 360px';
+
 export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -21,8 +24,8 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
       style={{
         zIndex: 2,
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: '360px 86px 440px',
+        justifyContent: WORD_CAPTION_JUSTIFY,
+        padding: WORD_CAPTION_PADDING,
       }}
     >
       <div
