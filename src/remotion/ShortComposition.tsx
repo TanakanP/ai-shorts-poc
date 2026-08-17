@@ -53,11 +53,13 @@ export const ShortComposition = ({video, assetBaseUrl, localAssetPaths}: ShortCo
 
   return (
     <AbsoluteFill style={{backgroundColor: '#080808'}}>
-      {createSceneTimeline(video).map(({scene, from, durationInFrames: sceneDuration}) => (
+      {createSceneTimeline(video).map(({scene, from, durationInFrames: sceneDuration}, index, items) => (
         <Sequence key={scene.id} from={from} durationInFrames={sceneDuration} name={scene.id}>
           <Scene
             scene={scene}
             durationInFrames={sceneDuration}
+            fadeIn={index > 0}
+            fadeOut={index < items.length - 1}
             assetBaseUrl={assetBaseUrl}
             localAssetPaths={localAssetPaths}
           />
