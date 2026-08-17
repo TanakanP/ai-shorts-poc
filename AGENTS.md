@@ -1,9 +1,9 @@
 # Project Instructions
 
-This branch experiments with undimmed footage and clause-window karaoke captions.
+This branch experiments with undimmed footage and karaoke captions split by | in scene.text.
 
 Primary implementation plan:
-docs/superpowers/plans/2026-08-17-karaoke-clauses.md
+docs/superpowers/plans/2026-08-17-karaoke-pipes.md
 
 Rules:
 - Follow the implementation plan task-by-task and in order.

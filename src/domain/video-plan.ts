@@ -13,10 +13,25 @@ export type VideoPlan = {
   scenes: VideoScene[];
 };
 
+const isValidCaptionText = (text: string): boolean => {
+  const parts = text.split('|').map((part) => part.trim());
+  if (parts.some((part) => part.length === 0)) return false;
+  if (parts.length > 3) return false;
+  if (parts.some((part) => part.length < 4)) return false;
+  const spoken = parts.join(' ');
+  return spoken.length >= 4;
+};
+
 const videoSceneSchema = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/),
   durationSeconds: z.number().int().min(4).max(8),
-  text: z.string().min(4).max(100).refine((text) => text.trim().length >= 4),
+  text: z
+    .string()
+    .min(4)
+    .max(100)
+    .refine((text) => isValidCaptionText(text), {
+      message: 'Scene text caption bars must split into 1-3 non-empty clauses',
+    }),
   searchQuery: z.string().min(2).max(80).refine((query) => query.trim().length >= 2),
 });
 

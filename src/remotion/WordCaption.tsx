@@ -1,6 +1,7 @@
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import {currentWordIndexAt} from '../captions/active-word';
-import {activeCaptionClause, chunkCaptionClauses} from '../captions/caption-clauses';
+import {activeCaptionClause} from '../captions/caption-clauses';
+import {alignCaptionSegments, parseCaptionSegments} from '../captions/caption-segments';
 import type {ResolvedScene} from '../domain/resolved-video';
 import {captionFontFamily} from './caption-font';
 
@@ -22,7 +23,10 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   const {fps} = useVideoConfig();
   if (scene.words.length === 0) return null;
   const timeMs = captionTimeMs(frame, fps);
-  const live = activeCaptionClause(chunkCaptionClauses(scene.words), timeMs);
+  const live = activeCaptionClause(
+    alignCaptionSegments(parseCaptionSegments(scene.text), scene.words),
+    timeMs,
+  );
   const current = currentWordIndexAt(scene.words, timeMs);
   const currentWord = current === null ? null : scene.words[current];
 

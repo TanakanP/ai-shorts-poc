@@ -1,4 +1,5 @@
 import {join} from 'node:path';
+import {spokenSceneText} from '../captions/caption-segments';
 import type {VideoPlan} from '../domain/video-plan';
 import type {SceneVoice, VoiceManifest} from '../domain/voice';
 import {assertVoicedTimeline, sceneDurationFromAudio} from './scene-duration';
@@ -24,7 +25,7 @@ export async function synthesizeSceneVoices(
   const timedScenes = [];
 
   for (const [index, scene] of plan.scenes.entries()) {
-    const spoken = await deps.synthesize({text: scene.text, voiceId});
+    const spoken = await deps.synthesize({text: spokenSceneText(scene.text), voiceId});
     const durationSeconds = sceneDurationFromAudio(spoken.durationSeconds);
     const localAudioPath = join(runDir, `voice-${String(index + 1).padStart(2, '0')}.mp3`);
     await deps.writeAudioFile(localAudioPath, spoken.audio);

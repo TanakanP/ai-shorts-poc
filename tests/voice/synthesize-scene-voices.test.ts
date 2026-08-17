@@ -64,6 +64,32 @@ describe('synthesizeSceneVoices', () => {
     });
   });
 
+  it('sends spoken text without caption bars to TTS', async () => {
+    const piped: VideoPlan = {
+      ...plan,
+      scenes: plan.scenes.map((scene, index) =>
+        index === 0
+          ? {...scene, text: 'Ever notice milk is far away | from the door?'}
+          : scene,
+      ),
+    };
+    const synthesize = vi.fn(async ({text}: {text: string}) => ({
+      audio: Buffer.from(text),
+      durationSeconds: 5.2,
+      words: [{text: 'Ever', startMs: 0, endMs: 400}],
+    }));
+
+    await synthesizeSceneVoices(piped, '/tmp/run', 'eve', {
+      synthesize,
+      writeAudioFile: async () => undefined,
+    });
+
+    expect(synthesize.mock.calls[0]?.[0]).toEqual({
+      text: 'Ever notice milk is far away from the door?',
+      voiceId: 'eve',
+    });
+  });
+
   it('does not synthesize later scenes after a failure', async () => {
     const synthesize = vi
       .fn()

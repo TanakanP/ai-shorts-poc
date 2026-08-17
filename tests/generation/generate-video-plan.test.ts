@@ -53,6 +53,27 @@ describe('videoPlanSchema', () => {
     expect(() => videoPlanSchema.parse(plan)).toThrow();
   });
 
+  it('accepts caption bars in scene text', () => {
+    const plan = copyFixture();
+    plan.scenes[0].text = 'Milk is at the back of the store | because your walk is valuable.';
+
+    expect(parseVideoPlan(plan).scenes[0]?.text).toContain('|');
+  });
+
+  it('rejects empty caption-bar segments', () => {
+    const plan = copyFixture();
+    plan.scenes[0].text = 'Milk is at the back | | because your walk is valuable.';
+
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects more than two caption bars', () => {
+    const plan = copyFixture();
+    plan.scenes[0].text = 'Milk | is | at | the back.';
+
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
   it('rejects blank text or searchQuery', () => {
     for (const field of ['text', 'searchQuery'] as const) {
       const plan = copyFixture();
@@ -138,9 +159,9 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).not.toMatch(/without narration/i);
   });
 
-  it('says on-screen text shows short clauses with a karaoke highlight', () => {
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/short clauses/i);
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/highlighted/i);
+  it('asks the model to mark on-screen clauses with a bar', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/\|/);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not speak the bar/i);
   });
 });
 
