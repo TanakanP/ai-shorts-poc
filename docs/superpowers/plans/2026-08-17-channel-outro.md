@@ -1,3 +1,3 @@
 # Channel outro on the last scene
 
-Append `{Brand}. {Signoff}` to the last scene script after the model plan, separated by `|`. Same clip, same Eve TTS, karaoke on the new clause. Brand and sign-off come from `.env`.
+Add a `channel-outro` scene after the model plan. It speaks `{Brand}. {Signoff}` and reuses the first clip (via bookend) so the ending loops to the start. The payoff scene is unchanged.

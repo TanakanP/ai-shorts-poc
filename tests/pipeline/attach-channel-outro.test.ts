@@ -12,22 +12,25 @@ const plan: VideoPlan = {
 };
 
 describe('attachChannelOutro', () => {
-  it('appends brand and sign-off to the last scene script', () => {
+  it('adds a new last scene for the brand sign-off', () => {
     expect(attachChannelOutro(plan, 'Curious Cart', 'If that made you look twice, follow along.')).toEqual({
       ...plan,
       scenes: [
-        plan.scenes[0],
+        ...plan.scenes,
         {
-          ...plan.scenes[1],
-          text: 'Deliveries also stay efficient. | Curious Cart. If that made you look twice, follow along.',
+          id: 'channel-outro',
+          durationSeconds: 4,
+          text: 'Curious Cart. If that made you look twice, follow along.',
+          searchQuery: 'milk supermarket',
         },
       ],
     });
   });
 
-  it('does not change earlier scenes', () => {
+  it('does not change the payoff script', () => {
     const next = attachChannelOutro(plan, 'Curious Cart', 'Follow along.');
-    expect(next.scenes[0]).toEqual(plan.scenes[0]);
-    expect(next.scenes).toHaveLength(2);
+    expect(next.scenes.slice(0, 2)).toEqual(plan.scenes);
+    expect(next.scenes).toHaveLength(3);
+    expect(next.scenes.at(-1)?.id).toBe('channel-outro');
   });
 });

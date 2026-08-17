@@ -145,7 +145,7 @@ describe('runCli', () => {
     expect(harness.output).toEqual([
       `Creating short: ${plan.topic}`,
       '[1/4] Generated 5-scene plan',
-      '[2/4] Synthesized voice (31.5s)',
+      '[2/4] Synthesized voice (37.8s)',
       '[3/4] Resolved 5 stock clips',
       '[4/4] Rendered video',
       `Done: ${runDir}/output.mp4`,

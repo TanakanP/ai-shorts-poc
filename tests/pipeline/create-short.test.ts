@@ -26,25 +26,26 @@ const plan: VideoPlan = {
 
 const planWithOutro: VideoPlan = {
   ...plan,
-  scenes: plan.scenes.map((scene, index) =>
-    index === plan.scenes.length - 1
-      ? {
-          ...scene,
-          text: 'Deliveries also stay efficient. | Curious Cart. If that made you look twice, follow along.',
-        }
-      : scene,
-  ),
+  scenes: [
+    ...plan.scenes,
+    {
+      id: 'channel-outro',
+      durationSeconds: 4,
+      text: 'Curious Cart. If that made you look twice, follow along.',
+      searchQuery: 'milk supermarket',
+    },
+  ],
 };
 
 const voiceResult: SynthesizeSceneVoicesResult = {
   timedPlan: {
-    ...plan,
-    scenes: plan.scenes.map((scene) => ({...scene, durationSeconds: 6.3})),
+    ...planWithOutro,
+    scenes: planWithOutro.scenes.map((scene) => ({...scene, durationSeconds: 6.3})),
   },
   manifest: {
     voiceId: 'eve',
     language: 'en',
-    scenes: plan.scenes.map((scene, index) => ({
+    scenes: planWithOutro.scenes.map((scene, index) => ({
       sceneId: scene.id,
       localAudioPath: `${runDir}/voice-${String(index + 1).padStart(2, '0')}.mp3`,
       voiceId: 'eve',
