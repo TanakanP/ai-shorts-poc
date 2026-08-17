@@ -138,8 +138,9 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).not.toMatch(/without narration/i);
   });
 
-  it('says on-screen text builds word by word', () => {
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/word by word/i);
+  it('says on-screen text builds in short phrases then replaces', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/short phrases/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/replace/i);
   });
 });
 
