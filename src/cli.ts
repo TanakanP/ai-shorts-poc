@@ -2,7 +2,7 @@ import {writeFile} from 'node:fs/promises';
 import {resolve as resolvePath} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {config as loadDotenv} from 'dotenv';
-import {loadConfig} from './config';
+import {findEnvFile, loadConfig} from './config';
 import {ProviderError} from './domain/provider-error';
 import {
   createOpenAIStructuredPlanGenerator,
@@ -111,8 +111,11 @@ export async function runCli(
 
     io.log(`Done: ${result.outputPath}`);
     return 0;
-  } catch {
+  } catch (cause) {
     io.error(`Failed during ${stage}. Run directory: ${runDir}`);
+    if (stage === 'setup' && cause instanceof Error) {
+      io.error(cause.message);
+    }
     return 1;
   }
 }
@@ -145,7 +148,8 @@ function createProductionDeps(): CreateShortDeps {
 
 const entryPath = process.argv[1] ? pathToFileURL(resolvePath(process.argv[1])).href : undefined;
 if (import.meta.url === entryPath) {
-  loadDotenv({quiet: true});
+  const envPath = findEnvFile(process.cwd());
+  loadDotenv(envPath ? {path: envPath, quiet: true} : {quiet: true});
   void runCli(process.argv.slice(2), createProductionDeps).then((exitCode) => {
     process.exitCode = exitCode;
   });

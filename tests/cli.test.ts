@@ -105,6 +105,28 @@ describe('runCli', () => {
     expect(harness.receivedTopic).toBe('Why supermarkets put milk at the back');
   });
 
+  it('reports a setup error before a run directory exists', async () => {
+    const errors: string[] = [];
+
+    await expect(
+      runCli(
+        ['Why milk is at the back'],
+        () => {
+          throw new Error('Missing or invalid env: OPENAI_API_KEY');
+        },
+        {
+          log: () => undefined,
+          error: (message) => errors.push(message),
+        },
+      ),
+    ).resolves.toBe(1);
+
+    expect(errors).toEqual([
+      'Failed during setup. Run directory: not created',
+      'Missing or invalid env: OPENAI_API_KEY',
+    ]);
+  });
+
   it('rejects a missing topic with usage text', async () => {
     const harness = createHarness();
 
