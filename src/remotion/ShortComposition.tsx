@@ -1,6 +1,7 @@
 import {AbsoluteFill, Html5Audio, Sequence, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {ResolvedScene, ResolvedVideo} from '../domain/resolved-video';
 import {getVideoSource, Scene, SCENE_FADE_FRAMES} from './Scene';
+import {WordCaption} from './WordCaption';
 
 export type ShortCompositionProps = {
   video: ResolvedVideo;
@@ -66,6 +67,7 @@ export const ShortComposition = ({video, assetBaseUrl, localAssetPaths}: ShortCo
       {createVoiceTimeline(video).map(({scene, from, durationInFrames: voiceDuration}) => (
         <Sequence key={`${scene.id}-voice`} from={from} durationInFrames={voiceDuration} name={`${scene.id}-voice`}>
           <Html5Audio src={getVideoSource(scene.localAudioPath, assetBaseUrl, localAssetPaths)} />
+          <WordCaption scene={scene} />
         </Sequence>
       ))}
 
