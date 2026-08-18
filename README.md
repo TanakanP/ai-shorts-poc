@@ -32,6 +32,7 @@ The rendered video is written to:
 runs/<run-id>/output.mp4
 ```
 
+The plan is **four educational scenes** (hook, you-reason, proof, payoff) plus a channel outro. The hook is a question or myth and does not give the answer. Stock clips stay unique per educational scene and prefer the Pexels result whose page slug matches the line.
 The MP4 includes spoken narration and on-screen captions that show **one model-marked clause at a time** (`|` in `scene.text`), with the **current word in yellow** (karaoke). Bars are stripped before TTS. Footage has **no dark wash**. Type is **Montserrat Black** with a black stroke at a fixed large size.
 A quiet looping music bed (`assets/music/SOUNDTRACK.mp3`, overridable with `BACKGROUND_MUSIC_PATH`) plays under the voice.
 A final **channel-outro** scene speaks **`CHANNEL_BRAND`. `CHANNEL_SIGNOFF`** and reuses the opening clip so replay loops to the start. The educational last scene keeps its own script and footage. The same run directory contains intermediate JSON artifacts, per-scene voice clips,
