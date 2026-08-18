@@ -26,7 +26,7 @@ function plan(scenes: VideoScene[]): VideoPlan {
 function video(downloadUrl: string, overrides: Partial<PexelsVideo> = {}): PexelsVideo {
   return {
     id: 101,
-    url: 'https://www.pexels.com/video/test-101/',
+    url: 'https://www.pexels.com/video/test-footage-101/',
     duration: 8,
     user: {name: 'Test Creator', url: 'https://www.pexels.com/@test-creator'},
     video_files: [
@@ -55,12 +55,16 @@ describe('resolveSceneAssets', () => {
   it('resolves a portrait result and downloads it once', async () => {
     const runDirectory = await createRunDirectory();
     const deps = resolverDeps();
-    deps.searchVideos.mockResolvedValueOnce([video('https://videos.pexels.com/portrait.mp4')]);
+    deps.searchVideos.mockResolvedValueOnce([
+      video('https://videos.pexels.com/portrait.mp4', {
+        url: 'https://www.pexels.com/video/city-lights-101/',
+      }),
+    ]);
 
     await expect(resolveSceneAssets(plan([scene('intro', 'city lights')]), runDirectory, deps)).resolves.toEqual([
       {
         ...scene('intro', 'city lights'),
-        sourcePageUrl: 'https://www.pexels.com/video/test-101/',
+        sourcePageUrl: 'https://www.pexels.com/video/city-lights-101/',
         creatorName: 'Test Creator',
         creatorUrl: 'https://www.pexels.com/@test-creator',
         localVideoPath: join(runDirectory, 'scene-01.mp4'),
@@ -70,6 +74,53 @@ describe('resolveSceneAssets', () => {
     expect(deps.searchVideos).toHaveBeenCalledWith('city lights', {orientation: 'portrait', perPage: 15});
     expect(deps.download).toHaveBeenCalledWith(
       'https://videos.pexels.com/portrait.mp4',
+      join(runDirectory, 'scene-01.mp4'),
+    );
+  });
+
+  it('searches landscape when the best portrait slug match is 0', async () => {
+    const runDirectory = await createRunDirectory();
+    const deps = resolverDeps();
+    deps.searchVideos
+      .mockResolvedValueOnce([
+        video('https://videos.pexels.com/pepper.mp4', {
+          id: 501,
+          url: 'https://www.pexels.com/video/a-man-looking-at-a-yellow-bell-pepper-501/',
+        }),
+      ])
+      .mockResolvedValueOnce([
+        video('https://videos.pexels.com/milk.mp4', {
+          id: 602,
+          url: 'https://www.pexels.com/video/supermarket-milk-fridge-602/',
+          video_files: [
+            {
+              id: 62,
+              file_type: 'video/mp4',
+              width: 1920,
+              height: 1080,
+              link: 'https://videos.pexels.com/milk.mp4',
+            },
+          ],
+        }),
+      ]);
+
+    const resolved = await resolveSceneAssets(
+      plan([
+        {
+          id: 'hook',
+          durationSeconds: 6,
+          text: 'Why is the milk always at the back?',
+          searchQuery: 'supermarket milk fridge',
+        },
+      ]),
+      runDirectory,
+      deps,
+    );
+
+    expect(resolved[0]?.sourcePageUrl).toBe('https://www.pexels.com/video/supermarket-milk-fridge-602/');
+    expect(deps.searchVideos).toHaveBeenCalledTimes(2);
+    expect(deps.download).toHaveBeenCalledWith(
+      'https://videos.pexels.com/milk.mp4',
       join(runDirectory, 'scene-01.mp4'),
     );
   });
@@ -121,7 +172,7 @@ describe('resolveSceneAssets', () => {
     );
 
     expect(resolved.map((item) => item.sourcePageUrl)).toEqual([
-      'https://www.pexels.com/video/test-101/',
+      'https://www.pexels.com/video/test-footage-101/',
       'https://www.pexels.com/video/test-202/',
     ]);
     expect(deps.download).toHaveBeenNthCalledWith(
@@ -139,7 +190,11 @@ describe('resolveSceneAssets', () => {
   it('reuses the first clip for the channel outro without another download', async () => {
     const runDirectory = await createRunDirectory();
     const deps = resolverDeps();
-    deps.searchVideos.mockResolvedValue([video('https://videos.pexels.com/hook.mp4')]);
+    deps.searchVideos.mockResolvedValue([
+      video('https://videos.pexels.com/hook.mp4', {
+        url: 'https://www.pexels.com/video/milk-supermarket-101/',
+      }),
+    ]);
 
     const resolved = await resolveSceneAssets(
       plan([
@@ -153,7 +208,7 @@ describe('resolveSceneAssets', () => {
     expect(resolved[1]).toMatchObject({
       id: 'channel-outro',
       localVideoPath: join(runDirectory, 'scene-01.mp4'),
-      sourcePageUrl: 'https://www.pexels.com/video/test-101/',
+      sourcePageUrl: 'https://www.pexels.com/video/milk-supermarket-101/',
       creatorName: 'Test Creator',
     });
     expect(deps.searchVideos).toHaveBeenCalledTimes(1);

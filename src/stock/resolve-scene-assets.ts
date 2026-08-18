@@ -2,6 +2,7 @@ import {join} from 'node:path';
 import type {StockScene} from '../domain/resolved-video';
 import type {VideoPlan} from '../domain/video-plan';
 import type {PexelsVideo, SearchOptions} from './pexels-client';
+import {scoreStockMatch} from './score-stock-match';
 import {selectBestVideo} from './select-video-file';
 
 export type ResolveDeps = {
@@ -36,17 +37,33 @@ export async function resolveSceneAssets(
     }
 
     const requiredSeconds = scene.durationSeconds + (index === 0 ? 0 : transitionSeconds);
+    const match = {searchQuery: scene.searchQuery, sceneText: scene.text};
     let candidate = selectBestVideo(
       (await deps.searchVideos(scene.searchQuery, portraitSearch)) ?? [],
       requiredSeconds,
       usedVideoIds,
+      match,
     );
-    if (!candidate) {
-      candidate = selectBestVideo(
+    const portraitScore = candidate
+      ? scoreStockMatch(candidate.sourcePageUrl, scene.searchQuery, scene.text)
+      : -1;
+    if (!candidate || portraitScore === 0) {
+      const landscape = selectBestVideo(
         (await deps.searchVideos(scene.searchQuery, landscapeSearch)) ?? [],
         requiredSeconds,
         usedVideoIds,
+        match,
       );
+      if (!candidate) {
+        candidate = landscape;
+      } else if (landscape) {
+        const landscapeScore = scoreStockMatch(
+          landscape.sourcePageUrl,
+          scene.searchQuery,
+          scene.text,
+        );
+        if (landscapeScore > portraitScore) candidate = landscape;
+      }
     }
     if (!candidate) throw new Error(`No usable video for scene ${scene.id}: ${scene.searchQuery}`);
 
