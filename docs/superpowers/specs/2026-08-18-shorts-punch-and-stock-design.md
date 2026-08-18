@@ -9,7 +9,7 @@ A generated short has four spoken educational scenes (hook, you-reason, proof, p
 ## Locked decisions
 
 1. **Exactly 4 educational scenes.** The channel outro is still appended after the plan. The model does not write the outro.
-2. **Writing target 16–32 seconds.** That is the natural range of 4 scenes at 4–8 seconds each. Prompt asks for about 6 seconds per line (~24s). Real duration stays speak-then-time (20–60s voiced).
+2. **Writing target 16–32 seconds.** That is the natural range of 4 scenes at 4–8 seconds each. Prompt asks for about 6 seconds per line (~24s). Real duration stays speak-then-time (15–60s voiced).
 3. **Beat roles.** Scene 1 is a question or myth and must not give the answer. Scene 2 is one reason spoken to you/your. Scene 3 is one concrete proof or walk. Scene 4 is the payoff in plain words with no second thesis.
 4. **No lecture jargon.** Prompt bans logistics, cold-chain, merchandising, refrigerated cases, and similar textbook phrasing.
 5. **searchQuery is filmable objects from that line.** Example: `supermarket milk fridge`, not `consumer psychology`.

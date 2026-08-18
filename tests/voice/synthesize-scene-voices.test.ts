@@ -130,7 +130,7 @@ describe('synthesizeSceneVoices', () => {
     expect(writeAudioFile).toHaveBeenCalledTimes(1);
   });
 
-  it('rejects a voiced timeline outside 20-60 seconds', async () => {
+  it('rejects a voiced timeline outside 15-60 seconds', async () => {
     await expect(
       synthesizeSceneVoices(plan, '/tmp/run', 'eve', {
         synthesize: async () => ({
@@ -140,6 +140,6 @@ describe('synthesizeSceneVoices', () => {
         }),
         writeAudioFile: async () => undefined,
       }),
-    ).rejects.toThrow(/20/);
+    ).rejects.toThrow(/15/);
   });
 });

@@ -24,8 +24,12 @@ describe('assertVoicedTimeline', () => {
     expect(() => assertVoicedTimeline([6.3, 6.3, 6.3, 6.3, 6.3])).not.toThrow();
   });
 
-  it('rejects a total below 20s', () => {
-    expect(() => assertVoicedTimeline([2.8, 2.8, 2.8, 2.8, 2.8])).toThrow(/20/);
+  it('accepts a punchy 4-beat outro timeline just under 20s', () => {
+    expect(() => assertVoicedTimeline([3.07, 4.24, 4.66, 4.32, 3.46])).not.toThrow();
+  });
+
+  it('rejects a total below 15s', () => {
+    expect(() => assertVoicedTimeline([2.8, 2.8, 2.8, 2.8, 2.8])).toThrow(/15/);
   });
 
   it('rejects a total above 60s', () => {
