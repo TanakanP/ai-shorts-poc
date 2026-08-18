@@ -39,15 +39,15 @@ export const videoPlanSchema = z
   .object({
     topic: z.string().min(3).max(200),
     title: z.string().min(5).max(90),
-    scenes: z.array(videoSceneSchema).min(5).max(7),
+    scenes: z.array(videoSceneSchema).min(4).max(4),
   })
   .superRefine((plan, context) => {
     const totalDuration = plan.scenes.reduce((total, scene) => total + scene.durationSeconds, 0);
-    if (totalDuration < 30 || totalDuration > 45) {
+    if (totalDuration < 16 || totalDuration > 32) {
       context.addIssue({
         code: 'custom',
         path: ['scenes'],
-        message: 'Total duration must be between 30 and 45 seconds',
+        message: 'Total duration must be between 16 and 32 seconds',
       });
     }
 

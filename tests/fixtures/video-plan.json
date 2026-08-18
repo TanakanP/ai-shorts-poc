@@ -3,40 +3,28 @@
   "title": "Why Milk Is Always at the Back",
   "scenes": [
     {
-      "id": "milk-at-the-back",
+      "id": "hook",
       "durationSeconds": 6,
       "text": "Why is milk always so far from the entrance?",
-      "searchQuery": "supermarket milk aisle"
+      "searchQuery": "supermarket entrance milk"
     },
     {
-      "id": "daily-essential",
+      "id": "you-reason",
       "durationSeconds": 6,
-      "text": "Milk is a staple many shoppers buy regularly.",
-      "searchQuery": "shopper picking milk carton"
+      "text": "Stores want your whole trip | not just your milk run.",
+      "searchQuery": "shopper walking supermarket aisle"
     },
     {
-      "id": "longer-route",
+      "id": "proof",
       "durationSeconds": 6,
-      "text": "Putting it at the back creates a longer route.",
-      "searchQuery": "shopping cart supermarket aisle"
+      "text": "That walk takes you past snacks, fruit, and deals.",
+      "searchQuery": "supermarket snacks fruit shelves"
     },
     {
-      "id": "more-products",
+      "id": "payoff",
       "durationSeconds": 6,
-      "text": "That route exposes shoppers to more products.",
-      "searchQuery": "supermarket shelves products"
-    },
-    {
-      "id": "extra-purchases",
-      "durationSeconds": 6,
-      "text": "More exposure can encourage extra purchases.",
-      "searchQuery": "shopper adding groceries cart"
-    },
-    {
-      "id": "store-layout-payoff",
-      "durationSeconds": 6,
-      "text": "The milk trip doubles as a tour of the store.",
-      "searchQuery": "supermarket aisle wide view"
+      "text": "So the back wall is a longer path | not a mystery.",
+      "searchQuery": "supermarket dairy milk fridge"
     }
   ]
 }

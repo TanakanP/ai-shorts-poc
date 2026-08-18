@@ -16,42 +16,36 @@ const fixture = JSON.parse(
 const copyFixture = (): VideoPlan => structuredClone(fixture);
 
 describe('videoPlanSchema', () => {
-  it('accepts a 6-scene 36-second plan', () => {
+  it('accepts a 4-scene 24-second plan', () => {
     expect(parseVideoPlan(copyFixture())).toEqual(fixture);
   });
 
-  it('rejects fewer than 5 scenes', () => {
+  it('rejects fewer than 4 scenes', () => {
     const plan = copyFixture();
-    plan.scenes = plan.scenes
-      .slice(0, 4)
-      .map((scene) => ({...scene, durationSeconds: 8}));
+    plan.scenes = plan.scenes.slice(0, 3).map((scene) => ({...scene, durationSeconds: 8}));
 
     expect(() => videoPlanSchema.parse(plan)).toThrow();
   });
 
-  it('rejects more than 7 scenes', () => {
+  it('rejects more than 4 scenes', () => {
     const plan = copyFixture();
-    plan.scenes.push(
-      {...plan.scenes[0], id: 'extra-scene-one'},
-      {...plan.scenes[1], id: 'extra-scene-two'},
-    );
+    plan.scenes.push({...plan.scenes[0], id: 'extra-scene'});
+
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('accepts a 16-second four-scene plan', () => {
+    const plan = copyFixture();
     plan.scenes = plan.scenes.map((scene) => ({...scene, durationSeconds: 4}));
 
-    expect(() => videoPlanSchema.parse(plan)).toThrow();
+    expect(parseVideoPlan(plan).scenes).toHaveLength(4);
   });
 
-  it('rejects total duration below 30 seconds', () => {
-    const plan = copyFixture();
-    plan.scenes = plan.scenes.slice(0, 5).map((scene) => ({...scene, durationSeconds: 4}));
-
-    expect(() => videoPlanSchema.parse(plan)).toThrow();
-  });
-
-  it('rejects total duration above 45 seconds', () => {
+  it('accepts a 32-second four-scene plan', () => {
     const plan = copyFixture();
     plan.scenes = plan.scenes.map((scene) => ({...scene, durationSeconds: 8}));
 
-    expect(() => videoPlanSchema.parse(plan)).toThrow();
+    expect(parseVideoPlan(plan).scenes).toHaveLength(4);
   });
 
   it('accepts caption bars in scene text', () => {
@@ -176,7 +170,7 @@ describe('generateVideoPlan', () => {
   });
 
   it('rejects invalid AI data', async () => {
-    const invalidPlan = {...copyFixture(), scenes: fixture.scenes.slice(0, 4)};
+    const invalidPlan = {...copyFixture(), scenes: fixture.scenes.slice(0, 3)};
 
     await expect(
       generateVideoPlan(fixture.topic, {
@@ -206,6 +200,14 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/research brief/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/well-supported/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/optional/i);
+  });
+
+  it('asks for exactly 4 educational scenes and a delayed answer', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/exactly 4 educational scenes/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not give the answer in scene 1/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/you/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/logistics/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/visible objects/i);
   });
 });
 
