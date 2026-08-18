@@ -73,6 +73,19 @@ describe('selectBestVideo', () => {
     expect(selectBestVideo(videos, 6)).toBeNull();
   });
 
+  it('prefers a matching slug over a sharper mismatch when a hint is given', () => {
+    const videos = copyVideos();
+    videos[0].url = 'https://www.pexels.com/video/supermarket-milk-fridge-401/';
+    videos[1].url = 'https://www.pexels.com/video/a-man-looking-at-a-yellow-bell-pepper-402/';
+
+    expect(
+      selectBestVideo(videos, 6, new Set(), {
+        searchQuery: 'supermarket milk fridge',
+        sceneText: 'Why is the milk always at the back?',
+      }),
+    ).toMatchObject({videoId: 401});
+  });
+
   it('uses video id then file id as stable tie-breakers', () => {
     const videos = copyVideos().slice(0, 2).map((video) => ({
       ...video,

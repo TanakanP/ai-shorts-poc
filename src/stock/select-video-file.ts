@@ -1,4 +1,5 @@
 import type {PexelsVideo, PexelsVideoFile} from './pexels-client';
+import {scoreStockMatch} from './score-stock-match';
 
 export type SelectedVideo = {
   videoId: number;
@@ -37,17 +38,31 @@ function compareCandidates(left: Candidate, right: Candidate): number {
   return left.file.id - right.file.id;
 }
 
+export type StockMatchHint = {
+  searchQuery: string;
+  sceneText: string;
+};
+
 export function selectBestVideo(
   videos: PexelsVideo[],
   requiredSeconds: number,
   excludeVideoIds: ReadonlySet<number> = new Set(),
+  match?: StockMatchHint,
 ): SelectedVideo | null {
   const candidates = videos
     .filter((video) => video.duration >= requiredSeconds && !excludeVideoIds.has(video.id))
     .flatMap((video) =>
       video.video_files.filter(isMp4).map((file) => ({video, file})),
     )
-    .sort(compareCandidates);
+    .sort((left, right) => {
+      if (match) {
+        const scoreDelta =
+          scoreStockMatch(right.video.url, match.searchQuery, match.sceneText) -
+          scoreStockMatch(left.video.url, match.searchQuery, match.sceneText);
+        if (scoreDelta !== 0) return scoreDelta;
+      }
+      return compareCandidates(left, right);
+    });
   const candidate = candidates[0];
   if (!candidate) return null;
 
