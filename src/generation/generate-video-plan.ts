@@ -20,7 +20,7 @@ export const MIN_RESEARCH_CHARS = 20;
 export function formatPlanInput(topic: string, research?: string): string {
   const trimmedResearch = research?.trim() ?? '';
   if (!trimmedResearch) return `TOPIC:\n${topic}`;
-  return `TOPIC:\n${topic}\n\nRESEARCH BRIEF:\n${trimmedResearch}`;
+  return `TOPIC:\n${topic}\n\nCREATIVE BRIEF:\n${trimmedResearch}`;
 }
 
 export async function generateVideoPlan(

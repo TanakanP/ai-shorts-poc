@@ -260,32 +260,34 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not end with a brand name/i);
   });
 
-  it('tells the model to follow a research brief when one is present', () => {
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/research brief/i);
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/well-supported/i);
+  it('treats the second argument as an optional creative brief', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/creative brief/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/tone/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/optional/i);
   });
 
-  it('asks for exactly 4 educational scenes and a delayed answer', () => {
+  it('asks for claim hooks and escalating four beats', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/exactly 4 educational scenes/i);
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not give the answer in scene 1/i);
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/you/i);
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/logistics/i);
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/visible objects/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not start the hook with why/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/stake/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/twist/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/viralAngle|viral angle/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/searchQueries|search queries/i);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/visualIntent|visual intent/i);
   });
 });
 
 describe('formatPlanInput', () => {
-  it('sends topic and research brief as labeled blocks', () => {
-    expect(formatPlanInput('Why milk is at the back', 'Explain retail layout strategy.')).toContain(
+  it('sends topic and creative brief as labeled blocks', () => {
+    expect(formatPlanInput('Why milk is at the back', 'Tone: sly. Angle: your walk is the product.')).toContain(
       'TOPIC:\nWhy milk is at the back',
     );
-    expect(formatPlanInput('Why milk is at the back', 'Explain retail layout strategy.')).toContain(
-      'RESEARCH BRIEF:\nExplain retail layout strategy.',
+    expect(formatPlanInput('Why milk is at the back', 'Tone: sly. Angle: your walk is the product.')).toContain(
+      'CREATIVE BRIEF:\nTone: sly. Angle: your walk is the product.',
     );
   });
 
-  it('sends only the topic when research is omitted', () => {
+  it('sends only the topic when the brief is omitted', () => {
     expect(formatPlanInput('Why milk is at the back')).toBe('TOPIC:\nWhy milk is at the back');
     expect(formatPlanInput('Why milk is at the back', '   ')).toBe('TOPIC:\nWhy milk is at the back');
   });
