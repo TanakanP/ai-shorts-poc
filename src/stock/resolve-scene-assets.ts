@@ -28,6 +28,7 @@ export async function resolveSceneAssets(
       if (!first) throw new Error('Channel outro requires a first scene clip');
       resolved.push({
         ...scene,
+        selectedSearchQuery: first.selectedSearchQuery,
         sourcePageUrl: first.sourcePageUrl,
         creatorName: first.creatorName,
         creatorUrl: first.creatorUrl,
@@ -36,20 +37,21 @@ export async function resolveSceneAssets(
       continue;
     }
 
+    const query = scene.searchQueries[0] ?? '';
     const requiredSeconds = scene.durationSeconds + (index === 0 ? 0 : transitionSeconds);
-    const match = {searchQuery: scene.searchQuery, sceneText: scene.text};
+    const match = {searchQuery: query, sceneText: scene.text};
     let candidate = selectBestVideo(
-      (await deps.searchVideos(scene.searchQuery, portraitSearch)) ?? [],
+      (await deps.searchVideos(query, portraitSearch)) ?? [],
       requiredSeconds,
       usedVideoIds,
       match,
     );
     const portraitScore = candidate
-      ? scoreStockMatch(candidate.sourcePageUrl, scene.searchQuery, scene.text)
+      ? scoreStockMatch(candidate.sourcePageUrl, query, scene.text)
       : -1;
     if (!candidate || portraitScore === 0) {
       const landscape = selectBestVideo(
-        (await deps.searchVideos(scene.searchQuery, landscapeSearch)) ?? [],
+        (await deps.searchVideos(query, landscapeSearch)) ?? [],
         requiredSeconds,
         usedVideoIds,
         match,
@@ -59,19 +61,20 @@ export async function resolveSceneAssets(
       } else if (landscape) {
         const landscapeScore = scoreStockMatch(
           landscape.sourcePageUrl,
-          scene.searchQuery,
+          query,
           scene.text,
         );
         if (landscapeScore > portraitScore) candidate = landscape;
       }
     }
-    if (!candidate) throw new Error(`No usable video for scene ${scene.id}: ${scene.searchQuery}`);
+    if (!candidate) throw new Error(`No usable video for scene ${scene.id}: ${query}`);
 
     const localVideoPath = join(runDir, `scene-${String(index + 1).padStart(2, '0')}.mp4`);
     await deps.download(candidate.downloadUrl, localVideoPath);
     usedVideoIds.add(candidate.videoId);
     resolved.push({
       ...scene,
+      selectedSearchQuery: query,
       sourcePageUrl: candidate.sourcePageUrl,
       creatorName: candidate.creatorName,
       creatorUrl: candidate.creatorUrl,

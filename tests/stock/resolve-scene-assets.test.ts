@@ -16,11 +16,23 @@ async function createRunDirectory(): Promise<string> {
 }
 
 function scene(id: string, searchQuery = `${id} footage`): VideoScene {
-  return {id, durationSeconds: 6, text: `Watch ${id} happen`, searchQuery};
+  return {
+    id,
+    role: id === 'channel-outro' ? 'outro' : 'hook',
+    durationSeconds: 6,
+    text: `Watch ${id} happen`,
+    visualIntent: `Watch ${id} happen on camera`,
+    searchQueries: [searchQuery, `${id} backup`],
+  };
 }
 
 function plan(scenes: VideoScene[]): VideoPlan {
-  return {topic: 'A test topic', title: 'A valid test title', scenes};
+  return {
+    topic: 'A test topic',
+    title: 'A valid test title',
+    viralAngle: 'A test viral angle for stock matching',
+    scenes,
+  };
 }
 
 function video(downloadUrl: string, overrides: Partial<PexelsVideo> = {}): PexelsVideo {
@@ -64,6 +76,7 @@ describe('resolveSceneAssets', () => {
     await expect(resolveSceneAssets(plan([scene('intro', 'city lights')]), runDirectory, deps)).resolves.toEqual([
       {
         ...scene('intro', 'city lights'),
+        selectedSearchQuery: 'city lights',
         sourcePageUrl: 'https://www.pexels.com/video/city-lights-101/',
         creatorName: 'Test Creator',
         creatorUrl: 'https://www.pexels.com/@test-creator',
@@ -108,9 +121,11 @@ describe('resolveSceneAssets', () => {
       plan([
         {
           id: 'hook',
+          role: 'hook',
           durationSeconds: 6,
           text: 'Why is the milk always at the back?',
-          searchQuery: 'supermarket milk fridge',
+          visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
+          searchQueries: ['supermarket milk fridge', 'grocery dairy aisle'],
         },
       ]),
       runDirectory,
@@ -199,7 +214,14 @@ describe('resolveSceneAssets', () => {
     const resolved = await resolveSceneAssets(
       plan([
         scene('hook', 'milk supermarket'),
-        {id: 'channel-outro', durationSeconds: 4, text: 'Curious Cart. Follow along.', searchQuery: 'milk supermarket'},
+        {
+          id: 'channel-outro',
+          role: 'outro',
+          durationSeconds: 4,
+          text: 'Curious Cart. Follow along.',
+          visualIntent: 'Opening supermarket clip looping for the sign-off',
+          searchQueries: ['milk supermarket', 'grocery dairy aisle'],
+        },
       ]),
       runDirectory,
       deps,

@@ -22,9 +22,12 @@ const video: ResolvedVideo = {
   scenes: [
     {
       id: 'scene-1',
+      role: 'hook',
       durationSeconds: 5,
       text: 'A short test scene',
-      searchQuery: 'test scene',
+      visualIntent: 'A short test supermarket scene',
+      searchQueries: ['test scene', 'local test clip'],
+      selectedSearchQuery: 'test scene',
       sourcePageUrl: 'https://example.com/video',
       creatorName: 'Test Creator',
       creatorUrl: 'https://example.com/creator',

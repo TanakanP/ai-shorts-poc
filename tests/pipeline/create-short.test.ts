@@ -16,12 +16,48 @@ const research = 'Explain supermarket layout and staple placement.';
 const plan: VideoPlan = {
   topic,
   title: 'Why Milk Is Always at the Back',
+  viralAngle: 'The store is using your walk, not hiding the milk.',
   scenes: [
-    {id: 'hook', durationSeconds: 6, text: 'The milk is hiding.', searchQuery: 'milk supermarket'},
-    {id: 'walk', durationSeconds: 6, text: 'You cross the whole store.', searchQuery: 'supermarket aisle'},
-    {id: 'see', durationSeconds: 6, text: 'That exposes more products.', searchQuery: 'grocery shelves'},
-    {id: 'buy', durationSeconds: 6, text: 'Some become impulse buys.', searchQuery: 'shopping cart'},
-    {id: 'fresh', durationSeconds: 6, text: 'Deliveries also stay efficient.', searchQuery: 'grocery delivery'},
+    {
+      id: 'hook',
+      role: 'hook',
+      durationSeconds: 6,
+      text: 'The milk is hiding.',
+      visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
+      searchQueries: ['milk supermarket', 'grocery dairy aisle'],
+    },
+    {
+      id: 'walk',
+      role: 'stake',
+      durationSeconds: 6,
+      text: 'You cross the whole store.',
+      visualIntent: 'Shopper pushing a cart down a long grocery aisle',
+      searchQueries: ['supermarket aisle', 'grocery store walk'],
+    },
+    {
+      id: 'see',
+      role: 'proof',
+      durationSeconds: 6,
+      text: 'That exposes more products.',
+      visualIntent: 'Grocery shelves of snacks and fruit along an aisle',
+      searchQueries: ['grocery shelves', 'supermarket snacks fruit'],
+    },
+    {
+      id: 'buy',
+      role: 'payoff',
+      durationSeconds: 6,
+      text: 'Some become impulse buys.',
+      visualIntent: 'Shopper adding items from an end cap into a cart',
+      searchQueries: ['shopping cart', 'impulse buy grocery'],
+    },
+    {
+      id: 'fresh',
+      role: 'payoff',
+      durationSeconds: 6,
+      text: 'Deliveries also stay efficient.',
+      visualIntent: 'Grocery delivery crates stacked at a loading dock',
+      searchQueries: ['grocery delivery', 'supermarket loading dock'],
+    },
   ],
 };
 
@@ -31,9 +67,11 @@ const planWithOutro: VideoPlan = {
     ...plan.scenes,
     {
       id: 'channel-outro',
+      role: 'outro',
       durationSeconds: 4,
       text: 'Curious Cart. | If that made you look twice, follow along.',
-      searchQuery: 'milk supermarket',
+      visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
+      searchQueries: ['milk supermarket', 'grocery dairy aisle'],
     },
   ],
 };
@@ -59,6 +97,7 @@ const voiceResult: SynthesizeSceneVoicesResult = {
 
 const stockScenes: StockScene[] = voiceResult.timedPlan.scenes.map((scene, index) => ({
   ...scene,
+  selectedSearchQuery: scene.searchQueries[0] ?? '',
   sourcePageUrl: `https://example.com/videos/${index + 1}`,
   creatorName: `Creator ${index + 1}`,
   creatorUrl: `https://example.com/creators/${index + 1}`,

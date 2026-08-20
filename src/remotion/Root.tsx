@@ -1,7 +1,10 @@
 import {Composition, type CalculateMetadataFunction} from 'remotion';
 import videoPlanFixture from '../../tests/fixtures/video-plan.json';
 import type {ResolvedVideo} from '../domain/resolved-video';
+import type {VideoPlan} from '../domain/video-plan';
 import {ShortComposition, type ShortCompositionProps} from './ShortComposition';
+
+const planFixture = videoPlanFixture as VideoPlan;
 
 const FPS = 30;
 const fixtureVideoUrl = new URL('../../tests/fixtures/tiny-video.mp4', import.meta.url).href;
@@ -9,16 +12,17 @@ const fixtureAudioUrl = new URL('../../tests/fixtures/tiny-audio.mp3', import.me
 
 const fixtureVideo: ResolvedVideo = {
   runId: 'fixture-preview',
-  title: videoPlanFixture.title,
+  title: planFixture.title,
   fps: FPS,
   width: 1080,
   height: 1920,
-  scenes: videoPlanFixture.scenes.map((scene, index) => ({
+  scenes: planFixture.scenes.map((scene, index) => ({
     ...scene,
     text:
       index === 3
         ? 'Store layouts guide every trip, placing everyday essentials beyond products you might never see.'
         : scene.text,
+    selectedSearchQuery: scene.searchQueries[0] ?? '',
     sourcePageUrl: 'https://www.pexels.com/',
     creatorName: 'Fixture footage',
     creatorUrl: 'https://www.pexels.com/',

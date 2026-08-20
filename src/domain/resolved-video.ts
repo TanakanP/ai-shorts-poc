@@ -2,6 +2,7 @@ import type {VideoScene} from './video-plan.js';
 import type {VoiceWord} from './voice.js';
 
 export type ResolvedScene = VideoScene & {
+  selectedSearchQuery: string;
   sourcePageUrl: string;
   creatorName: string;
   creatorUrl: string;

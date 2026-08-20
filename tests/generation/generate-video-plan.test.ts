@@ -1,6 +1,6 @@
 import {readFileSync} from 'node:fs';
 import {afterEach, describe, expect, it, vi} from 'vitest';
-import {parseVideoPlan, videoPlanSchema} from '../../src/domain/video-plan';
+import {isGenericQuestionHook, parseVideoPlan, videoPlanSchema} from '../../src/domain/video-plan';
 import {
   createOpenAIStructuredPlanGenerator,
   formatPlanInput,
@@ -69,13 +69,77 @@ describe('videoPlanSchema', () => {
     expect(() => videoPlanSchema.parse(plan)).toThrow();
   });
 
-  it('rejects blank text or searchQuery', () => {
-    for (const field of ['text', 'searchQuery'] as const) {
-      const plan = copyFixture();
-      plan.scenes[0][field] = ' ';
+  it('rejects blank text', () => {
+    const plan = copyFixture();
+    plan.scenes[0].text = ' ';
 
-      expect(() => videoPlanSchema.parse(plan)).toThrow();
-    }
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects a generic question hook', () => {
+    const plan = copyFixture();
+    plan.scenes[0].text = 'Why is milk always at the back?';
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects educational roles in the wrong order', () => {
+    const plan = copyFixture();
+    plan.scenes[0].role = 'payoff';
+    plan.scenes[3].role = 'hook';
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects fewer than two search queries', () => {
+    const plan = copyFixture();
+    plan.scenes[0].searchQueries = ['supermarket milk fridge'];
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects a blank search query array', () => {
+    const plan = copyFixture();
+    plan.scenes[0].searchQueries = [];
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects more than three search queries', () => {
+    const plan = copyFixture();
+    plan.scenes[0].searchQueries = [
+      'supermarket milk fridge',
+      'grocery dairy aisle',
+      'milk refrigerator closeup',
+      'store dairy wall',
+    ];
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects a too-short search query', () => {
+    const plan = copyFixture();
+    plan.scenes[0].searchQueries = ['ab', 'grocery dairy aisle'];
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects duplicate search queries in a scene', () => {
+    const plan = copyFixture();
+    plan.scenes[0].searchQueries = ['supermarket milk fridge', 'supermarket milk fridge'];
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects blank visual intent', () => {
+    const plan = copyFixture();
+    plan.scenes[0].visualIntent = '  ';
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('rejects a missing viralAngle', () => {
+    const plan = copyFixture();
+    delete (plan as {viralAngle?: string}).viralAngle;
+    expect(() => videoPlanSchema.parse(plan)).toThrow();
+  });
+
+  it('treats Why/How/What/Ever wonder openings as generic hooks', () => {
+    expect(isGenericQuestionHook('Why is milk at the back?')).toBe(true);
+    expect(isGenericQuestionHook('Ever wonder why milk hides?')).toBe(true);
+    expect(isGenericQuestionHook('Stores hide the milk on purpose.')).toBe(false);
   });
 
   it('rejects duplicate scene ids', () => {
@@ -100,8 +164,8 @@ describe('videoPlanSchema', () => {
       {...fixture.scenes[0], durationSeconds: 6.5},
       {...fixture.scenes[0], text: 'abc'},
       {...fixture.scenes[0], text: 'x'.repeat(101)},
-      {...fixture.scenes[0], searchQuery: 'x'},
-      {...fixture.scenes[0], searchQuery: 'x'.repeat(81)},
+      {...fixture.scenes[0], searchQueries: ['x', 'grocery dairy aisle']},
+      {...fixture.scenes[0], searchQueries: ['x'.repeat(81), 'grocery dairy aisle']},
     ];
 
     for (const scene of invalidScenes) {

@@ -19,9 +19,12 @@ const video: ResolvedVideo = {
   scenes: [
     {
       id: 'hook',
+      role: 'hook',
       durationSeconds: 4,
       text: 'First scene text',
-      searchQuery: 'first scene',
+      visualIntent: 'First scene supermarket footage',
+      searchQueries: ['first scene', 'opening grocery clip'],
+      selectedSearchQuery: 'first scene',
       sourcePageUrl: 'https://example.com/one',
       creatorName: 'Creator One',
       creatorUrl: 'https://example.com/creators/one',
@@ -32,9 +35,12 @@ const video: ResolvedVideo = {
     },
     {
       id: 'payoff',
+      role: 'payoff',
       durationSeconds: 7,
       text: 'Second scene text',
-      searchQuery: 'second scene',
+      visualIntent: 'Second scene supermarket footage',
+      searchQueries: ['second scene', 'closing grocery clip'],
+      selectedSearchQuery: 'second scene',
       sourcePageUrl: 'https://example.com/two',
       creatorName: 'Creator Two',
       creatorUrl: 'https://example.com/creators/two',

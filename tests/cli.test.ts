@@ -10,18 +10,23 @@ import {VideoDownloadError} from '../src/stock/download-file';
 const runId = '20260813-120000-deadbeef';
 const runDir = `runs/${runId}`;
 const research = 'Explain supermarket layout and staple placement.';
+const cliRoles = ['hook', 'stake', 'proof', 'payoff', 'outro'] as const;
 const plan: VideoPlan = {
   topic: 'Why supermarkets put milk at the back',
   title: 'Why Milk Is Always at the Back',
+  viralAngle: 'The store is using your walk, not hiding the milk.',
   scenes: Array.from({length: 5}, (_, index) => ({
     id: `scene-${index + 1}`,
+    role: cliRoles[index] ?? 'hook',
     durationSeconds: 6,
     text: `Scene ${index + 1} explains the idea.`,
-    searchQuery: `supermarket scene ${index + 1}`,
+    visualIntent: `Supermarket footage for scene ${index + 1}`,
+    searchQueries: [`supermarket scene ${index + 1}`, `grocery scene ${index + 1}`],
   })),
 };
 const resolvedScenes: ResolvedScene[] = plan.scenes.map((scene, index) => ({
   ...scene,
+  selectedSearchQuery: scene.searchQueries[0] ?? '',
   sourcePageUrl: `https://example.test/videos/${index + 1}`,
   creatorName: `Creator ${index + 1}`,
   creatorUrl: `https://example.test/creators/${index + 1}`,

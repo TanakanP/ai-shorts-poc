@@ -16,9 +16,12 @@ const video: ResolvedVideo = {
   scenes: [
     {
       id: 'smoke-scene',
+      role: 'hook',
       durationSeconds: 5,
       text: 'A five-second local smoke render.',
-      searchQuery: 'smoke render fixture',
+      visualIntent: 'A five-second local smoke render.',
+      searchQueries: ['smoke render fixture', 'local test clip'],
+      selectedSearchQuery: 'smoke render fixture',
       sourcePageUrl: 'https://www.pexels.com/',
       creatorName: 'Fixture footage',
       creatorUrl: 'https://www.pexels.com/',

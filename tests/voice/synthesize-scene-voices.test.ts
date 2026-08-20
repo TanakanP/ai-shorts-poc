@@ -7,12 +7,48 @@ import {synthesizeSceneVoices} from '../../src/voice/synthesize-scene-voices';
 const plan: VideoPlan = {
   topic: 'Why supermarkets put milk at the back',
   title: 'Why Milk Is Always at the Back',
+  viralAngle: 'The store is using your walk, not hiding the milk.',
   scenes: [
-    {id: 'hook', durationSeconds: 6, text: 'Ever notice milk is far away?', searchQuery: 'supermarket entrance'},
-    {id: 'walk', durationSeconds: 6, text: 'The back forces a longer walk.', searchQuery: 'supermarket aisle'},
-    {id: 'see', durationSeconds: 6, text: 'That walk shows more products.', searchQuery: 'grocery shelves'},
-    {id: 'buy', durationSeconds: 6, text: 'More products invite extra buys.', searchQuery: 'shopping cart'},
-    {id: 'payoff', durationSeconds: 6, text: 'Placement is convenience and strategy.', searchQuery: 'dairy cooler'},
+    {
+      id: 'hook',
+      role: 'hook',
+      durationSeconds: 6,
+      text: 'Ever notice milk is far away?',
+      visualIntent: 'Shopper walking toward a supermarket entrance',
+      searchQueries: ['supermarket entrance', 'grocery store doors'],
+    },
+    {
+      id: 'walk',
+      role: 'stake',
+      durationSeconds: 6,
+      text: 'The back forces a longer walk.',
+      visualIntent: 'Shopper walking down a long supermarket aisle',
+      searchQueries: ['supermarket aisle', 'grocery aisle walk'],
+    },
+    {
+      id: 'see',
+      role: 'proof',
+      durationSeconds: 6,
+      text: 'That walk shows more products.',
+      visualIntent: 'Grocery shelves of snacks and fruit along an aisle',
+      searchQueries: ['grocery shelves', 'supermarket snacks fruit'],
+    },
+    {
+      id: 'buy',
+      role: 'payoff',
+      durationSeconds: 6,
+      text: 'More products invite extra buys.',
+      visualIntent: 'Shopper adding items from an end cap into a cart',
+      searchQueries: ['shopping cart', 'impulse buy grocery'],
+    },
+    {
+      id: 'payoff',
+      role: 'outro',
+      durationSeconds: 6,
+      text: 'Placement is convenience and strategy.',
+      visualIntent: 'Supermarket dairy milk refrigerators at the back wall',
+      searchQueries: ['dairy cooler', 'grocery milk refrigerator'],
+    },
   ],
 };
 

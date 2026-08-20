@@ -11,9 +11,11 @@ export function attachChannelOutro(plan: VideoPlan, brand: string, signoff: stri
       ...plan.scenes,
       {
         id: 'channel-outro',
+        role: 'outro',
         durationSeconds: 4,
         text: `${name}. | ${line}`,
-        searchQuery: first.searchQuery,
+        visualIntent: first.visualIntent,
+        searchQueries: first.searchQueries,
       },
     ],
   };

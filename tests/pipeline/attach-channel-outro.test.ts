@@ -5,9 +5,24 @@ import type {VideoPlan} from '../../src/domain/video-plan';
 const plan: VideoPlan = {
   topic: 'Why supermarkets put milk at the back',
   title: 'Why Milk Is Always at the Back',
+  viralAngle: 'The store is using your walk, not hiding the milk.',
   scenes: [
-    {id: 'hook', durationSeconds: 6, text: 'The milk is hiding.', searchQuery: 'milk supermarket'},
-    {id: 'payoff', durationSeconds: 6, text: 'Deliveries also stay efficient.', searchQuery: 'grocery delivery'},
+    {
+      id: 'hook',
+      role: 'hook',
+      durationSeconds: 6,
+      text: 'The milk is hiding.',
+      visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
+      searchQueries: ['milk supermarket', 'grocery dairy aisle'],
+    },
+    {
+      id: 'payoff',
+      role: 'payoff',
+      durationSeconds: 6,
+      text: 'Deliveries also stay efficient.',
+      visualIntent: 'Grocery delivery crates stacked at a loading dock',
+      searchQueries: ['grocery delivery', 'supermarket loading dock'],
+    },
   ],
 };
 
@@ -19,9 +34,11 @@ describe('attachChannelOutro', () => {
         ...plan.scenes,
         {
           id: 'channel-outro',
+          role: 'outro',
           durationSeconds: 4,
           text: 'Curious Cart. | If that made you look twice, follow along.',
-          searchQuery: 'milk supermarket',
+          visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
+          searchQueries: ['milk supermarket', 'grocery dairy aisle'],
         },
       ],
     });

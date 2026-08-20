@@ -1,30 +1,39 @@
 {
   "topic": "Why supermarkets put milk at the back",
   "title": "Why Milk Is Always at the Back",
+  "viralAngle": "The store is using your walk, not hiding the milk.",
   "scenes": [
     {
       "id": "hook",
+      "role": "hook",
       "durationSeconds": 6,
-      "text": "Why is milk always so far from the entrance?",
-      "searchQuery": "supermarket entrance milk"
+      "text": "Stores hide the milk on purpose.",
+      "visualIntent": "Shopper walking toward supermarket dairy refrigerators",
+      "searchQueries": ["supermarket milk fridge", "grocery dairy aisle"]
     },
     {
-      "id": "you-reason",
+      "id": "stake",
+      "role": "stake",
       "durationSeconds": 6,
-      "text": "Stores want your whole trip | not just your milk run.",
-      "searchQuery": "shopper walking supermarket aisle"
+      "text": "You came for one carton | your feet still cross the store.",
+      "visualIntent": "Shopper pushing a cart down a long grocery aisle",
+      "searchQueries": ["shopping cart grocery aisle", "supermarket aisle shopper"]
     },
     {
       "id": "proof",
+      "role": "proof",
       "durationSeconds": 6,
       "text": "That walk takes you past snacks, fruit, and deals.",
-      "searchQuery": "supermarket snacks fruit shelves"
+      "visualIntent": "Grocery shelves of snacks and fruit along an aisle",
+      "searchQueries": ["supermarket snacks fruit shelves", "grocery end cap snacks"]
     },
     {
       "id": "payoff",
+      "role": "payoff",
       "durationSeconds": 6,
-      "text": "So the back wall is a longer path | not a mystery.",
-      "searchQuery": "supermarket dairy milk fridge"
+      "text": "Your walk is the product | not a missing fridge.",
+      "visualIntent": "Supermarket dairy milk refrigerators at the back wall",
+      "searchQueries": ["supermarket dairy milk fridge", "grocery milk refrigerator"]
     }
   ]
 }
