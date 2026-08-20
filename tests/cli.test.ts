@@ -146,7 +146,7 @@ describe('runCli', () => {
 
     await expect(harness.run([])).resolves.toBe(1);
 
-    expect(harness.errors).toEqual(['Usage: npm run generate -- "<topic>" ["<research>"]']);
+    expect(harness.errors).toEqual(['Usage: npm run generate -- "<topic>" ["<creative-brief>"]']);
     expect(harness.receivedTopic).toBeUndefined();
   });
 

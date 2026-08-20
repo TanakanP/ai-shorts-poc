@@ -57,7 +57,7 @@ export async function runCli(
   const topic = args[0]?.trim() ?? '';
   const research = args.slice(1).join(' ').trim();
   if (!topic) {
-    io.error('Usage: npm run generate -- "<topic>" ["<research>"]');
+    io.error('Usage: npm run generate -- "<topic>" ["<creative-brief>"]');
     return 1;
   }
 
