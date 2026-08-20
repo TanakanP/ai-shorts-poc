@@ -3,16 +3,65 @@ import type {StockScene} from '../domain/resolved-video';
 import type {VideoPlan} from '../domain/video-plan';
 import type {PexelsVideo, SearchOptions} from './pexels-client';
 import {scoreStockMatch} from './score-stock-match';
-import {selectBestVideo} from './select-video-file';
+import {selectBestVideo, type SelectedVideo} from './select-video-file';
 
 export type ResolveDeps = {
   searchVideos: (query: string, options: SearchOptions) => Promise<PexelsVideo[]>;
   download: (url: string, destination: string) => Promise<void>;
 };
 
+type PickedClip = {
+  candidate: SelectedVideo;
+  selectedSearchQuery: string;
+};
+
 const portraitSearch: SearchOptions = {orientation: 'portrait', perPage: 15};
 const landscapeSearch: SearchOptions = {orientation: 'landscape', perPage: 15};
 const transitionSeconds = 6 / 30;
+
+async function pickClip(
+  scene: VideoPlan['scenes'][number],
+  requiredSeconds: number,
+  usedVideoIds: ReadonlySet<number>,
+  deps: ResolveDeps,
+): Promise<PickedClip> {
+  let fallback: PickedClip | undefined;
+
+  for (const query of scene.searchQueries) {
+    const match = {searchQuery: query, sceneText: scene.text};
+    let candidate = selectBestVideo(
+      (await deps.searchVideos(query, portraitSearch)) ?? [],
+      requiredSeconds,
+      usedVideoIds,
+      match,
+    );
+    const portraitScore = candidate
+      ? scoreStockMatch(candidate.sourcePageUrl, query, scene.text)
+      : -1;
+    if (!candidate || portraitScore === 0) {
+      const landscape = selectBestVideo(
+        (await deps.searchVideos(query, landscapeSearch)) ?? [],
+        requiredSeconds,
+        usedVideoIds,
+        match,
+      );
+      if (!candidate) candidate = landscape;
+      else if (landscape) {
+        const landscapeScore = scoreStockMatch(landscape.sourcePageUrl, query, scene.text);
+        if (landscapeScore > portraitScore) candidate = landscape;
+      }
+    }
+    if (!candidate) continue;
+    const score = scoreStockMatch(candidate.sourcePageUrl, query, scene.text);
+    if (score > 0) return {candidate, selectedSearchQuery: query};
+    fallback ??= {candidate, selectedSearchQuery: query};
+  }
+
+  if (!fallback) {
+    throw new Error(`No usable video for scene ${scene.id}: ${scene.searchQueries.join(' | ')}`);
+  }
+  return fallback;
+}
 
 export async function resolveSceneAssets(
   plan: VideoPlan,
@@ -37,47 +86,18 @@ export async function resolveSceneAssets(
       continue;
     }
 
-    const query = scene.searchQueries[0] ?? '';
     const requiredSeconds = scene.durationSeconds + (index === 0 ? 0 : transitionSeconds);
-    const match = {searchQuery: query, sceneText: scene.text};
-    let candidate = selectBestVideo(
-      (await deps.searchVideos(query, portraitSearch)) ?? [],
-      requiredSeconds,
-      usedVideoIds,
-      match,
-    );
-    const portraitScore = candidate
-      ? scoreStockMatch(candidate.sourcePageUrl, query, scene.text)
-      : -1;
-    if (!candidate || portraitScore === 0) {
-      const landscape = selectBestVideo(
-        (await deps.searchVideos(query, landscapeSearch)) ?? [],
-        requiredSeconds,
-        usedVideoIds,
-        match,
-      );
-      if (!candidate) {
-        candidate = landscape;
-      } else if (landscape) {
-        const landscapeScore = scoreStockMatch(
-          landscape.sourcePageUrl,
-          query,
-          scene.text,
-        );
-        if (landscapeScore > portraitScore) candidate = landscape;
-      }
-    }
-    if (!candidate) throw new Error(`No usable video for scene ${scene.id}: ${query}`);
+    const picked = await pickClip(scene, requiredSeconds, usedVideoIds, deps);
 
     const localVideoPath = join(runDir, `scene-${String(index + 1).padStart(2, '0')}.mp4`);
-    await deps.download(candidate.downloadUrl, localVideoPath);
-    usedVideoIds.add(candidate.videoId);
+    await deps.download(picked.candidate.downloadUrl, localVideoPath);
+    usedVideoIds.add(picked.candidate.videoId);
     resolved.push({
       ...scene,
-      selectedSearchQuery: query,
-      sourcePageUrl: candidate.sourcePageUrl,
-      creatorName: candidate.creatorName,
-      creatorUrl: candidate.creatorUrl,
+      selectedSearchQuery: picked.selectedSearchQuery,
+      sourcePageUrl: picked.candidate.sourcePageUrl,
+      creatorName: picked.candidate.creatorName,
+      creatorUrl: picked.candidate.creatorUrl,
       localVideoPath,
     });
   }

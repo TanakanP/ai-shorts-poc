@@ -132,12 +132,60 @@ describe('resolveSceneAssets', () => {
       deps,
     );
 
+    expect(resolved[0]?.selectedSearchQuery).toBe('supermarket milk fridge');
     expect(resolved[0]?.sourcePageUrl).toBe('https://www.pexels.com/video/supermarket-milk-fridge-602/');
     expect(deps.searchVideos).toHaveBeenCalledTimes(2);
     expect(deps.download).toHaveBeenCalledWith(
       'https://videos.pexels.com/milk.mp4',
       join(runDirectory, 'scene-01.mp4'),
     );
+  });
+
+  it('tries the next search query when the first query only yields a zero-score slug', async () => {
+    const runDirectory = await createRunDirectory();
+    const deps = resolverDeps();
+    deps.searchVideos
+      .mockResolvedValueOnce([
+        video('https://videos.pexels.com/pepper.mp4', {
+          id: 501,
+          url: 'https://www.pexels.com/video/a-man-looking-at-a-yellow-bell-pepper-501/',
+        }),
+      ])
+      .mockResolvedValueOnce([]) // landscape for query 1
+      .mockResolvedValueOnce([
+        video('https://videos.pexels.com/milk.mp4', {
+          id: 602,
+          url: 'https://www.pexels.com/video/supermarket-milk-fridge-602/',
+        }),
+      ]);
+
+    const resolved = await resolveSceneAssets(
+      plan([
+        {
+          id: 'hook',
+          role: 'hook',
+          durationSeconds: 6,
+          text: 'Stores hide the milk on purpose.',
+          visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
+          searchQueries: ['person walking supermarket aisle', 'supermarket milk fridge'],
+        },
+      ]),
+      runDirectory,
+      deps,
+    );
+
+    expect(resolved[0]?.selectedSearchQuery).toBe('supermarket milk fridge');
+    expect(resolved[0]?.sourcePageUrl).toBe(
+      'https://www.pexels.com/video/supermarket-milk-fridge-602/',
+    );
+    expect(deps.searchVideos).toHaveBeenNthCalledWith(1, 'person walking supermarket aisle', {
+      orientation: 'portrait',
+      perPage: 15,
+    });
+    expect(deps.searchVideos).toHaveBeenNthCalledWith(3, 'supermarket milk fridge', {
+      orientation: 'portrait',
+      perPage: 15,
+    });
   });
 
   it('retries exactly once with landscape when portrait has no usable result', async () => {
@@ -166,7 +214,7 @@ describe('resolveSceneAssets', () => {
     deps.searchVideos.mockResolvedValue([]);
 
     await expect(resolveSceneAssets(plan([scene('missing', 'empty beach')]), await createRunDirectory(), deps))
-      .rejects.toThrow(/missing.*empty beach/i);
+      .rejects.toThrow(/missing: empty beach \| missing backup/);
     expect(deps.download).not.toHaveBeenCalled();
   });
 
@@ -233,6 +281,7 @@ describe('resolveSceneAssets', () => {
       sourcePageUrl: 'https://www.pexels.com/video/milk-supermarket-101/',
       creatorName: 'Test Creator',
     });
+    expect(resolved[1]?.selectedSearchQuery).toBe(resolved[0]?.selectedSearchQuery);
     expect(deps.searchVideos).toHaveBeenCalledTimes(1);
     expect(deps.download).toHaveBeenCalledTimes(1);
   });
@@ -258,13 +307,15 @@ describe('resolveSceneAssets', () => {
     deps.searchVideos
       .mockResolvedValueOnce([video('https://videos.pexels.com/first.mp4')])
       .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([])
       .mockResolvedValueOnce([]);
 
     await expect(resolveSceneAssets(plan([scene('first'), scene('broken'), scene('later')]), runDirectory, deps))
       .rejects.toThrow(/broken/);
 
     expect(deps.download).toHaveBeenCalledTimes(1);
-    expect(deps.searchVideos).toHaveBeenCalledTimes(3);
+    expect(deps.searchVideos).toHaveBeenCalledTimes(5);
     expect(deps.searchVideos).not.toHaveBeenCalledWith('later footage', expect.anything());
   });
 
