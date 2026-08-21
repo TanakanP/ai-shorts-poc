@@ -28,6 +28,14 @@
       "searchQueries": ["supermarket snacks fruit shelves", "grocery end cap snacks"]
     },
     {
+      "id": "twist",
+      "role": "twist",
+      "durationSeconds": 6,
+      "text": "That extra grab is the point | not an accident.",
+      "visualIntent": "Shopper adding a snack to the cart in a grocery aisle",
+      "searchQueries": ["shopper adding snacks grocery cart", "impulse buy supermarket"]
+    },
+    {
       "id": "payoff",
       "role": "payoff",
       "durationSeconds": 6,

@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {stripSpeechTags} from '../captions/speech-tags';
 
-export const EDUCATIONAL_ROLES = ['hook', 'stake', 'proof', 'payoff'] as const;
+export const EDUCATIONAL_ROLES = ['hook', 'stake', 'proof', 'twist', 'payoff'] as const;
 export type EducationalRole = (typeof EDUCATIONAL_ROLES)[number];
 export type BeatRole = EducationalRole | 'outro';
 
@@ -60,15 +60,15 @@ export const videoPlanSchema = z
     topic: z.string().min(3).max(200),
     title: z.string().min(5).max(90),
     viralAngle: z.string().trim().min(10).max(180),
-    scenes: z.array(videoSceneSchema).min(4).max(4),
+    scenes: z.array(videoSceneSchema).min(5).max(5),
   })
   .superRefine((plan, context) => {
     const totalDuration = plan.scenes.reduce((total, scene) => total + scene.durationSeconds, 0);
-    if (totalDuration < 16 || totalDuration > 32) {
+    if (totalDuration < 20 || totalDuration > 40) {
       context.addIssue({
         code: 'custom',
         path: ['scenes'],
-        message: 'Total duration must be between 16 and 32 seconds',
+        message: 'Total duration must be between 20 and 40 seconds',
       });
     }
 
@@ -85,7 +85,7 @@ export const videoPlanSchema = z
       context.addIssue({
         code: 'custom',
         path: ['scenes'],
-        message: 'Educational roles must be hook, stake, proof, payoff',
+        message: 'Educational roles must be hook, stake, proof, twist, payoff',
       });
     }
 

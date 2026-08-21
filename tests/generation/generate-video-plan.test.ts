@@ -16,36 +16,36 @@ const fixture = JSON.parse(
 const copyFixture = (): VideoPlan => structuredClone(fixture);
 
 describe('videoPlanSchema', () => {
-  it('accepts a 4-scene 24-second plan', () => {
+  it('accepts a 5-scene 30-second plan', () => {
     expect(parseVideoPlan(copyFixture())).toEqual(fixture);
   });
 
-  it('rejects fewer than 4 scenes', () => {
+  it('rejects fewer than 5 scenes', () => {
     const plan = copyFixture();
-    plan.scenes = plan.scenes.slice(0, 3).map((scene) => ({...scene, durationSeconds: 8}));
+    plan.scenes = plan.scenes.slice(0, 4).map((scene) => ({...scene, durationSeconds: 8}));
 
     expect(() => videoPlanSchema.parse(plan)).toThrow();
   });
 
-  it('rejects more than 4 scenes', () => {
+  it('rejects more than 5 scenes', () => {
     const plan = copyFixture();
     plan.scenes.push({...plan.scenes[0], id: 'extra-scene'});
 
     expect(() => videoPlanSchema.parse(plan)).toThrow();
   });
 
-  it('accepts a 16-second four-scene plan', () => {
+  it('accepts a 20-second five-scene plan', () => {
     const plan = copyFixture();
     plan.scenes = plan.scenes.map((scene) => ({...scene, durationSeconds: 4}));
 
-    expect(parseVideoPlan(plan).scenes).toHaveLength(4);
+    expect(parseVideoPlan(plan).scenes).toHaveLength(5);
   });
 
-  it('accepts a 32-second four-scene plan', () => {
+  it('accepts a 40-second five-scene plan', () => {
     const plan = copyFixture();
     plan.scenes = plan.scenes.map((scene) => ({...scene, durationSeconds: 8}));
 
-    expect(parseVideoPlan(plan).scenes).toHaveLength(4);
+    expect(parseVideoPlan(plan).scenes).toHaveLength(5);
   });
 
   it('accepts caption bars in scene text', () => {
@@ -85,7 +85,7 @@ describe('videoPlanSchema', () => {
   it('rejects educational roles in the wrong order', () => {
     const plan = copyFixture();
     plan.scenes[0].role = 'payoff';
-    plan.scenes[3].role = 'hook';
+    plan.scenes[4].role = 'hook';
     expect(() => videoPlanSchema.parse(plan)).toThrow();
   });
 
@@ -272,8 +272,8 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).not.toMatch(/do not include speech tags/i);
   });
 
-  it('asks for claim hooks and escalating four beats', () => {
-    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/exactly 4 educational scenes/i);
+  it('asks for claim hooks and escalating five beats', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/exactly 5 educational scenes/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/do not start the hook with why/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/stake/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/twist/i);

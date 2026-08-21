@@ -1,6 +1,6 @@
 # Project Instructions
 
-This project implements voiced AI Shorts (v1.1): punchy 4-beat plans from a creative brief, karaoke captions, unique stock from ordered Pexels queries, a channel sign-off, and a local music bed.
+This project implements voiced AI Shorts (v1.1): punchy 5-beat plans from a creative brief, karaoke captions, unique stock from ordered Pexels queries, a channel sign-off, and a local music bed.
 
 Primary implementation plan:
 docs/superpowers/plans/2026-08-20-v1-1-creative-brief-and-stock.md

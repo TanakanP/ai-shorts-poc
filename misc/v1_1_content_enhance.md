@@ -50,7 +50,7 @@ npm run generate -- "Why Supermarkets Put Milk at the Back" "Tone: sly, like a f
 ## After each run, check `plan.json`
 
 - Hook is a **claim** (not “Why is milk…”, “Ever wonder…”).
-- Four educational beats **escalate** (hook → you/stake → proof → twist/payoff). Nothing is a paraphrase of the line before.
+- Five educational beats **escalate** (hook → stake → proof → twist → payoff). Nothing is a paraphrase of the line before.
 - Spoken lines still sound like a person, not a headline telegram.
 - `searchQueries` look like **filmable things** for that line, specific first.
 - Channel outro is still last and separate.
