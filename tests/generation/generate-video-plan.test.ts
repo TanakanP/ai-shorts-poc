@@ -163,7 +163,7 @@ describe('videoPlanSchema', () => {
       {...fixture.scenes[0], durationSeconds: 9},
       {...fixture.scenes[0], durationSeconds: 6.5},
       {...fixture.scenes[0], text: 'abc'},
-      {...fixture.scenes[0], text: 'x'.repeat(101)},
+      {...fixture.scenes[0], text: 'x'.repeat(161)},
       {...fixture.scenes[0], searchQueries: ['x', 'grocery dairy aisle']},
       {...fixture.scenes[0], searchQueries: ['x'.repeat(81), 'grocery dairy aisle']},
     ];
@@ -264,6 +264,12 @@ describe('VIDEO_PLAN_SYSTEM_PROMPT', () => {
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/creative brief/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/tone/i);
     expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/optional/i);
+  });
+
+  it('allows a few xAI speech tags for delivery', () => {
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/\[pause\]/);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).toMatch(/<emphasis>/);
+    expect(VIDEO_PLAN_SYSTEM_PROMPT).not.toMatch(/do not include speech tags/i);
   });
 
   it('asks for claim hooks and escalating four beats', () => {

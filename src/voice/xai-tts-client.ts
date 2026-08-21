@@ -14,6 +14,8 @@ export type SpeechSynthesizer = (args: {
   voiceId: string;
 }) => Promise<SynthesizeSpeechResult>;
 
+export const TTS_SPEECH_SPEED = 1.2;
+
 const ttsResponseSchema = z.object({
   audio: z.string().min(1),
   duration: z.number().positive(),
@@ -42,6 +44,7 @@ export function createXaiSpeechSynthesizer(
           language: 'en',
           output_format: {codec: 'mp3', sample_rate: 44100, bit_rate: 192000},
           with_timestamps: true,
+          speed: TTS_SPEECH_SPEED,
         }),
       });
     } catch (cause) {

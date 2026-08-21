@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {stripSpeechTags} from '../captions/speech-tags';
 
 export const EDUCATIONAL_ROLES = ['hook', 'stake', 'proof', 'payoff'] as const;
 export type EducationalRole = (typeof EDUCATIONAL_ROLES)[number];
@@ -21,12 +22,12 @@ export type VideoPlan = {
 };
 
 export function isGenericQuestionHook(text: string): boolean {
-  const opening = text.split('|')[0]?.trim() ?? '';
+  const opening = stripSpeechTags(text.split('|')[0] ?? '');
   return /^(why|how|what|ever\s+wonder)\b/i.test(opening);
 }
 
 const isValidCaptionText = (text: string): boolean => {
-  const parts = text.split('|').map((part) => part.trim());
+  const parts = text.split('|').map((part) => stripSpeechTags(part));
   if (parts.some((part) => part.length === 0)) return false;
   if (parts.length > 3) return false;
   if (parts.some((part) => part.length < 4)) return false;
@@ -40,7 +41,7 @@ const videoSceneSchema = z.object({
   text: z
     .string()
     .min(4)
-    .max(100)
+    .max(160)
     .refine((text) => isValidCaptionText(text), {
       message: 'Scene text caption bars must split into 1-3 non-empty clauses',
     }),

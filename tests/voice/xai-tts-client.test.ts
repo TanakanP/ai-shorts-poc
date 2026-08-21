@@ -41,6 +41,7 @@ describe('createXaiSpeechSynthesizer', () => {
         language: 'en',
         output_format: {codec: 'mp3', sample_rate: 44100, bit_rate: 192000},
         with_timestamps: true,
+        speed: 1.2,
       }),
     });
   });

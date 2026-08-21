@@ -10,7 +10,7 @@ Use everyday words. Do not say logistics, cold-chain, merchandising, refrigerate
 Each scene.text is the exact line a narrator will speak. Insert | between on-screen clauses, at most twice. Each side must be a complete thought. Short lines may omit |. Do not speak the bar. The current word is highlighted.
 Each scene lasts 4–8 seconds as a writing target; keep each line speakable in that window.
 Each scene text is one short thought readable on a phone and natural when spoken aloud.
-Do not include speech tags, stage directions, or SSML.
+The hook may use an exclamation. You may add xAI speech tags for delivery only: [pause], [laugh], <emphasis>, <fast>, or <loud>. Do not speak the tag names. Do not use other tags, SSML, or stage directions.
 Every scene needs visualIntent (the exact shot) and searchQueries: 2–3 ordered Pexels queries. Query 1 is the most specific visible objects from THAT line, e.g. "supermarket milk fridge". Queries 2–3 are broader but still on-topic. Never abstract ideas like "consumer psychology".
 Avoid unverifiable statistics and sensational claims.
 Return only data matching the required schema.`;

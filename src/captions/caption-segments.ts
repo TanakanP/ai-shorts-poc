@@ -1,5 +1,6 @@
 import type {VoiceWord} from '../domain/voice';
 import {activeCaptionClause} from './caption-clauses';
+import {captionWords, stripSpeechTags} from './speech-tags';
 
 export const CHANNEL_OUTRO_SCENE_ID = 'channel-outro';
 
@@ -66,7 +67,9 @@ export function liveCaptionLines(
   scene: {id: string; text: string; words: readonly VoiceWord[]},
   timeMs: number,
 ): VoiceWord[][] {
-  const chunks = alignCaptionSegments(parseCaptionSegments(scene.text), scene.words);
+  const words = captionWords(scene.words);
+  const segments = parseCaptionSegments(scene.text).map(stripSpeechTags).filter(Boolean);
+  const chunks = alignCaptionSegments(segments, words);
   if (scene.id === CHANNEL_OUTRO_SCENE_ID) return chunks;
   const live = activeCaptionClause(chunks, timeMs);
   return live.length === 0 ? [] : [live];

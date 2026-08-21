@@ -24,6 +24,12 @@ describe('spokenSceneText', () => {
   it('leaves a line without bars unchanged', () => {
     expect(spokenSceneText('Milk is a staple.')).toBe('Milk is a staple.');
   });
+
+  it('keeps xAI speech tags for TTS after stripping caption bars', () => {
+    expect(
+      spokenSceneText('<emphasis>Stores hide the milk</emphasis> | [pause] on purpose!'),
+    ).toBe('<emphasis>Stores hide the milk</emphasis> [pause] on purpose!');
+  });
 });
 
 describe('parseCaptionSegments', () => {
@@ -93,6 +99,20 @@ describe('liveCaptionLines', () => {
       ['Curious', 'Cart.'],
       ['Follow', 'along.'],
     ]);
+  });
+
+  it('hides speech tags from karaoke lines', () => {
+    const words = timed(['<emphasis>Stores', 'hide', '[pause]', 'the', 'milk</emphasis>']);
+    expect(
+      liveCaptionLines(
+        {
+          id: 'hook',
+          text: '<emphasis>Stores hide the milk</emphasis> [pause]',
+          words,
+        },
+        200,
+      ).map((line) => line.map((word) => word.text)),
+    ).toEqual([['Stores', 'hide', 'the', 'milk']]);
   });
 
   it('still shows only the current clause on a normal scene', () => {
