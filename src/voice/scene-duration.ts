@@ -1,5 +1,5 @@
 export const VOICE_TAIL_PAD_SECONDS = 0.3;
-export const MIN_AUDIO_SECONDS = 2.5;
+export const MIN_AUDIO_SECONDS = 1.5;
 export const MAX_AUDIO_SECONDS = 12;
 export const MIN_TOTAL_SECONDS = 15;
 export const MAX_TOTAL_SECONDS = 60;

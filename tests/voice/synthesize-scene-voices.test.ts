@@ -154,14 +154,14 @@ describe('synthesizeSceneVoices', () => {
       })
       .mockResolvedValueOnce({
         audio: Buffer.from('short'),
-        durationSeconds: 2.4,
+        durationSeconds: 1.4,
         words: [{text: 'The', startMs: 0, endMs: 200}],
       });
     const writeAudioFile = vi.fn(async (_path: string, _bytes: Buffer) => undefined);
 
     await expect(
       synthesizeSceneVoices(plan, '/tmp/run', 'eve', {synthesize, writeAudioFile}),
-    ).rejects.toThrow(/2\.5/);
+    ).rejects.toThrow(/1\.5/);
     expect(synthesize).toHaveBeenCalledTimes(2);
     expect(writeAudioFile).toHaveBeenCalledTimes(1);
   });

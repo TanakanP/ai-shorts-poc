@@ -10,8 +10,12 @@ describe('sceneDurationFromAudio', () => {
     expect(sceneDurationFromAudio(6)).toBe(6 + VOICE_TAIL_PAD_SECONDS);
   });
 
-  it('rejects audio shorter than 2.5s', () => {
-    expect(() => sceneDurationFromAudio(2.49)).toThrow(/2\.5/);
+  it('accepts a punchy 1.2x line just under 2.5s', () => {
+    expect(sceneDurationFromAudio(2.2)).toBe(2.2 + VOICE_TAIL_PAD_SECONDS);
+  });
+
+  it('rejects audio shorter than 1.5s', () => {
+    expect(() => sceneDurationFromAudio(1.49)).toThrow(/1\.5/);
   });
 
   it('rejects audio longer than 12s', () => {
