@@ -50,4 +50,9 @@ describe('attachChannelOutro', () => {
     expect(next.scenes).toHaveLength(3);
     expect(next.scenes.at(-1)?.id).toBe('channel-outro');
   });
+
+  it('keeps a question mark on the brand line', () => {
+    const next = attachChannelOutro(plan, 'Tell Me Whyyyyyyyy?', 'Like and subscribe for more.');
+    expect(next.scenes.at(-1)?.text).toBe('Tell Me Whyyyyyyyy? | Like and subscribe for more.');
+  });
 });

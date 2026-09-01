@@ -3,7 +3,8 @@ import type {VideoPlan} from '../domain/video-plan';
 export function attachChannelOutro(plan: VideoPlan, brand: string, signoff: string): VideoPlan {
   const first = plan.scenes[0];
   if (!first) return plan;
-  const name = brand.trim().replace(/[.!?]+$/u, '');
+  const name = brand.trim();
+  const spokenName = /[.!?]$/u.test(name) ? name : `${name}.`;
   const line = signoff.trim();
   return {
     ...plan,
@@ -13,7 +14,7 @@ export function attachChannelOutro(plan: VideoPlan, brand: string, signoff: stri
         id: 'channel-outro',
         role: 'outro',
         durationSeconds: 4,
-        text: `${name}. | ${line}`,
+        text: `${spokenName} | ${line}`,
         visualIntent: first.visualIntent,
         searchQueries: first.searchQueries,
       },
