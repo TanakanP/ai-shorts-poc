@@ -110,7 +110,7 @@ export function createOpenAIStructuredPlanGenerator(
   return async ({system, input}) => {
     try {
       const response = await client.responses.parse({
-        model: 'gpt-5.5',
+        model: 'gpt-5.6',
         instructions: system,
         input,
         text: {format: zodTextFormat(schema, schemaName)},
