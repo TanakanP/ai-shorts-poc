@@ -326,6 +326,27 @@ describe('V3 story validation', () => {
     expect(() => parseStoryBeats(beats)).toThrow();
   });
 
+  it('accepts a 26 second story', () => {
+    const beats = validBeats();
+    const durations = [4, 5, 5, 6, 6];
+    for (const [index, duration] of durations.entries()) {
+      beats[index]!.durationSeconds = duration;
+    }
+
+    expect(parseStoryBeats(beats).reduce((total, beat) => total + beat.durationSeconds, 0)).toBe(26);
+  });
+
+  it('rejects a 28 second story so story plus outro stays at most 30 seconds', () => {
+    const beats = validBeats();
+    const durations = [4, 6, 6, 6, 6];
+    for (const [index, duration] of durations.entries()) {
+      beats[index]!.durationSeconds = duration;
+    }
+
+    expect(beats.reduce((total, beat) => total + beat.durationSeconds, 0)).toBe(28);
+    expect(() => parseStoryBeats(beats)).toThrow();
+  });
+
   it('requires curiosityTarget on hook', () => {
     const missing = validBeats();
     delete (missing[0] as {curiosityTarget?: string}).curiosityTarget;

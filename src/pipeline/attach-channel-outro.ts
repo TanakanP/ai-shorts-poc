@@ -1,4 +1,4 @@
-import type {VideoPlan} from '../domain/video-plan';
+import {CHANNEL_OUTRO_DURATION_SECONDS, type VideoPlan} from '../domain/video-plan';
 
 export function attachChannelOutro(plan: VideoPlan, brand: string, signoff: string): VideoPlan {
   const first = plan.scenes[0];
@@ -13,7 +13,7 @@ export function attachChannelOutro(plan: VideoPlan, brand: string, signoff: stri
       {
         id: 'channel-outro',
         role: 'outro',
-        durationSeconds: 4,
+        durationSeconds: CHANNEL_OUTRO_DURATION_SECONDS,
         text: `${spokenName} | ${line}`,
         visualIntent: first.visualIntent,
         searchQueries: first.searchQueries,

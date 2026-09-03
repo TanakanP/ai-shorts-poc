@@ -100,6 +100,37 @@ describe('synthesizeSceneVoices', () => {
     });
   });
 
+  it('uses spokenText as the TTS source when it differs from text', async () => {
+    const voiced: VideoPlan = {
+      ...plan,
+      scenes: plan.scenes.map((scene, index) =>
+        index === 0
+          ? {
+              ...scene,
+              text: 'FALLBACK TEXT THAT SHOULD NOT BE SPOKEN',
+              spokenText: 'A runway can change its number without moving.',
+              displayText: 'SAME RUNWAY. NEW NUMBER.',
+            }
+          : scene,
+      ),
+    };
+    const synthesize = vi.fn(async ({text}: {text: string}) => ({
+      audio: Buffer.from(text),
+      durationSeconds: 5.2,
+      words: [{text: 'A', startMs: 0, endMs: 400}],
+    }));
+
+    await synthesizeSceneVoices(voiced, '/tmp/run', 'eve', {
+      synthesize,
+      writeAudioFile: async () => undefined,
+    });
+
+    expect(synthesize.mock.calls[0]?.[0]).toEqual({
+      text: 'A runway can change its number without moving.',
+      voiceId: 'eve',
+    });
+  });
+
   it('sends spoken text without caption bars to TTS', async () => {
     const piped: VideoPlan = {
       ...plan,

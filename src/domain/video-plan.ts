@@ -28,6 +28,19 @@ export type VideoPlan = {
   scenes: VideoScene[];
 };
 
+export const CHANNEL_OUTRO_DURATION_SECONDS = 4;
+export const MIN_STORY_DURATION_SECONDS = 20;
+export const MAX_STORY_DURATION_SECONDS = 28;
+export const MAX_FINAL_DURATION_SECONDS = 30;
+
+export function maxStoryDurationSeconds(outroDurationSeconds: number): number {
+  return Math.min(MAX_STORY_DURATION_SECONDS, MAX_FINAL_DURATION_SECONDS - outroDurationSeconds);
+}
+
+export function narrationSource(scene: Pick<VideoScene, 'text' | 'spokenText'>): string {
+  return scene.spokenText ?? scene.text;
+}
+
 export function isGenericQuestionHook(text: string): boolean {
   const opening = stripSpeechTags(text.split('|')[0] ?? '');
   return /^(why|how|what|ever\s+wonder)\b/i.test(opening);
@@ -382,11 +395,12 @@ export const storyBeatsSchema = z
     }
 
     const totalDuration = beats.reduce((total, beat) => total + beat.durationSeconds, 0);
-    if (totalDuration < 20 || totalDuration > 28) {
+    const maxStoryDuration = maxStoryDurationSeconds(CHANNEL_OUTRO_DURATION_SECONDS);
+    if (totalDuration < MIN_STORY_DURATION_SECONDS || totalDuration > maxStoryDuration) {
       context.addIssue({
         code: 'custom',
         path: ['durationSeconds'],
-        message: 'Total duration must be between 20 and 28 seconds',
+        message: `Total duration must be between ${MIN_STORY_DURATION_SECONDS} and ${maxStoryDuration} seconds`,
       });
     }
 
