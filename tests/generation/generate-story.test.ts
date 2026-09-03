@@ -206,6 +206,30 @@ describe('generateStory', () => {
     expect(STORY_SYSTEM_PROMPT).toMatch(/every beat adds new information/i);
   });
 
+  it('keeps at most two emphasis words that appear in displayText', async () => {
+    const noisy = validBeats().map((beat) => ({
+      ...beat,
+      emphasisWords: ['MISSING', beat.displayText.split(/\s+/)[0] ?? 'WORD', 'ALSO-MISSING', 'EXTRA'],
+    }));
+    const generateStructured = vi.fn().mockResolvedValue(noisy);
+    const beats = await generateStory(
+      {topic, creativeBrief, contentPattern, selectedHook: hookA},
+      {generateStructured},
+    );
+
+    for (const beat of beats) {
+      expect(beat.emphasisWords.length).toBeLessThanOrEqual(2);
+      for (const word of beat.emphasisWords) {
+        expect(beat.displayText.toLowerCase()).toContain(word.toLowerCase());
+      }
+    }
+  });
+
+  it('limits emphasisWords to two tokens from displayText', () => {
+    expect(STORY_SYSTEM_PROMPT).toMatch(/emphasisWords/);
+    expect(STORY_SYSTEM_PROMPT).toMatch(/0–2|0-2|at most two/i);
+  });
+
   it('requires spokenText and displayText separately', () => {
     expect(STORY_SYSTEM_PROMPT).toMatch(/spokenText/);
     expect(STORY_SYSTEM_PROMPT).toMatch(/displayText/);

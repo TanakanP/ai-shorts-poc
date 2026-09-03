@@ -251,6 +251,24 @@ function displayContainsEmphasisWord(displayText: string, word: string): boolean
   return target.length > 0 && display.includes(target);
 }
 
+export function sanitizeEmphasisWords(displayText: string, emphasisWords: readonly unknown[]): string[] {
+  const kept: string[] = [];
+  const seen = new Set<string>();
+
+  for (const word of emphasisWords) {
+    if (typeof word !== 'string') continue;
+    const trimmed = word.trim();
+    if (!trimmed || !displayContainsEmphasisWord(displayText, trimmed)) continue;
+    const key = normalizedComparable(trimmed);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    kept.push(trimmed);
+    if (kept.length === 2) break;
+  }
+
+  return kept;
+}
+
 function hasSubscribeOrFollowCta(text: string): boolean {
   return (
     /\bsubscribe\b/iu.test(text) ||
@@ -516,7 +534,7 @@ const storyBeatOpenAiSchema = z.object({
   durationSeconds: z.number(),
   spokenText: z.string().min(1),
   displayText: z.string().min(1),
-  emphasisWords: z.array(z.string()),
+  emphasisWords: z.array(z.string()).max(2),
   beatPurpose: z.string().min(1),
   newInformation: z.string().min(1),
   curiosityTarget: z.string().nullable(),

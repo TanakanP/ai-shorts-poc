@@ -84,6 +84,7 @@ COPY RULES
 - spokenText and displayText are separate fields.
 - spokenText sounds natural aloud. Write natural narration, not five headline fragments.
 - displayText is concise visual copy, maximum 9 words.
+- emphasisWords is 0–2 tokens copied from displayText. Do not invent extra words.
 - every beat adds new information.
 - every beat includes beatPurpose and newInformation metadata.
 - hook and curiosity-reset require curiosityTarget.

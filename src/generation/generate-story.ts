@@ -1,4 +1,4 @@
-import {parseStoryBeats} from '../domain/video-plan';
+import {parseStoryBeats, sanitizeEmphasisWords} from '../domain/video-plan';
 import type {ContentPattern, HookConcept, StoryBeat} from '../domain/video-plan';
 import {publicFailureDetail} from '../domain/provider-error';
 import {STORY_SYSTEM_PROMPT} from './prompt';
@@ -22,7 +22,7 @@ function applySelectedHook(raw: unknown, selectedHook: HookConcept): unknown {
   if (!Array.isArray(raw)) return raw;
   return raw.map((beat) => {
     if (!beat || typeof beat !== 'object' || (beat as {role?: string}).role !== 'hook') return beat;
-    return {
+    const next = {
       ...beat,
       spokenText: selectedHook.spokenHook,
       displayText: selectedHook.displayText,
@@ -30,6 +30,31 @@ function applySelectedHook(raw: unknown, selectedHook: HookConcept): unknown {
       requiredVisualObjects: selectedHook.requiredVisualObjects,
       searchQueries: selectedHook.searchQueries,
       curiosityTarget: selectedHook.curiosityTarget,
+    };
+    return {
+      ...next,
+      emphasisWords: sanitizeEmphasisWords(
+        selectedHook.displayText,
+        Array.isArray((beat as {emphasisWords?: unknown}).emphasisWords)
+          ? (beat as {emphasisWords: unknown[]}).emphasisWords
+          : [],
+      ),
+    };
+  });
+}
+
+function sanitizeStoryBeats(raw: unknown): unknown {
+  if (!Array.isArray(raw)) return raw;
+  return raw.map((beat) => {
+    if (!beat || typeof beat !== 'object') return beat;
+    const record = beat as {displayText?: unknown; emphasisWords?: unknown};
+    const displayText = typeof record.displayText === 'string' ? record.displayText : '';
+    return {
+      ...record,
+      emphasisWords: sanitizeEmphasisWords(
+        displayText,
+        Array.isArray(record.emphasisWords) ? record.emphasisWords : [],
+      ),
     };
   });
 }
@@ -66,7 +91,7 @@ export async function generateStory(
     input: providerInput,
   });
   try {
-    const beats = parseStoryBeats(applySelectedHook(raw, input.selectedHook));
+    const beats = parseStoryBeats(sanitizeStoryBeats(applySelectedHook(raw, input.selectedHook)));
     assertSelectedHookContract(beats, input.selectedHook);
     return beats;
   } catch (cause) {
