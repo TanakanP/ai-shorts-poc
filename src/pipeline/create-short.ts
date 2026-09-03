@@ -1,12 +1,79 @@
 import {join} from 'node:path';
-import type {ResolvedVideo, StockScene} from '../domain/resolved-video';
+import {CHANNEL_OUTRO_SCENE_ID} from '../captions/caption-segments';
+import type {ResolvedScene, ResolvedVideo, StockScene} from '../domain/resolved-video';
 import {videoPlanFromV3, type VideoPlan, type VideoPlanV3} from '../domain/video-plan';
 import type {ProviderDiagnostic} from '../domain/provider-error';
+import {totalHookScore} from '../generation/select-hook';
 import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices';
 import {attachChannelOutro} from './attach-channel-outro';
 import {bookendLastScene} from './bookend-last-scene';
 
+const HOOK_SELECTION_RULE = 'total>clarity>visualizability>stopScroll>id';
+
+const countWords = (text: string): number => text.trim().split(/\s+/u).filter(Boolean).length;
+
+export function serializeVideoPlanV3(plan: VideoPlanV3) {
+  return {
+    ...plan,
+    hookCandidates: plan.hookCandidates.map((candidate) => ({
+      ...candidate,
+      totalScore: totalHookScore(candidate.scores),
+    })),
+    selection: {
+      selectedHookId: plan.selectedHookId,
+      rule: HOOK_SELECTION_RULE,
+    },
+  };
+}
+
 type RunStage = 'generation' | 'voice' | 'stock-resolution' | 'render';
+
+function storyScenes<T extends {id: string}>(scenes: T[]): T[] {
+  return scenes.filter((scene) => scene.id !== CHANNEL_OUTRO_SCENE_ID);
+}
+
+export function buildRunSummary(args: {
+  runId: string;
+  topic: string;
+  research: string;
+  channel: {brand: string; signoff: string};
+  plan: VideoPlanV3;
+  timedPlan: VideoPlan;
+  resolvedScenes: ResolvedScene[];
+  status: 'rendered' | 'failed';
+  startedAt: string;
+  finishedAt: string;
+  attribution?: Array<{sourcePageUrl: string; creatorName: string; creatorUrl: string}>;
+  error?: {stage: RunStage; message: string} & Partial<ProviderDiagnostic>;
+}) {
+  const selectedHook = args.plan.hookCandidates.find(
+    (candidate) => candidate.id === args.plan.selectedHookId,
+  );
+  const storyBeats = args.plan.beats;
+  const storyResolved = storyScenes(args.resolvedScenes);
+
+  return {
+    runId: args.runId,
+    formatVersion: 'retention-v3' as const,
+    topic: args.topic,
+    research: args.research,
+    channel: args.channel,
+    contentPattern: args.plan.contentPattern,
+    selectedHookId: args.plan.selectedHookId,
+    selectedHookTotalScore: selectedHook ? totalHookScore(selectedHook.scores) : 0,
+    storyDurationSeconds: storyBeats.reduce((sum, beat) => sum + beat.durationSeconds, 0),
+    finalDurationSeconds: args.timedPlan.scenes.reduce((sum, scene) => sum + scene.durationSeconds, 0),
+    beatCount: storyBeats.length,
+    spokenWordCounts: storyBeats.map((beat) => countWords(beat.spokenText)),
+    displayWordCounts: storyBeats.map((beat) => countWords(beat.displayText)),
+    selectedSearchQueries: storyResolved.map((scene) => scene.selectedSearchQuery),
+    status: args.status,
+    startedAt: args.startedAt,
+    finishedAt: args.finishedAt,
+    ...(args.attribution ? {attribution: args.attribution} : {}),
+    ...(args.error ? {error: args.error} : {}),
+  };
+}
 
 type RunDirectory = {runId: string; runDir: string};
 
@@ -55,7 +122,7 @@ export async function createShort(
 
   try {
     const v3Plan = await deps.generateVideoPlan(topic);
-    await deps.persistJson(planPath, v3Plan);
+    await deps.persistJson(planPath, serializeVideoPlanV3(v3Plan));
     const plan = attachChannelOutro(
       videoPlanFromV3(v3Plan),
       deps.channel.brand,
@@ -102,16 +169,19 @@ export async function createShort(
 
     stage = 'render';
     await deps.renderShort(resolvedVideo, outputPath);
-    await deps.persistJson(runPath, {
+    await deps.persistJson(runPath, buildRunSummary({
       runId,
       topic,
       research: deps.research,
       channel: deps.channel,
+      plan: v3Plan,
+      timedPlan,
+      resolvedScenes: loopedScenes,
       status: 'rendered',
       startedAt,
       finishedAt: new Date().toISOString(),
       attribution,
-    });
+    }));
 
     return {runId, outputPath, planPath, voicePath, resolvedPath};
   } catch (error) {

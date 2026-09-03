@@ -289,7 +289,15 @@ describe('createShort', () => {
     expect(planWithOutro.scenes).toHaveLength(6);
     expect(planWithOutro.scenes.at(-1)?.id).toBe('channel-outro');
     expect(planWithOutro.scenes.at(-1)?.durationSeconds).toBe(4);
-    expect(persisted[0]).toEqual({path: `${runDir}/plan.json`, value: plan});
+    expect(persisted[0]?.path).toBe(`${runDir}/plan.json`);
+    expect(persisted[0]?.value).toMatchObject({
+      ...plan,
+      hookCandidates: expect.any(Array),
+      selection: {
+        selectedHookId: 'hook-a',
+        rule: 'total>clarity>visualizability>stopScroll>id',
+      },
+    });
     expect(persisted[1]).toEqual({path: `${runDir}/voice.json`, value: voiceResult.manifest});
     expect(persisted[2]).toEqual({
       path: `${runDir}/resolved.json`,
@@ -307,22 +315,21 @@ describe('createShort', () => {
     const lastPersistedScene = persistedResolved.scenes.at(-1);
     expect(lastPersistedScene?.localVideoPath).toBe(`${runDir}/scene-01.mp4`);
     expect(lastPersistedScene?.creatorName).toBe('Creator 1');
-    expect(persisted[3]).toEqual({
-      path: `${runDir}/run.json`,
-      value: {
-        runId,
-        topic,
-        research,
-        channel,
-        status: 'rendered',
-        startedAt: expect.any(String),
-        finishedAt: expect.any(String),
-        attribution: loopedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
-          sourcePageUrl,
-          creatorName,
-          creatorUrl,
-        })),
-      },
+    expect(persisted[3]?.path).toBe(`${runDir}/run.json`);
+    expect(persisted[3]?.value).toMatchObject({
+      runId,
+      formatVersion: 'retention-v3',
+      topic,
+      research,
+      channel,
+      status: 'rendered',
+      startedAt: expect.any(String),
+      finishedAt: expect.any(String),
+      attribution: loopedScenes.map(({sourcePageUrl, creatorName, creatorUrl}) => ({
+        sourcePageUrl,
+        creatorName,
+        creatorUrl,
+      })),
     });
     const persistedAttribution = (
       persisted[3]?.value as {
@@ -334,6 +341,149 @@ describe('createShort', () => {
       creatorName: firstResolved.creatorName,
       creatorUrl: firstResolved.creatorUrl,
     });
+  });
+
+  it('writes formatVersion retention-v3 to plan.json', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedPlan = persisted.find((entry) => entry.path.endsWith('plan.json'))?.value as VideoPlanV3;
+    expect(persistedPlan.formatVersion).toBe('retention-v3');
+  });
+
+  it('persists all three hook candidates', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedPlan = persisted.find((entry) => entry.path.endsWith('plan.json'))?.value as {
+      hookCandidates: Array<{id: string}>;
+    };
+    expect(persistedPlan.hookCandidates.map((candidate) => candidate.id)).toEqual([
+      'hook-a',
+      'hook-b',
+      'hook-c',
+    ]);
+  });
+
+  it('persists every hook sub-score', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedPlan = persisted.find((entry) => entry.path.endsWith('plan.json'))?.value as {
+      hookCandidates: Array<{id: string; scores: HookConcept['scores']}>;
+    };
+    expect(persistedPlan.hookCandidates.find((candidate) => candidate.id === 'hook-a')?.scores).toEqual(
+      hookA.scores,
+    );
+    expect(persistedPlan.hookCandidates.find((candidate) => candidate.id === 'hook-b')?.scores).toEqual(
+      hookB.scores,
+    );
+    expect(persistedPlan.hookCandidates.find((candidate) => candidate.id === 'hook-c')?.scores).toEqual(
+      hookC.scores,
+    );
+  });
+
+  it('persists computed total score for every hook', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedPlan = persisted.find((entry) => entry.path.endsWith('plan.json'))?.value as {
+      hookCandidates: Array<{id: string; totalScore: number}>;
+    };
+    expect(persistedPlan.hookCandidates.find((candidate) => candidate.id === 'hook-a')?.totalScore).toBe(25);
+    expect(persistedPlan.hookCandidates.find((candidate) => candidate.id === 'hook-b')?.totalScore).toBe(15);
+    expect(persistedPlan.hookCandidates.find((candidate) => candidate.id === 'hook-c')?.totalScore).toBe(20);
+  });
+
+  it('persists selectedHookId', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedPlan = persisted.find((entry) => entry.path.endsWith('plan.json'))?.value as {
+      selectedHookId: string;
+    };
+    expect(persistedPlan.selectedHookId).toBe('hook-a');
+  });
+
+  it('persists selected hook tie-break metadata when a tie occurs', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedPlan = persisted.find((entry) => entry.path.endsWith('plan.json'))?.value as {
+      selection: {selectedHookId: string; rule: string};
+    };
+    expect(persistedPlan.selection).toEqual({
+      selectedHookId: 'hook-a',
+      rule: 'total>clarity>visualizability>stopScroll>id',
+    });
+  });
+
+  it('persists five story beats with beatPurpose/newInformation/curiosityTarget', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedPlan = persisted.find((entry) => entry.path.endsWith('plan.json'))?.value as VideoPlanV3;
+    expect(persistedPlan.beats).toHaveLength(5);
+    expect(persistedPlan.beats.map((beat) => beat.role)).toEqual([
+      'hook',
+      'context',
+      'curiosity-reset',
+      'mechanism',
+      'payoff',
+    ]);
+    expect(persistedPlan.beats.every((beat) => beat.beatPurpose.length > 0)).toBe(true);
+    expect(persistedPlan.beats.every((beat) => beat.newInformation.length > 0)).toBe(true);
+    expect(persistedPlan.beats[0]?.curiosityTarget).toBe(hookA.curiosityTarget);
+    expect(persistedPlan.beats[2]?.curiosityTarget).toBeTruthy();
+  });
+
+  it('persists spokenText and displayText', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedPlan = persisted.find((entry) => entry.path.endsWith('plan.json'))?.value as VideoPlanV3;
+    expect(persistedPlan.beats[0]?.spokenText).toBe(hookA.spokenHook);
+    expect(persistedPlan.beats[0]?.displayText).toBe(hookA.displayText);
+  });
+
+  it('persists requiredVisualObjects and all search queries', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedPlan = persisted.find((entry) => entry.path.endsWith('plan.json'))?.value as VideoPlanV3;
+    expect(persistedPlan.beats[0]?.requiredVisualObjects).toEqual(hookA.requiredVisualObjects);
+    expect(persistedPlan.beats.map((beat) => beat.searchQueries)).toEqual(beats.map((beat) => beat.searchQueries));
+  });
+
+  it('keeps selectedSearchQuery in resolved.json', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedResolved = persisted.find((entry) => entry.path.endsWith('resolved.json'))?.value as ResolvedVideo;
+    expect(persistedResolved.scenes.every((scene) => scene.selectedSearchQuery.length > 0)).toBe(true);
+    expect(persistedResolved.scenes[0]?.selectedSearchQuery).toBe(hookA.searchQueries[0]);
+  });
+
+  it('writes V3 run summary fields to run.json', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const persistedRun = persisted.find((entry) => entry.path.endsWith('run.json'))?.value as Record<string, unknown>;
+    expect(persistedRun).toMatchObject({
+      formatVersion: 'retention-v3',
+      topic,
+      contentPattern: 'BALANCED_REVEAL',
+      selectedHookId: 'hook-a',
+      selectedHookTotalScore: 25,
+      storyDurationSeconds: 30,
+      finalDurationSeconds: 37.8,
+      beatCount: 5,
+      spokenWordCounts: [9, 5, 4, 4, 4],
+      displayWordCounts: [3, 4, 3, 3, 3],
+      selectedSearchQueries: [
+        'milk supermarket',
+        'supermarket aisle',
+        'grocery shelves',
+        'shopping cart',
+        'grocery delivery',
+      ],
+    });
+  });
+
+  it('never writes API keys or provider Authorization headers', async () => {
+    const {deps, persisted} = fakeDeps([]);
+    await createShort(topic, deps);
+    const serialized = JSON.stringify(persisted);
+    expect(serialized).not.toMatch(/sk-|Authorization|OPENAI_API_KEY|PEXELS_API_KEY|XAI_API_KEY/i);
   });
 
   it('fails stock-resolution when a voice scene has no words', async () => {
