@@ -191,7 +191,7 @@ export function normalizeHookStart(text: string): string {
 }
 
 export function isBannedHookOpening(text: string): boolean {
-  const normalized = normalizeHookStart(text);
+  const normalized = normalizeHookStart(text).replace(/^(why|how|what)['’]s\b/u, '$1');
   return (
     normalized.endsWith('?') ||
     BANNED_HOOK_STARTS.some(
@@ -232,7 +232,11 @@ function displayContainsEmphasisWord(displayText: string, word: string): boolean
 }
 
 function hasSubscribeOrFollowCta(text: string): boolean {
-  return /\b(subscribe|follow)\b(?!-)/iu.test(text);
+  return (
+    /\bsubscribe\b/iu.test(text) ||
+    /\bfollow\s+(me|us|for)\b/iu.test(text) ||
+    /#follow\b/iu.test(text)
+  );
 }
 
 function stringArraysEqual(left: readonly string[], right: readonly string[]): boolean {
@@ -322,7 +326,7 @@ const storyBeatSchema = z
   .object({
     id: nonEmptyText,
     role: z.enum(STORY_ROLES),
-    durationSeconds: z.number(),
+    durationSeconds: z.number().positive(),
     spokenText: nonEmptyText,
     displayText: z
       .string()
@@ -354,6 +358,13 @@ const storyBeatsSchema = z
   .min(5)
   .max(5)
   .superRefine((beats, context) => {
+    if (new Set(beats.map((beat) => beat.id)).size !== beats.length) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Beat ids must be unique',
+      });
+    }
+
     const roles = beats.map((beat) => beat.role);
     if (roles.join(',') !== STORY_ROLES.join(',')) {
       context.addIssue({

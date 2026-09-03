@@ -168,6 +168,9 @@ describe('V3 hook validation', () => {
     'Welcome to Tell Me Whyyyyyy.',
     "Today we're explaining runway numbers.",
     'In this video we explain runways.',
+    "What's actually a heading, not a name.",
+    "How's a runway a compass.",
+    "Why's the number painted on the asphalt.",
   ])('rejects banned hook opening: %s', (text) => {
     expect(isBannedHookOpening(text)).toBe(true);
   });
@@ -177,6 +180,12 @@ describe('V3 hook validation', () => {
 
     const candidates = validHookCandidates();
     candidates[0].spokenHook = 'A runway can change its number without moving?';
+    expect(() => parseHookCandidates(candidates)).toThrow();
+  });
+
+  it("rejects Why/How/What contractions as banned openings", () => {
+    const candidates = validHookCandidates();
+    candidates[0].spokenHook = "What's actually a heading, not a name.";
     expect(() => parseHookCandidates(candidates)).toThrow();
   });
 
@@ -392,6 +401,15 @@ describe('V3 story validation', () => {
     const followUs = validBeats();
     followUs[4].spokenText = 'Follow us for more runway facts tonight.';
     expect(() => parseStoryBeats(followUs)).toThrow();
+
+    const followMe = validBeats();
+    followMe[4].spokenText = 'Follow me for more runway facts tonight.';
+    expect(() => parseStoryBeats(followMe)).toThrow();
+
+    const hashtag = validBeats();
+    hashtag[4].displayText = 'FIELD MOVED #FOLLOW';
+    hashtag[4].emphasisWords = ['FIELD'];
+    expect(() => parseStoryBeats(hashtag)).toThrow();
   });
 
   it('accepts visualIntent shorter than 10 characters', () => {
@@ -403,10 +421,13 @@ describe('V3 story validation', () => {
   it('accepts beat id that is not kebab-case', () => {
     const beats = validBeats();
     beats[1].id = 'Context Beat #2';
-    beats[2].id = 'Context Beat #2';
-    const parsed = parseStoryBeats(beats);
-    expect(parsed[1]?.id).toBe('Context Beat #2');
-    expect(parsed[2]?.id).toBe('Context Beat #2');
+    expect(parseStoryBeats(beats)[1]?.id).toBe('Context Beat #2');
+  });
+
+  it('rejects duplicate beat ids', () => {
+    const beats = validBeats();
+    beats[2].id = beats[1].id;
+    expect(() => parseStoryBeats(beats)).toThrow();
   });
 
   it('accepts non-integer beat durations that still sum to 20–28', () => {
@@ -417,6 +438,16 @@ describe('V3 story validation', () => {
     }
 
     expect(parseStoryBeats(beats).map((beat) => beat.durationSeconds)).toEqual(durations);
+  });
+
+  it('rejects zero or negative beat durations even when the total is 20–28', () => {
+    const beats = validBeats();
+    const durations = [24, -4, 4, 0, 0];
+    for (const [index, duration] of durations.entries()) {
+      beats[index].durationSeconds = duration;
+    }
+
+    expect(() => parseStoryBeats(beats)).toThrow();
   });
 
   it('accepts payoff text containing "follow-up" but not a follow CTA', () => {
@@ -430,6 +461,14 @@ describe('V3 story validation', () => {
     display[4].displayText = 'FOLLOW-UP PROVED IT';
     display[4].emphasisWords = ['PROVED'];
     expect(parseStoryBeats(display)[4]?.displayText).toBe('FOLLOW-UP PROVED IT');
+  });
+
+  it('accepts ordinary follow language that is not a CTA', () => {
+    const beats = validBeats();
+    beats[4].spokenText = 'Pilots follow the new heading after the field moved.';
+    expect(parseStoryBeats(beats)[4]?.spokenText).toBe(
+      'Pilots follow the new heading after the field moved.',
+    );
   });
 
   it('accepts an emphasis word that is a case-insensitive substring of displayText', () => {
