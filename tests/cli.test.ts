@@ -1,6 +1,11 @@
 import {describe, expect, it} from 'vitest';
 import type {ResolvedScene} from '../src/domain/resolved-video';
-import type {VideoPlan} from '../src/domain/video-plan';
+import {
+  videoPlanFromV3,
+  type HookConcept,
+  type StoryBeat,
+  type VideoPlanV3,
+} from '../src/domain/video-plan';
 import type {CreateShortDeps} from '../src/pipeline/create-short';
 import {runCli} from '../src/cli';
 import {ProviderError} from '../src/domain/provider-error';
@@ -10,21 +15,83 @@ import {VideoDownloadError} from '../src/stock/download-file';
 const runId = '20260813-120000-deadbeef';
 const runDir = `runs/${runId}`;
 const research = 'Explain supermarket layout and staple placement.';
-const cliRoles = ['hook', 'stake', 'proof', 'payoff', 'outro'] as const;
-const plan: VideoPlan = {
+const cliRoles = ['hook', 'context', 'curiosity-reset', 'mechanism', 'payoff'] as const;
+const hookCandidates: HookConcept[] = [
+  {
+    id: 'hook-a',
+    spokenHook: 'The milk is hiding at the back on purpose.',
+    displayText: 'MILK IS HIDING',
+    curiosityTarget: 'Why is the milk so far from the door?',
+    visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
+    requiredVisualObjects: ['dairy refrigerators'],
+    searchQueries: ['supermarket scene 1', 'grocery scene 1'],
+    scores: {
+      stopScroll: 5,
+      clarity: 5,
+      contradiction: 5,
+      personalRelevance: 5,
+      visualizability: 5,
+    },
+  },
+  {
+    id: 'hook-b',
+    spokenHook: 'Your grocery walk is the product being sold.',
+    displayText: 'THE WALK IS THE PRODUCT',
+    curiosityTarget: 'What is the store actually selling besides milk?',
+    visualIntent: 'Shopper pushing a cart down a long grocery aisle',
+    requiredVisualObjects: ['grocery cart'],
+    searchQueries: ['supermarket scene 2', 'grocery scene 2'],
+    scores: {
+      stopScroll: 3,
+      clarity: 3,
+      contradiction: 3,
+      personalRelevance: 3,
+      visualizability: 3,
+    },
+  },
+  {
+    id: 'hook-c',
+    spokenHook: 'Staples sit far away so you see everything else first.',
+    displayText: 'STAPLES SIT FAR AWAY',
+    curiosityTarget: 'Why would a store hide its most needed items?',
+    visualIntent: 'Grocery shelves of snacks and fruit along an aisle',
+    requiredVisualObjects: ['grocery shelves'],
+    searchQueries: ['supermarket scene 3', 'grocery scene 3'],
+    scores: {
+      stopScroll: 4,
+      clarity: 4,
+      contradiction: 4,
+      personalRelevance: 4,
+      visualizability: 4,
+    },
+  },
+];
+const beats: StoryBeat[] = cliRoles.map((role, index) => ({
+  id: `scene-${index + 1}`,
+  role,
+  durationSeconds: 6,
+  spokenText: index === 0 ? hookCandidates[0].spokenHook : `Scene ${index + 1} explains the idea.`,
+  displayText: `SCENE ${index + 1} CARD`,
+  emphasisWords: [],
+  beatPurpose: `Purpose for ${role}.`,
+  newInformation: `New information for ${role}.`,
+  curiosityTarget: role === 'hook' || role === 'curiosity-reset' ? `Gap for ${role}` : undefined,
+  visualIntent: index === 0 ? hookCandidates[0].visualIntent : `Supermarket footage for scene ${index + 1}`,
+  requiredVisualObjects: [`object ${index + 1}`],
+  searchQueries: [`supermarket scene ${index + 1}`, `grocery scene ${index + 1}`],
+}));
+const plan: VideoPlanV3 = {
+  formatVersion: 'retention-v3',
   topic: 'Why supermarkets put milk at the back',
+  creativeBrief: research,
   title: 'Why Milk Is Always at the Back',
   viralAngle: 'The store is using your walk, not hiding the milk.',
-  scenes: Array.from({length: 5}, (_, index) => ({
-    id: `scene-${index + 1}`,
-    role: cliRoles[index] ?? 'hook',
-    durationSeconds: 6,
-    text: `Scene ${index + 1} explains the idea.`,
-    visualIntent: `Supermarket footage for scene ${index + 1}`,
-    searchQueries: [`supermarket scene ${index + 1}`, `grocery scene ${index + 1}`],
-  })),
+  contentPattern: 'BALANCED_REVEAL',
+  hookCandidates,
+  selectedHookId: 'hook-a',
+  beats,
 };
-const resolvedScenes: ResolvedScene[] = plan.scenes.map((scene, index) => ({
+const resolvedScenes: ResolvedScene[] = videoPlanFromV3(plan).scenes.map((scene, index) => ({
   ...scene,
   selectedSearchQuery: scene.searchQueries[0] ?? '',
   sourcePageUrl: `https://example.test/videos/${index + 1}`,

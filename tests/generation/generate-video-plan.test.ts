@@ -1,13 +1,23 @@
 import {readFileSync} from 'node:fs';
 import {afterEach, describe, expect, it, vi} from 'vitest';
-import {isGenericQuestionHook, parseVideoPlan, videoPlanSchema} from '../../src/domain/video-plan';
+import {
+  isGenericQuestionHook,
+  parseVideoPlan,
+  videoPlanSchema,
+} from '../../src/domain/video-plan';
+import type {
+  HookConcept,
+  StoryBeat,
+  VideoPlan,
+} from '../../src/domain/video-plan';
 import {
   createOpenAIStructuredPlanGenerator,
   formatPlanInput,
   generateVideoPlan,
 } from '../../src/generation/generate-video-plan';
+import type {GenerateStoryInput} from '../../src/generation/generate-story';
 import {VIDEO_PLAN_SYSTEM_PROMPT} from '../../src/generation/prompt';
-import type {VideoPlan} from '../../src/domain/video-plan';
+import {selectHook} from '../../src/generation/select-hook';
 
 const fixture = JSON.parse(
   readFileSync(new URL('../fixtures/video-plan.json', import.meta.url), 'utf8'),
@@ -176,72 +186,360 @@ describe('videoPlanSchema', () => {
   });
 });
 
+const hookA: HookConcept = {
+  id: 'hook-a',
+  spokenHook: 'A runway can change its number without moving.',
+  displayText: 'SAME RUNWAY. NEW NUMBER.',
+  curiosityTarget: 'How can a fixed runway need a different number?',
+  visualIntent: 'Airport runway threshold with large runway numbers visible',
+  requiredVisualObjects: ['runway number marking'],
+  searchQueries: ['airport runway number', 'runway threshold marking'],
+  scores: {
+    stopScroll: 3,
+    clarity: 3,
+    contradiction: 3,
+    personalRelevance: 3,
+    visualizability: 3,
+  },
+};
+
+const hookB: HookConcept = {
+  id: 'hook-b',
+  spokenHook: 'The painted number on a runway is not a permanent name.',
+  displayText: 'NUMBERS ARE NOT NAMES',
+  curiosityTarget: 'Why would a runway keep the same strip and lose its number?',
+  visualIntent: 'Close-up of large painted runway numbers on asphalt',
+  requiredVisualObjects: ['painted runway digits'],
+  searchQueries: ['painted runway numbers', 'asphalt runway marking'],
+  scores: {
+    stopScroll: 5,
+    clarity: 5,
+    contradiction: 5,
+    personalRelevance: 5,
+    visualizability: 5,
+  },
+};
+
+const hookC: HookConcept = {
+  id: 'hook-c',
+  spokenHook: 'A runway can keep the same asphalt and still get a new identity.',
+  displayText: 'NEW IDENTITY. SAME STRIP.',
+  curiosityTarget: 'What identity can change if the pavement never moves?',
+  visualIntent: 'Aerial view of a single runway with visible threshold numbers',
+  requiredVisualObjects: ['aerial runway threshold'],
+  searchQueries: ['aerial airport runway', 'runway threshold aerial'],
+  scores: {
+    stopScroll: 4,
+    clarity: 4,
+    contradiction: 4,
+    personalRelevance: 4,
+    visualizability: 4,
+  },
+};
+
+const topic = 'Why runway numbers change';
+const creativeBrief =
+  'Punchy BALANCED_REVEAL about magnetic heading. Ban jargon. Close on the field moving.';
+
+const validHookCandidates = (): HookConcept[] => structuredClone([hookA, hookB, hookC]);
+
+const beatsForHook = (hook: HookConcept): StoryBeat[] => [
+  {
+    id: 'hook',
+    role: 'hook',
+    durationSeconds: 3,
+    spokenText: hook.spokenHook,
+    displayText: hook.displayText,
+    emphasisWords: [],
+    beatPurpose: 'Create an impossible-sounding contradiction.',
+    newInformation: 'Runway numbers can change while the runway stays fixed.',
+    curiosityTarget: hook.curiosityTarget,
+    visualIntent: hook.visualIntent,
+    requiredVisualObjects: [...hook.requiredVisualObjects],
+    searchQueries: [...hook.searchQueries],
+  },
+  {
+    id: 'context',
+    role: 'context',
+    durationSeconds: 5,
+    spokenText: 'That number is a magnetic heading, not a permanent name.',
+    displayText: 'HEADING, NOT A NAME',
+    emphasisWords: ['HEADING'],
+    beatPurpose: 'Orient the viewer to what runway numbers actually mean.',
+    newInformation: 'Runway numbers come from magnetic heading rather than a fixed label.',
+    visualIntent: 'Compass heading overlay on an airport runway',
+    requiredVisualObjects: ['runway heading sign'],
+    searchQueries: ['airport runway heading sign', 'runway compass marking'],
+  },
+  {
+    id: 'curiosity-reset',
+    role: 'curiosity-reset',
+    durationSeconds: 5,
+    spokenText: 'Magnetic north itself keeps drifting, so the heading can go stale.',
+    displayText: 'NORTH KEEPS DRIFTING',
+    emphasisWords: ['DRIFTING'],
+    beatPurpose: 'Open a second gap by showing the heading can become wrong.',
+    newInformation: 'Magnetic north drift can make a correct runway number outdated.',
+    curiosityTarget: 'What happens when the painted heading no longer matches magnetic north?',
+    visualIntent: 'Airport workers painting a new runway number on asphalt',
+    requiredVisualObjects: ['runway painting crew'],
+    searchQueries: ['runway number painting', 'airport runway repaint'],
+  },
+  {
+    id: 'mechanism',
+    role: 'mechanism',
+    durationSeconds: 6,
+    spokenText: 'Airports then repaint the digits after a heading shift of about ten degrees.',
+    displayText: 'REPAINT AFTER TEN DEGREES',
+    emphasisWords: ['REPAINT'],
+    beatPurpose: 'Explain the threshold that forces a new runway number.',
+    newInformation: 'A roughly ten-degree magnetic shift triggers a runway number change.',
+    visualIntent: 'Close-up of freshly painted runway digits on asphalt',
+    requiredVisualObjects: ['fresh runway digits'],
+    searchQueries: ['fresh runway numbers', 'painted runway threshold'],
+  },
+  {
+    id: 'payoff',
+    role: 'payoff',
+    durationSeconds: 5,
+    spokenText: 'The concrete never moved. The planet magnetic field did.',
+    displayText: 'THE FIELD MOVED',
+    emphasisWords: ['FIELD'],
+    beatPurpose: 'Reframe the contradiction as a planetary change, not a construction trick.',
+    newInformation: 'The runway stays put while Earth magnetic field shifts the heading.',
+    visualIntent: 'Long still shot of an unchanged runway under open sky',
+    requiredVisualObjects: ['unchanged runway'],
+    searchQueries: ['empty airport runway', 'runway vanishing point'],
+  },
+];
+
+function stubPlanProviders(options?: {
+  hooks?: HookConcept[] | (() => Promise<HookConcept[]>);
+  story?: StoryBeat[] | ((input: GenerateStoryInput) => Promise<StoryBeat[]>);
+}) {
+  const calls: string[] = [];
+  const generateHooks = vi.fn(async (_topic: string, _creativeBrief: string) => {
+    calls.push('hooks');
+    if (typeof options?.hooks === 'function') return options.hooks();
+    return options?.hooks ?? validHookCandidates();
+  });
+  const generateStory = vi.fn(async (input: GenerateStoryInput) => {
+    calls.push('story');
+    if (typeof options?.story === 'function') return options.story(input);
+    if (options?.story) return options.story;
+    return beatsForHook(input.selectedHook);
+  });
+  return {calls, generateHooks, generateStory};
+}
+
 describe('generateVideoPlan', () => {
-  it('trims the topic before generation', async () => {
-    const generateStructured = vi.fn().mockResolvedValue(copyFixture());
+  it('preserves topic + second CLI argument generation contract', async () => {
+    const {generateHooks, generateStory} = stubPlanProviders();
 
-    await generateVideoPlan(`  ${fixture.topic}  `, {
-      generateStructured,
-      research: '  Explain supermarket staple placement.  ',
+    await generateVideoPlan(`  ${topic}  `, {
+      research: `  ${creativeBrief}  `,
+      generateHooks,
+      generateStory,
     });
 
-    expect(generateStructured).toHaveBeenCalledWith({
-      system: VIDEO_PLAN_SYSTEM_PROMPT,
-      input: formatPlanInput(fixture.topic, 'Explain supermarket staple placement.'),
+    expect(generateHooks).toHaveBeenCalledWith(topic, creativeBrief);
+    expect(generateStory.mock.calls[0]?.[0]).toMatchObject({
+      topic,
+      creativeBrief,
     });
   });
 
-  it('rejects a research brief that is too short', async () => {
-    const generateStructured = vi.fn();
+  it('treats the second argument as the creative brief', async () => {
+    const brief =
+      'Punchy PERSONAL_STAKES about magnetic heading. Ban jargon. Close on the field moving.';
+    const {generateHooks, generateStory} = stubPlanProviders();
 
-    await expect(
-      generateVideoPlan(fixture.topic, {generateStructured, research: 'too short'}),
-    ).rejects.toThrow(/research/i);
-    expect(generateStructured).not.toHaveBeenCalled();
-  });
-
-  it('omits the research block when no brief is provided', async () => {
-    const generateStructured = vi.fn().mockResolvedValue(copyFixture());
-
-    await generateVideoPlan(fixture.topic, {generateStructured, research: '  '});
-
-    expect(generateStructured).toHaveBeenCalledWith({
-      system: VIDEO_PLAN_SYSTEM_PROMPT,
-      input: formatPlanInput(fixture.topic),
+    const plan = await generateVideoPlan(topic, {
+      research: `  ${brief}  `,
+      generateHooks,
+      generateStory,
     });
-    expect(generateStructured.mock.calls[0]?.[0]?.input).not.toMatch(/RESEARCH BRIEF/);
+
+    expect(generateHooks).toHaveBeenCalledWith(topic, brief);
+    expect(generateStory.mock.calls[0]?.[0]?.creativeBrief).toBe(brief);
+    expect(generateStory.mock.calls[0]?.[0]?.contentPattern).toBe('PERSONAL_STAKES');
+    expect(plan.creativeBrief).toBe(brief);
+    expect(plan.contentPattern).toBe('PERSONAL_STAKES');
   });
 
-  it('rejects topics shorter than 3 characters', async () => {
-    const generateStructured = vi.fn();
+  it('generates hooks before generating the story', async () => {
+    const {calls, generateHooks, generateStory} = stubPlanProviders();
 
-    await expect(
-      generateVideoPlan('  no  ', {
-        generateStructured,
-        research: 'Explain supermarket staple placement in enough detail.',
-      }),
-    ).rejects.toThrow('Topic must be at least 3 characters');
-    expect(generateStructured).not.toHaveBeenCalled();
+    await generateVideoPlan(topic, {
+      research: creativeBrief,
+      generateHooks,
+      generateStory,
+    });
+
+    expect(calls).toEqual(['hooks', 'story']);
+    expect(generateHooks).toHaveBeenCalledTimes(1);
+    expect(generateStory).toHaveBeenCalledTimes(1);
   });
 
-  it('returns valid generated data', async () => {
-    await expect(
-      generateVideoPlan(fixture.topic, {
-        generateStructured: async () => copyFixture(),
-        research: 'Explain supermarket staple placement in enough detail.',
-      }),
-    ).resolves.toEqual(fixture);
+  it('selects the hook in code using selectHook', async () => {
+    const candidates = validHookCandidates();
+    const {generateHooks, generateStory} = stubPlanProviders({hooks: candidates});
+
+    const plan = await generateVideoPlan(topic, {
+      research: creativeBrief,
+      generateHooks,
+      generateStory,
+    });
+
+    expect(selectHook(candidates).id).toBe('hook-b');
+    expect(generateStory.mock.calls[0]?.[0]?.selectedHook).toEqual(selectHook(candidates));
+    expect(plan.selectedHookId).toBe('hook-b');
   });
 
-  it('rejects invalid AI data', async () => {
-    const invalidPlan = {...copyFixture(), scenes: fixture.scenes.slice(0, 3)};
+  it('passes only the selected hook into story generation', async () => {
+    const candidates = validHookCandidates();
+    const {generateHooks, generateStory} = stubPlanProviders({hooks: candidates});
+
+    await generateVideoPlan(topic, {
+      research: creativeBrief,
+      generateHooks,
+      generateStory,
+    });
+
+    expect(generateStory).toHaveBeenCalledWith({
+      topic,
+      creativeBrief,
+      contentPattern: 'BALANCED_REVEAL',
+      selectedHook: selectHook(candidates),
+    });
+    expect(generateStory.mock.calls[0]?.[0]).not.toHaveProperty('hookCandidates');
+  });
+
+  it('persists all three hook candidates in the returned plan', async () => {
+    const candidates = validHookCandidates();
+    const {generateHooks, generateStory} = stubPlanProviders({hooks: candidates});
+
+    const plan = await generateVideoPlan(topic, {
+      research: creativeBrief,
+      generateHooks,
+      generateStory,
+    });
+
+    expect(plan.hookCandidates).toEqual(candidates);
+    expect(plan.hookCandidates).toHaveLength(3);
+    expect(plan.hookCandidates.map((hook) => hook.id)).toEqual(['hook-a', 'hook-b', 'hook-c']);
+  });
+
+  it('persists selectedHookId computed by code', async () => {
+    const candidates = validHookCandidates();
+    const {generateHooks, generateStory} = stubPlanProviders({hooks: candidates});
+
+    const plan = await generateVideoPlan(topic, {
+      research: creativeBrief,
+      generateHooks,
+      generateStory,
+    });
+
+    expect(plan.selectedHookId).toBe(selectHook(candidates).id);
+    expect(plan.selectedHookId).toBe('hook-b');
+    expect(plan.selectedHookId).not.toBe('hook-a');
+  });
+
+  it('returns formatVersion retention-v3', async () => {
+    const {generateHooks, generateStory} = stubPlanProviders();
+
+    const plan = await generateVideoPlan(topic, {
+      research: creativeBrief,
+      generateHooks,
+      generateStory,
+    });
+
+    expect(plan.formatVersion).toBe('retention-v3');
+  });
+
+  it('returns exactly five V3 beats', async () => {
+    const {generateHooks, generateStory} = stubPlanProviders();
+
+    const plan = await generateVideoPlan(topic, {
+      research: creativeBrief,
+      generateHooks,
+      generateStory,
+    });
+
+    expect(plan.beats).toHaveLength(5);
+    expect(plan.beats.map((beat) => beat.role)).toEqual([
+      'hook',
+      'context',
+      'curiosity-reset',
+      'mechanism',
+      'payoff',
+    ]);
+    expect(plan).not.toHaveProperty('scenes');
+  });
+
+  it('does not ask the hook provider to choose a winner', async () => {
+    const {generateHooks, generateStory} = stubPlanProviders();
+
+    await generateVideoPlan(topic, {
+      research: creativeBrief,
+      generateHooks,
+      generateStory,
+    });
+
+    expect(generateHooks.mock.calls[0]).toEqual([topic, creativeBrief]);
+    expect(generateHooks.mock.calls[0]).toHaveLength(2);
+    expect(JSON.stringify(generateHooks.mock.calls[0])).not.toMatch(/winner|selectedHookId/i);
+  });
+
+  it('does not generate a story when hook generation fails', async () => {
+    const failure = new Error('hook generation failed');
+    const {generateHooks, generateStory} = stubPlanProviders({
+      hooks: async () => {
+        throw failure;
+      },
+    });
 
     await expect(
-      generateVideoPlan(fixture.topic, {
-        generateStructured: async () => invalidPlan,
-        research: 'Explain supermarket staple placement in enough detail.',
+      generateVideoPlan(topic, {
+        research: creativeBrief,
+        generateHooks,
+        generateStory,
       }),
-    ).rejects.toThrow();
+    ).rejects.toBe(failure);
+    expect(generateStory).not.toHaveBeenCalled();
+  });
+
+  it('does not generate a story when hook selection input is invalid', async () => {
+    const {generateHooks, generateStory} = stubPlanProviders({
+      hooks: validHookCandidates().slice(0, 2),
+    });
+
+    await expect(
+      generateVideoPlan(topic, {
+        research: creativeBrief,
+        generateHooks,
+        generateStory,
+      }),
+    ).rejects.toThrow('Expected exactly 3 hook candidates; received 2');
+    expect(generateStory).not.toHaveBeenCalled();
+  });
+
+  it('propagates story validation failure without rendering concerns', async () => {
+    const failure = new Error('Hook beat copy and first-frame contract must match the selected hook');
+    const {generateHooks, generateStory} = stubPlanProviders({
+      story: async () => {
+        throw failure;
+      },
+    });
+
+    await expect(
+      generateVideoPlan(topic, {
+        research: creativeBrief,
+        generateHooks,
+        generateStory,
+      }),
+    ).rejects.toBe(failure);
+    expect(generateStory).toHaveBeenCalled();
   });
 });
 

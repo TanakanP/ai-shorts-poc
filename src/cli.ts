@@ -5,6 +5,12 @@ import {config as loadDotenv} from 'dotenv';
 import {findEnvFile, loadConfig} from './config';
 import {ProviderError} from './domain/provider-error';
 import {
+  hookCandidatesEnvelopeSchema,
+  storyBeatsEnvelopeSchema,
+} from './domain/video-plan';
+import {generateHooks} from './generation/generate-hooks';
+import {generateStory} from './generation/generate-story';
+import {
   createOpenAIStructuredPlanGenerator,
   generateVideoPlan,
 } from './generation/generate-video-plan';
@@ -80,7 +86,7 @@ export async function runCli(
         const plan = await withSafeFailure('Video plan generation failed', () =>
           deps.generateVideoPlan(runTopic),
         );
-        io.log(`[1/4] Generated ${plan.scenes.length}-scene plan`);
+        io.log(`[1/4] Generated ${plan.beats.length}-scene plan`);
         return plan;
       },
       synthesizeSceneVoices: async (plan, directory) => {
@@ -123,14 +129,40 @@ export async function runCli(
 
 function createProductionDeps(research: string): CreateShortDeps {
   const config = loadConfig();
-  const generateStructured = createOpenAIStructuredPlanGenerator(config.openAiApiKey);
+  const generateHookStructured = createOpenAIStructuredPlanGenerator(
+    config.openAiApiKey,
+    hookCandidatesEnvelopeSchema,
+    'hook_candidates',
+  );
+  const generateStoryStructured = createOpenAIStructuredPlanGenerator(
+    config.openAiApiKey,
+    storyBeatsEnvelopeSchema,
+    'story_beats',
+  );
   const pexels = new PexelsClient(config.pexelsApiKey);
   const synthesize = createXaiSpeechSynthesizer(config.xaiApiKey);
 
   return {
     createRunDirectory,
     research,
-    generateVideoPlan: (topic) => generateVideoPlan(topic, {generateStructured, research}),
+    generateVideoPlan: (topic) =>
+      generateVideoPlan(topic, {
+        research,
+        generateHooks: (nextTopic, creativeBrief) =>
+          generateHooks(nextTopic, creativeBrief, {
+            generateStructured: async (args) => {
+              const parsed = await generateHookStructured(args);
+              return hookCandidatesEnvelopeSchema.parse(parsed).hookCandidates;
+            },
+          }),
+        generateStory: (input) =>
+          generateStory(input, {
+            generateStructured: async (args) => {
+              const parsed = await generateStoryStructured(args);
+              return storyBeatsEnvelopeSchema.parse(parsed).beats;
+            },
+          }),
+      }),
     persistJson,
     synthesizeSceneVoices: (plan, runDir) =>
       synthesizeSceneVoices(plan, runDir, config.xaiVoiceId, {

@@ -1,6 +1,12 @@
 import {describe, expect, it} from 'vitest';
 import type {ResolvedScene, ResolvedVideo, StockScene} from '../../src/domain/resolved-video';
-import type {VideoPlan} from '../../src/domain/video-plan';
+import {
+  videoPlanFromV3,
+  type HookConcept,
+  type StoryBeat,
+  type VideoPlanV3,
+} from '../../src/domain/video-plan';
+import {attachChannelOutro} from '../../src/pipeline/attach-channel-outro';
 import {createShort, type CreateShortDeps} from '../../src/pipeline/create-short';
 import type {SynthesizeSceneVoicesResult} from '../../src/voice/synthesize-scene-voices';
 
@@ -13,68 +19,144 @@ const channel = {
 };
 const research = 'Explain supermarket layout and staple placement.';
 
-const plan: VideoPlan = {
-  topic,
-  title: 'Why Milk Is Always at the Back',
-  viralAngle: 'The store is using your walk, not hiding the milk.',
-  scenes: [
-    {
-      id: 'hook',
-      role: 'hook',
-      durationSeconds: 6,
-      text: 'The milk is hiding.',
-      visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
-      searchQueries: ['milk supermarket', 'grocery dairy aisle'],
-    },
-    {
-      id: 'walk',
-      role: 'stake',
-      durationSeconds: 6,
-      text: 'You cross the whole store.',
-      visualIntent: 'Shopper pushing a cart down a long grocery aisle',
-      searchQueries: ['supermarket aisle', 'grocery store walk'],
-    },
-    {
-      id: 'see',
-      role: 'proof',
-      durationSeconds: 6,
-      text: 'That exposes more products.',
-      visualIntent: 'Grocery shelves of snacks and fruit along an aisle',
-      searchQueries: ['grocery shelves', 'supermarket snacks fruit'],
-    },
-    {
-      id: 'buy',
-      role: 'payoff',
-      durationSeconds: 6,
-      text: 'Some become impulse buys.',
-      visualIntent: 'Shopper adding items from an end cap into a cart',
-      searchQueries: ['shopping cart', 'impulse buy grocery'],
-    },
-    {
-      id: 'fresh',
-      role: 'payoff',
-      durationSeconds: 6,
-      text: 'Deliveries also stay efficient.',
-      visualIntent: 'Grocery delivery crates stacked at a loading dock',
-      searchQueries: ['grocery delivery', 'supermarket loading dock'],
-    },
-  ],
+const hookA: HookConcept = {
+  id: 'hook-a',
+  spokenHook: 'The milk is hiding at the back on purpose.',
+  displayText: 'MILK IS HIDING',
+  curiosityTarget: 'Why is the milk so far from the door?',
+  visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
+  requiredVisualObjects: ['dairy refrigerators'],
+  searchQueries: ['milk supermarket', 'grocery dairy aisle'],
+  scores: {
+    stopScroll: 5,
+    clarity: 5,
+    contradiction: 5,
+    personalRelevance: 5,
+    visualizability: 5,
+  },
 };
 
-const planWithOutro: VideoPlan = {
-  ...plan,
-  scenes: [
-    ...plan.scenes,
-    {
-      id: 'channel-outro',
-      role: 'outro',
-      durationSeconds: 4,
-      text: 'Curious Cart. | If that made you look twice, follow along.',
-      visualIntent: 'Shopper walking toward supermarket dairy refrigerators',
-      searchQueries: ['milk supermarket', 'grocery dairy aisle'],
-    },
-  ],
+const hookB: HookConcept = {
+  id: 'hook-b',
+  spokenHook: 'Your grocery walk is the product being sold.',
+  displayText: 'THE WALK IS THE PRODUCT',
+  curiosityTarget: 'What is the store actually selling besides milk?',
+  visualIntent: 'Shopper pushing a cart down a long grocery aisle',
+  requiredVisualObjects: ['grocery cart'],
+  searchQueries: ['supermarket aisle', 'grocery store walk'],
+  scores: {
+    stopScroll: 3,
+    clarity: 3,
+    contradiction: 3,
+    personalRelevance: 3,
+    visualizability: 3,
+  },
 };
+
+const hookC: HookConcept = {
+  id: 'hook-c',
+  spokenHook: 'Staples sit far away so you see everything else first.',
+  displayText: 'STAPLES SIT FAR AWAY',
+  curiosityTarget: 'Why would a store hide its most needed items?',
+  visualIntent: 'Grocery shelves of snacks and fruit along an aisle',
+  requiredVisualObjects: ['grocery shelves'],
+  searchQueries: ['grocery shelves', 'supermarket snacks fruit'],
+  scores: {
+    stopScroll: 4,
+    clarity: 4,
+    contradiction: 4,
+    personalRelevance: 4,
+    visualizability: 4,
+  },
+};
+
+const beats: StoryBeat[] = [
+  {
+    id: 'hook',
+    role: 'hook',
+    durationSeconds: 6,
+    spokenText: hookA.spokenHook,
+    displayText: hookA.displayText,
+    emphasisWords: [],
+    beatPurpose: 'Open the contradiction.',
+    newInformation: 'Milk is placed far from the entrance on purpose.',
+    curiosityTarget: hookA.curiosityTarget,
+    visualIntent: hookA.visualIntent,
+    requiredVisualObjects: hookA.requiredVisualObjects,
+    searchQueries: hookA.searchQueries,
+  },
+  {
+    id: 'context',
+    role: 'context',
+    durationSeconds: 6,
+    spokenText: 'You cross the whole store.',
+    displayText: 'YOU CROSS THE STORE',
+    emphasisWords: [],
+    beatPurpose: 'Show the cost of the layout.',
+    newInformation: 'Reaching milk requires walking the full store.',
+    visualIntent: 'Shopper pushing a cart down a long grocery aisle',
+    requiredVisualObjects: ['grocery aisle'],
+    searchQueries: ['supermarket aisle', 'grocery store walk'],
+  },
+  {
+    id: 'curiosity-reset',
+    role: 'curiosity-reset',
+    durationSeconds: 6,
+    spokenText: 'That exposes more products.',
+    displayText: 'MORE PRODUCTS APPEAR',
+    emphasisWords: [],
+    beatPurpose: 'Open a second gap about extra exposure.',
+    newInformation: 'The walk is designed to show more goods.',
+    curiosityTarget: 'What does that extra exposure do to a shopper?',
+    visualIntent: 'Grocery shelves of snacks and fruit along an aisle',
+    requiredVisualObjects: ['snack shelves'],
+    searchQueries: ['grocery shelves', 'supermarket snacks fruit'],
+  },
+  {
+    id: 'mechanism',
+    role: 'mechanism',
+    durationSeconds: 6,
+    spokenText: 'Some become impulse buys.',
+    displayText: 'IMPULSE BUYS APPEAR',
+    emphasisWords: [],
+    beatPurpose: 'Explain the hidden system.',
+    newInformation: 'Extra exposure converts into unplanned purchases.',
+    visualIntent: 'Shopper adding items from an end cap into a cart',
+    requiredVisualObjects: ['end cap'],
+    searchQueries: ['shopping cart', 'impulse buy grocery'],
+  },
+  {
+    id: 'payoff',
+    role: 'payoff',
+    durationSeconds: 6,
+    spokenText: 'Deliveries also stay efficient.',
+    displayText: 'DELIVERIES STAY EFFICIENT',
+    emphasisWords: [],
+    beatPurpose: 'Reframe the layout as more than a trick.',
+    newInformation: 'Back-wall staples also keep restocking efficient.',
+    visualIntent: 'Grocery delivery crates stacked at a loading dock',
+    requiredVisualObjects: ['loading dock'],
+    searchQueries: ['grocery delivery', 'supermarket loading dock'],
+  },
+];
+
+const plan: VideoPlanV3 = {
+  formatVersion: 'retention-v3',
+  topic,
+  creativeBrief: research,
+  title: 'Why Milk Is Always at the Back',
+  viralAngle: 'The store is using your walk, not hiding the milk.',
+  contentPattern: 'BALANCED_REVEAL',
+  hookCandidates: [hookA, hookB, hookC],
+  selectedHookId: 'hook-a',
+  beats,
+};
+
+const planWithOutro = attachChannelOutro(
+  videoPlanFromV3(plan),
+  channel.brand,
+  channel.signoff,
+);
 
 const voiceResult: SynthesizeSceneVoicesResult = {
   timedPlan: {
@@ -204,7 +286,10 @@ describe('createShort', () => {
       'render',
       'persist run.json:rendered',
     ]);
-    expect(persisted[0]).toEqual({path: `${runDir}/plan.json`, value: planWithOutro});
+    expect(planWithOutro.scenes).toHaveLength(6);
+    expect(planWithOutro.scenes.at(-1)?.id).toBe('channel-outro');
+    expect(planWithOutro.scenes.at(-1)?.durationSeconds).toBe(4);
+    expect(persisted[0]).toEqual({path: `${runDir}/plan.json`, value: plan});
     expect(persisted[1]).toEqual({path: `${runDir}/voice.json`, value: voiceResult.manifest});
     expect(persisted[2]).toEqual({
       path: `${runDir}/resolved.json`,

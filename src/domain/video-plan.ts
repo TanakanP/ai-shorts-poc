@@ -3,7 +3,7 @@ import {stripSpeechTags} from '../captions/speech-tags';
 
 export const EDUCATIONAL_ROLES = ['hook', 'stake', 'proof', 'twist', 'payoff'] as const;
 export type EducationalRole = (typeof EDUCATIONAL_ROLES)[number];
-export type BeatRole = EducationalRole | 'outro';
+export type BeatRole = EducationalRole | StoryRole | 'outro';
 
 export type VideoScene = {
   id: string;
@@ -299,7 +299,7 @@ const hookConceptSchema = z
     }
   }) satisfies z.ZodType<HookConcept>;
 
-const hookCandidatesSchema = z
+export const hookCandidatesSchema = z
   .array(hookConceptSchema)
   .min(3)
   .max(3)
@@ -353,7 +353,7 @@ const storyBeatSchema = z
     }
   }) satisfies z.ZodType<StoryBeat>;
 
-const storyBeatsSchema = z
+export const storyBeatsSchema = z
   .array(storyBeatSchema)
   .min(5)
   .max(5)
@@ -485,6 +485,14 @@ const videoPlanV3Schema = z
     }
   }) satisfies z.ZodType<VideoPlanV3>;
 
+export const hookCandidatesEnvelopeSchema = z.object({
+  hookCandidates: hookCandidatesSchema,
+});
+
+export const storyBeatsEnvelopeSchema = z.object({
+  beats: storyBeatsSchema,
+});
+
 export function parseHookCandidates(value: unknown): HookConcept[] {
   return hookCandidatesSchema.parse(value);
 }
@@ -495,4 +503,20 @@ export function parseStoryBeats(value: unknown): StoryBeat[] {
 
 export function parseVideoPlanV3(value: unknown): VideoPlanV3 {
   return videoPlanV3Schema.parse(value);
+}
+
+export function videoPlanFromV3(plan: VideoPlanV3): VideoPlan {
+  return {
+    topic: plan.topic,
+    title: plan.title,
+    viralAngle: plan.viralAngle,
+    scenes: plan.beats.map((beat) => ({
+      id: beat.id,
+      role: beat.role,
+      durationSeconds: beat.durationSeconds,
+      text: beat.spokenText,
+      visualIntent: beat.visualIntent,
+      searchQueries: beat.searchQueries,
+    })),
+  };
 }

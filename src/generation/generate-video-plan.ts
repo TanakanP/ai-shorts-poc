@@ -1,9 +1,19 @@
 import OpenAI from 'openai';
 import {zodTextFormat} from 'openai/helpers/zod';
-import {parseVideoPlan, videoPlanSchema} from '../domain/video-plan';
-import type {VideoPlan} from '../domain/video-plan';
+import type {ZodType} from 'zod';
+import {
+  CONTENT_PATTERNS,
+  parseVideoPlanV3,
+  videoPlanSchema,
+  type ContentPattern,
+  type HookConcept,
+  type StoryBeat,
+  type VideoPlanV3,
+} from '../domain/video-plan';
 import {ProviderError} from '../domain/provider-error';
-import {VIDEO_PLAN_SYSTEM_PROMPT} from './prompt';
+import {generateHooks} from './generate-hooks';
+import {generateStory, type GenerateStoryInput} from './generate-story';
+import {selectHook} from './select-hook';
 
 export type StructuredPlanGenerator = (args: {
   system: string;
@@ -11,11 +21,11 @@ export type StructuredPlanGenerator = (args: {
 }) => Promise<unknown>;
 
 export type GenerateVideoPlanDeps = {
-  generateStructured: StructuredPlanGenerator;
+  generateStructured?: StructuredPlanGenerator;
+  generateHooks?: (topic: string, creativeBrief: string) => Promise<HookConcept[]>;
+  generateStory?: (input: GenerateStoryInput) => Promise<StoryBeat[]>;
   research?: string;
 };
-
-export const MIN_RESEARCH_CHARS = 20;
 
 export function formatPlanInput(topic: string, research?: string): string {
   const trimmedResearch = research?.trim() ?? '';
@@ -23,25 +33,78 @@ export function formatPlanInput(topic: string, research?: string): string {
   return `TOPIC:\n${topic}\n\nCREATIVE BRIEF:\n${trimmedResearch}`;
 }
 
+export function readContentPattern(creativeBrief: string): ContentPattern | null {
+  for (const pattern of CONTENT_PATTERNS) {
+    if (creativeBrief.includes(pattern)) return pattern;
+  }
+  return null;
+}
+
+function inferOrReadContentPattern(creativeBrief: string): ContentPattern {
+  return readContentPattern(creativeBrief) ?? 'BALANCED_REVEAL';
+}
+
+function resolveGenerateHooks(
+  deps: GenerateVideoPlanDeps,
+): (topic: string, creativeBrief: string) => Promise<HookConcept[]> {
+  if (deps.generateHooks) return deps.generateHooks;
+  if (!deps.generateStructured) {
+    throw new Error('generateHooks or generateStructured is required');
+  }
+  const generateStructured = deps.generateStructured;
+  return (topic, creativeBrief) => generateHooks(topic, creativeBrief, {generateStructured});
+}
+
+function resolveGenerateStory(
+  deps: GenerateVideoPlanDeps,
+): (input: GenerateStoryInput) => Promise<StoryBeat[]> {
+  if (deps.generateStory) return deps.generateStory;
+  if (!deps.generateStructured) {
+    throw new Error('generateStory or generateStructured is required');
+  }
+  const generateStructured = deps.generateStructured;
+  return (input) => generateStory(input, {generateStructured});
+}
+
 export async function generateVideoPlan(
   topic: string,
   deps: GenerateVideoPlanDeps,
-): Promise<VideoPlan> {
-  const trimmedTopic = topic.trim();
-  if (trimmedTopic.length < 3) throw new Error('Topic must be at least 3 characters');
-  const trimmedResearch = deps.research?.trim() ?? '';
-  if (trimmedResearch.length > 0 && trimmedResearch.length < MIN_RESEARCH_CHARS) {
-    throw new Error(`Research brief must be at least ${MIN_RESEARCH_CHARS} characters`);
-  }
+): Promise<VideoPlanV3> {
+  const normalizedTopic = topic.trim();
+  if (normalizedTopic.length < 3) throw new Error('Topic must be at least 3 characters');
+  const creativeBrief = (deps.research ?? '').trim();
 
-  const raw = await deps.generateStructured({
-    system: VIDEO_PLAN_SYSTEM_PROMPT,
-    input: formatPlanInput(trimmedTopic, trimmedResearch),
+  const generateHooksFn = resolveGenerateHooks(deps);
+  const generateStoryFn = resolveGenerateStory(deps);
+
+  const hookCandidates = await generateHooksFn(normalizedTopic, creativeBrief);
+  const selectedHook = selectHook(hookCandidates);
+  const contentPattern = inferOrReadContentPattern(creativeBrief);
+  const beats = await generateStoryFn({
+    topic: normalizedTopic,
+    creativeBrief,
+    contentPattern,
+    selectedHook,
   });
-  return parseVideoPlan(raw);
+
+  return parseVideoPlanV3({
+    formatVersion: 'retention-v3',
+    topic: normalizedTopic,
+    creativeBrief,
+    title: normalizedTopic,
+    viralAngle: selectedHook.curiosityTarget,
+    contentPattern,
+    hookCandidates,
+    selectedHookId: selectedHook.id,
+    beats,
+  });
 }
 
-export function createOpenAIStructuredPlanGenerator(apiKey: string): StructuredPlanGenerator {
+export function createOpenAIStructuredPlanGenerator(
+  apiKey: string,
+  schema: ZodType = videoPlanSchema,
+  schemaName = 'video_plan',
+): StructuredPlanGenerator {
   const client = new OpenAI({apiKey});
 
   return async ({system, input}) => {
@@ -50,10 +113,10 @@ export function createOpenAIStructuredPlanGenerator(apiKey: string): StructuredP
         model: 'gpt-5.5',
         instructions: system,
         input,
-        text: {format: zodTextFormat(videoPlanSchema, 'video_plan')},
+        text: {format: zodTextFormat(schema, schemaName)},
       });
 
-      return parseVideoPlan(response.output_parsed);
+      return schema.parse(response.output_parsed);
     } catch (cause) {
       if (cause instanceof ProviderError) throw cause;
       const value = cause as {name?: unknown; status?: unknown; code?: unknown};

@@ -1,6 +1,6 @@
 import {join} from 'node:path';
 import type {ResolvedVideo, StockScene} from '../domain/resolved-video';
-import type {VideoPlan} from '../domain/video-plan';
+import {videoPlanFromV3, type VideoPlan, type VideoPlanV3} from '../domain/video-plan';
 import type {ProviderDiagnostic} from '../domain/provider-error';
 import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices';
 import {attachChannelOutro} from './attach-channel-outro';
@@ -19,7 +19,7 @@ export class SafeStageError extends Error {
 
 export type CreateShortDeps = {
   createRunDirectory: (topic: string) => Promise<RunDirectory>;
-  generateVideoPlan: (topic: string) => Promise<VideoPlan>;
+  generateVideoPlan: (topic: string) => Promise<VideoPlanV3>;
   persistJson: (path: string, value: unknown) => Promise<void>;
   synthesizeSceneVoices: (plan: VideoPlan, runDir: string) => Promise<SynthesizeSceneVoicesResult>;
   resolveSceneAssets: (plan: VideoPlan, runDir: string) => Promise<StockScene[]>;
@@ -54,12 +54,13 @@ export async function createShort(
     | undefined;
 
   try {
+    const v3Plan = await deps.generateVideoPlan(topic);
+    await deps.persistJson(planPath, v3Plan);
     const plan = attachChannelOutro(
-      await deps.generateVideoPlan(topic),
+      videoPlanFromV3(v3Plan),
       deps.channel.brand,
       deps.channel.signoff,
     );
-    await deps.persistJson(planPath, plan);
 
     stage = 'voice';
     const {timedPlan, manifest} = await deps.synthesizeSceneVoices(plan, runDir);
