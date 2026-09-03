@@ -236,6 +236,11 @@ describe('generateStory', () => {
     expect(STORY_SYSTEM_PROMPT).toMatch(/separate/i);
   });
 
+  it('asks for karaoke clause bars in spokenText', () => {
+    expect(STORY_SYSTEM_PROMPT).toMatch(/\|/);
+    expect(STORY_SYSTEM_PROMPT).toMatch(/karaoke clauses/i);
+  });
+
   it('requires natural narration rather than five headline fragments', () => {
     expect(STORY_SYSTEM_PROMPT).toMatch(/natural narration/i);
     expect(STORY_SYSTEM_PROMPT).toMatch(/headline fragments/i);

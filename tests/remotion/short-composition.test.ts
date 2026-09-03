@@ -106,6 +106,7 @@ const v3Video: ResolvedVideo = {
 };
 
 const hookScene = v3Video.scenes[0]!;
+const contextScene = v3Video.scenes[1]!;
 const resetScene = v3Video.scenes[2]!;
 const payoffScene = v3Video.scenes[4]!;
 const outroScene = v3Video.scenes[5]!;
@@ -211,6 +212,14 @@ describe('V3 spoken and display mapping', () => {
     expect(DISPLAY_CARD_PADDING).not.toBe(WORD_CAPTION_PADDING);
   });
 
+  it('renders the display card only on the hook beat', () => {
+    expect(shouldRenderDisplayCard(hookScene)).toBe(true);
+    expect(shouldRenderDisplayCard(resetScene)).toBe(false);
+    expect(shouldRenderDisplayCard(contextScene)).toBe(false);
+    expect(primaryDisplayText(resetScene)).toBe('');
+    expect(primaryDisplayText(contextScene)).toBe('');
+  });
+
   it('does not render full spokenText as the primary text card when displayText is shorter', () => {
     expect(hookDisplay.length).toBeLessThan(hookSpoken.length);
     expect(primaryDisplayText(hookScene)).toBe(hookDisplay);
@@ -249,7 +258,7 @@ describe('V3 spoken and display mapping', () => {
     expect(displayFontSizeForRole('curiosity-reset')).toBe(displayFontSizeForRole('context'));
     expect(displayFontSizeForRole('curiosity-reset')).toBe(displayFontSizeForRole('payoff'));
     expect(displayFontSizeForRole('curiosity-reset')).not.toBe(displayFontSizeForRole('outro'));
-    expect(shouldRenderDisplayCard(resetScene)).toBe(true);
+    expect(shouldRenderDisplayCard(resetScene)).toBe(false);
     expect(shouldRenderDisplayCard(outroScene)).toBe(false);
     expect(primaryDisplayText(outroScene)).toBe('');
   });

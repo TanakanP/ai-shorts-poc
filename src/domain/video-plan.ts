@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {ensureCaptionBars} from '../captions/caption-segments';
 import {stripSpeechTags} from '../captions/speech-tags';
 
 export const EDUCATIONAL_ROLES = ['hook', 'stake', 'proof', 'twist', 'payoff'] as const;
@@ -564,20 +565,23 @@ export function videoPlanFromV3(plan: VideoPlanV3): VideoPlan {
     topic: plan.topic,
     title: plan.title,
     viralAngle: plan.viralAngle,
-    scenes: plan.beats.map((beat) => ({
-      id: beat.id,
-      role: beat.role,
-      durationSeconds: beat.durationSeconds,
-      text: beat.spokenText,
-      spokenText: beat.spokenText,
-      displayText: beat.displayText,
-      emphasisWords: beat.emphasisWords,
-      beatPurpose: beat.beatPurpose,
-      newInformation: beat.newInformation,
-      curiosityTarget: beat.curiosityTarget ?? undefined,
-      visualIntent: beat.visualIntent,
-      requiredVisualObjects: beat.requiredVisualObjects,
-      searchQueries: beat.searchQueries,
-    })),
+    scenes: plan.beats.map((beat) => {
+      const captioned = ensureCaptionBars(beat.spokenText);
+      return {
+        id: beat.id,
+        role: beat.role,
+        durationSeconds: beat.durationSeconds,
+        text: captioned,
+        spokenText: captioned,
+        displayText: beat.displayText,
+        emphasisWords: beat.emphasisWords,
+        beatPurpose: beat.beatPurpose,
+        newInformation: beat.newInformation,
+        curiosityTarget: beat.curiosityTarget ?? undefined,
+        visualIntent: beat.visualIntent,
+        requiredVisualObjects: beat.requiredVisualObjects,
+        searchQueries: beat.searchQueries,
+      };
+    }),
   };
 }

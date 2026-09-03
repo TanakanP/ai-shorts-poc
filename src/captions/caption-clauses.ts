@@ -2,7 +2,7 @@ import type {VoiceWord} from '../domain/voice';
 
 export const CLAUSE_MAX_CHARS = 40;
 
-const HARD_STOP = /[.?!]$/;
+const HARD_STOP = /[.?!—–―]$/u;
 const SEMI_OR_COLON = /[;:]$/;
 
 const CLAUSE_STARTERS = new Set([

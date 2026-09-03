@@ -63,7 +63,7 @@ export const getVideoSource = (
 };
 
 export function primaryDisplayText(scene: {role: BeatRole; displayText?: string}): string {
-  if (scene.role === 'outro') return '';
+  if (scene.role !== 'hook') return '';
   return scene.displayText?.trim() ?? '';
 }
 

@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {
   alignCaptionSegments,
+  ensureCaptionBars,
   liveCaptionLines,
   parseCaptionSegments,
   spokenSceneText,
@@ -13,6 +14,24 @@ const timed = (texts: string[]): VoiceWord[] =>
     startMs: index * 200,
     endMs: index * 200 + 150,
   }));
+
+describe('ensureCaptionBars', () => {
+  it('inserts a karaoke bar at an em dash when the hook has no split', () => {
+    expect(
+      ensureCaptionBars(
+        "Your credit card rewards aren't really free—the store gets less than the amount you tapped for.",
+      ),
+    ).toBe(
+      "Your credit card rewards aren't really free | the store gets less than the amount you tapped for.",
+    );
+  });
+
+  it('leaves an existing karaoke bar in place', () => {
+    expect(ensureCaptionBars('Milk is at the back | because your walk is valuable.')).toBe(
+      'Milk is at the back | because your walk is valuable.',
+    );
+  });
+});
 
 describe('spokenSceneText', () => {
   it('strips caption bars and squeezes spaces for TTS', () => {
@@ -113,6 +132,20 @@ describe('liveCaptionLines', () => {
         200,
       ).map((line) => line.map((word) => word.text)),
     ).toEqual([['Stores', 'hide', 'the', 'milk']]);
+  });
+
+  it('splits an unbarred hook onto the current karaoke clause', () => {
+    const words = timed(['Rewards', 'are', 'not', 'free.', 'Stores', 'get', 'less.']);
+    expect(
+      liveCaptionLines(
+        {
+          id: 'hook',
+          text: 'Rewards are not free. Stores get less.',
+          words,
+        },
+        200,
+      ).map((line) => line.map((word) => word.text)),
+    ).toEqual([['Rewards', 'are', 'not', 'free.']]);
   });
 
   it('still shows only the current clause on a normal scene', () => {

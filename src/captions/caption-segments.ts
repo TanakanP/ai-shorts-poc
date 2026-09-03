@@ -1,10 +1,29 @@
 import type {VoiceWord} from '../domain/voice';
-import {activeCaptionClause} from './caption-clauses';
+import {activeCaptionClause, chunkCaptionClauses} from './caption-clauses';
 import {captionWords, stripSpeechTags} from './speech-tags';
 
 export const CHANNEL_OUTRO_SCENE_ID = 'channel-outro';
 
 const normalizeToken = (text: string): string => text.toLowerCase().replace(/[^a-z0-9']/g, '');
+
+export function ensureCaptionBars(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed || trimmed.includes('|')) return trimmed;
+
+  const dashed = trimmed
+    .split(/\s*[—–―]\s*/u)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (dashed.length >= 2) return dashed.slice(0, 3).join(' | ');
+
+  const sentences = trimmed
+    .split(/(?<=[.?!])\s+/u)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (sentences.length >= 2) return sentences.slice(0, 3).join(' | ');
+
+  return trimmed;
+}
 
 export function spokenSceneText(text: string): string {
   return text
@@ -69,7 +88,7 @@ export function liveCaptionLines(
 ): VoiceWord[][] {
   const words = captionWords(scene.words);
   const segments = parseCaptionSegments(scene.text).map(stripSpeechTags).filter(Boolean);
-  const chunks = alignCaptionSegments(segments, words);
+  const chunks = segments.length > 1 ? alignCaptionSegments(segments, words) : chunkCaptionClauses(words);
   if (scene.id === CHANNEL_OUTRO_SCENE_ID) return chunks;
   const live = activeCaptionClause(chunks, timeMs);
   return live.length === 0 ? [] : [live];

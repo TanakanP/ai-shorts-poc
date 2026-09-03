@@ -118,6 +118,11 @@ describe('generateHooks', () => {
     expect(HOOK_SYSTEM_PROMPT).toMatch(/shorter/i);
   });
 
+  it('asks for karaoke clause bars in the spoken hook', () => {
+    expect(HOOK_SYSTEM_PROMPT).toMatch(/\|/);
+    expect(HOOK_SYSTEM_PROMPT).toMatch(/karaoke clauses/i);
+  });
+
   it('requires curiosityTarget and first-frame visual contract', () => {
     expect(HOOK_SYSTEM_PROMPT).toMatch(/curiosityTarget/);
     expect(HOOK_SYSTEM_PROMPT).toMatch(/first-frame/i);

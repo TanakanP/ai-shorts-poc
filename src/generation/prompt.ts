@@ -30,7 +30,8 @@ HOOK RULES
 - Prefer a contradiction, personal consequence, unexpected second purpose, surprising number, or impossible-sounding fact when supported by the brief.
 - Never invent drama unsupported by the brief.
 - spokenHook sounds natural when spoken aloud.
-- displayText is shorter visual copy, not a transcript.
+- If the spoken hook has two thoughts, insert | between karaoke clauses, at most twice. Do not speak the bar.
+- displayText is shorter visual copy for the first-frame thumbnail only, not a transcript.
 - Each candidate includes curiosityTarget: the unanswered question the rest of the short must pay off.
 
 FIRST-FRAME RULES
@@ -83,7 +84,8 @@ ATTENTION RULES
 COPY RULES
 - spokenText and displayText are separate fields.
 - spokenText sounds natural aloud. Write natural narration, not five headline fragments.
-- displayText is concise visual copy, maximum 9 words.
+- Insert | between on-screen karaoke clauses, at most twice. Each side must be a complete thought. Short lines may omit |. Do not speak the bar.
+- displayText is concise visual copy, maximum 9 words. It is stored for the hook thumbnail; later beats still include it.
 - emphasisWords is 0–2 tokens copied from displayText. Do not invent extra words.
 - every beat adds new information.
 - every beat includes beatPurpose and newInformation metadata.
