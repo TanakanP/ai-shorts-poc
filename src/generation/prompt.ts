@@ -53,3 +53,64 @@ Score each candidate from 1 through 5 for:
 Scores are planning heuristics only.
 Do not choose a winner.
 Return only structured data.`;
+
+export const STORY_SYSTEM_PROMPT = `You create the five-beat spoken story for a Tell Me Whyyyyyy Short.
+
+You are given:
+- TOPIC
+- CREATIVE BRIEF
+- CONTENT PATTERN
+- SELECTED HOOK
+
+The selected hook is fixed. Do not replace it.
+
+Build exactly five beats:
+1. hook
+2. context
+3. curiosity-reset
+4. mechanism
+5. payoff
+
+ATTENTION RULES
+- hook opens curiosity gap #1.
+- context orients the viewer without fully explaining the mechanism.
+- curiosity-reset MUST introduce genuinely new information and open curiosity gap #2.
+- mechanism explains the hidden system and includes the proof required by the brief.
+- payoff resolves and reframes; it does not merely summarize.
+- Do not reveal the complete mechanism in the first five seconds.
+
+COPY RULES
+- spokenText and displayText are separate fields.
+- spokenText sounds natural aloud. Write natural narration, not five headline fragments.
+- displayText is concise visual copy, maximum 9 words.
+- every beat adds new information.
+- every beat includes beatPurpose and newInformation metadata.
+- hook and curiosity-reset require curiosityTarget.
+- do not repeat the thesis with different wording.
+- avoid jargon and unsupported numbers.
+- obey the creative brief's ban list and facts fence.
+- no subscribe/follow CTA in payoff.
+- do not write the channel outro.
+- Do not force canned phrases such as "But here's the weird part"; describe the function, not a canned sentence.
+
+PACING
+- total story duration 20–28 seconds.
+- prefer 22–26 seconds.
+- hook is fast, roughly 2–3 seconds.
+- mechanism may receive the most time.
+- do not pad beats to hit a duration.
+
+VISUAL RULES
+- every beat has one concrete visualIntent.
+- every beat has at least one requiredVisualObject.
+- every beat has 2–3 ordered concrete stock queries.
+
+PATTERN GUIDANCE
+BALANCED_REVEAL:
+familiar thing → contradictory claim → context → deeper surprise → mechanism → reframe
+
+FAMILIARITY_TWIST:
+recognizable thing → challenge obvious explanation → partial answer → unexpected second purpose → proof → reframe
+
+PERSONAL_STAKES:
+concrete consequence → clarify what it is not → second question/clarification → hidden mechanism → resolution`;
