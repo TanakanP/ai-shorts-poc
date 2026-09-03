@@ -1,7 +1,8 @@
 # AI Shorts POC
 
-Generate one vertical educational short from a topic. The local pipeline creates a video
-plan, synthesizes spoken narration, downloads stock footage from Pexels, and renders an MP4 with Remotion.
+Generate one vertical Tell Me Whyyyyyy Short from a topic and creative brief. The local
+pipeline creates a retention-v3 video plan, synthesizes spoken narration, downloads stock
+footage from Pexels, and renders an MP4 with Remotion.
 
 ## Requirements
 
@@ -17,12 +18,86 @@ plan, synthesizes spoken narration, downloads stock footage from Pexels, and ren
 2. Create a local environment file: `cp .env.example .env`
 3. Add `OPENAI_API_KEY`, `PEXELS_API_KEY`, `XAI_API_KEY`, `CHANNEL_BRAND`, and `CHANNEL_SIGNOFF` (and optional `XAI_VOICE_ID`) to `.env`.
 4. Run the offline test suite: `npm test`
-5. Generate a short with a topic. An optional second argument is a **creative brief** (tone, audience, angle, proof, bans). See `misc/v1_1_content_enhance.md` for how to write one:
+5. Generate a short with a topic and a **creative brief** (tone, audience, angle, proof, bans, optional content pattern):
 
 ```bash
-npm run generate -- "Why Supermarkets Put Milk at the Back"
-npm run generate -- "Why Supermarkets Put Milk at the Back" "Tone: sly, like a friend who caught a trick. Audience: people who grocery shop on autopilot. Angle: the store is using your feet, not hiding milk. Hook must be a claim, not a why-question. Proof: the walk past snacks. Ban loading docks, cold-chain, and 'ever wonder'. Close: your walk is the product. No fake numbers."
+npm run generate -- "<topic>" "<creative brief>"
 ```
+
+The second argument is required for retention-v3 planning (at least 5 characters). See `misc/v1_1_content_enhance.md` for how to write a brief.
+
+## Retention v3 behavior
+
+- Channel generation identity: **Tell Me Whyyyyyy**
+- Public CLI: two arguments, `topic` + `creative brief`
+- Exactly **3 hook candidates** (`hook-a`, `hook-b`, `hook-c`)
+- Code selects the winner: total score, then clarity, visualizability, stopScroll, then id
+- Five story roles: `hook` → `context` → `curiosity-reset` → `mechanism` → `payoff`
+- `curiosity-reset` is mandatory (second curiosity gap)
+- `spokenText` is narration/TTS; `displayText` is the large on-screen card (max 9 words)
+- Karaoke captions still follow TTS word timings
+- Story duration is validated at 20–26 seconds (26s max so a 4s outro stays ≤ 30s). Prompts prefer 22–26 seconds
+- Ordered Pexels resolution is unchanged: per query, portrait then landscape; `selectedSearchQuery` is persisted
+- Artifacts: `runs/<run-id>/plan.json`, `resolved.json`, `run.json`, `output.mp4`
+
+## Acceptance commands
+
+```bash
+npm run generate -- \
+  "A Runway Can Change Its Number Without Moving" \
+  "Pattern: BALANCED_REVEAL. Tone: aviation mind-bender with a clean visual reveal. Audience: U.S. travelers. Angle: the runway stays physically fixed while magnetic heading changes can force a new number. Hook must preserve the contradiction. Proof: show runway markings and magnetic heading drift. Ban fake thresholds and jargon. Close: the runway stayed still; the planet changed the number. Facts fence: verify FAA runway-numbering guidance."
+
+npm run generate -- \
+  "Costco Isn't Just Checking Whether You Paid" \
+  "Pattern: FAMILIARITY_TWIST. Tone: confident retail-insider. Audience: Americans who shop at Costco. Angle: receipt checks are not only about theft; they can also catch checkout errors. Hook must challenge the obvious security explanation. Proof: receipt, cart, item-count or expensive-item check. Curiosity reset must reveal the customer-side consequence. Ban fake theft statistics and universal procedure claims. Close: one last audit at the exit. Facts fence: verify Costco policy and separate official practice from anecdotes."
+
+npm run generate -- \
+  "A $40 Fill-Up Can Lock $100+ on Your Card" \
+  "Pattern: PERSONAL_STAKES. Tone: urgent money mystery that becomes reassuring. Audience: U.S. drivers. Angle: pay-at-pump authorization can temporarily reserve more than the final fuel purchase. Hook must lead with the $40 versus $100+ consequence. Proof: authorization before fuel total, then final settlement. Curiosity reset must clarify that the larger pending amount is not necessarily the final charge. Ban universal hold amounts/durations and financial advice. Close: it is a temporary placeholder for a bill that did not exist yet. Facts fence: verify merchant/card preauthorization practice and issuer variation."
+```
+
+Reusable constants live in `tests/fixtures/v3-acceptance.ts`.
+
+## Human review rubric
+
+For each acceptance video:
+
+- A. First spoken claim is understandable within ~2 seconds
+- B. First visual identifies the subject/environment without relying on narration
+- C. Display copy can be read without pausing
+- D. Hook creates curiosity without explaining the full mechanism
+- E. Context adds information rather than rephrasing the hook
+- F. Curiosity-reset creates a real second unanswered thought
+- G. Mechanism delivers the promised proof/reason
+- H. Payoff resolves and reframes rather than summarizes
+- I. Spoken copy sounds like a person, not five thumbnail headlines
+- J. At least 4/5 selected clips are semantically relevant
+- K. No obvious blank, black, clipped, or broken visual frames
+- L. Channel outro remains separate from story copy
+- M. No manual editing is required between CLI command and final MP4
+
+A–I and K–M must pass. J must be at least 4/5 scenes.
+
+## Failure classification
+
+Classify **one primary failure** before changing code. Fix the smallest responsible layer.
+
+```text
+HOOK_GENERATION
+HOOK_SELECTION
+FIRST_FRAME
+CURIOSITY_RESET
+STORY_REPETITION
+STORY_PACING
+SPOKEN_COPY
+DISPLAY_COPY
+VISUAL_QUERY
+PEXELS_MATCH
+TEXT_READABILITY
+RENDERING
+```
+
+This pipeline does not ingest analytics, auto-regenerate, schedule posts, or score topics at runtime.
 
 ## Expected output
 
@@ -32,11 +107,7 @@ The rendered video is written to:
 runs/<run-id>/output.mp4
 ```
 
-The plan is **five educational scenes** (hook, stake, proof, twist, payoff) plus a channel outro. Stock clips stay unique per educational scene and prefer ordered Pexels queries from the plan.
-The MP4 includes spoken narration and on-screen captions that show **one model-marked clause at a time** (`|` in `scene.text`), with the **current word in yellow** (karaoke). Bars are stripped before TTS. Footage has **no dark wash**. Type is **Montserrat Black** with a black stroke at a fixed large size.
+The plan is five V3 story beats plus a 4-second channel outro. `plan.json` stores all three hooks, scores, totals, `selectedHookId`, and spoken/display copy. `run.json` stores selection, duration, and word-count diagnostics. Stock clips stay unique per educational scene and prefer ordered Pexels queries from the plan.
+The MP4 includes spoken narration, a large `displayText` card, and karaoke captions from TTS word timings. Footage has **no dark wash**. Type is **Montserrat Black** with a black stroke.
 A quiet looping music bed (`assets/music/SOUNDTRACK.mp3`, overridable with `BACKGROUND_MUSIC_PATH`) plays under the voice.
-A final **channel-outro** scene speaks **`CHANNEL_BRAND` then `CHANNEL_SIGNOFF`** as two stacked lines (keeps the brand's `?` / `!` / `.` if you set one) and reuses the opening clip so replay loops to the start. The educational last scene keeps its own script and footage. The same run directory contains intermediate JSON artifacts, per-scene voice clips,
-and downloaded scene footage for local debugging. Creator and source attribution is recorded in
-`run.json`. Manually review the rendered video for factual accuracy, caption timing, legibility,
-footage relevance, and narration before any public upload. Before publishing, re-check Pexels
-attribution and link-back requirements and decide where the public-facing attribution will live.
+A final **channel-outro** scene speaks **`CHANNEL_BRAND` then `CHANNEL_SIGNOFF`** as two stacked lines (keeps the brand's `?` / `!` / `.` if you set one) and reuses the opening clip so replay loops to the start. The last story beat keeps its own script and footage. Creator and source attribution is recorded in `run.json`. Manually review the rendered video for factual accuracy, caption timing, legibility, footage relevance, and narration before any public upload. Before publishing, re-check Pexels attribution and link-back requirements and decide where the public-facing attribution will live.
