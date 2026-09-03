@@ -1,13 +1,14 @@
 import {describe, expect, it} from 'vitest';
 import type {ResolvedScene, ResolvedVideo, StockScene} from '../../src/domain/resolved-video';
 import {
+  parseStoryBeats,
   videoPlanFromV3,
   type HookConcept,
   type StoryBeat,
   type VideoPlanV3,
 } from '../../src/domain/video-plan';
 import {attachChannelOutro} from '../../src/pipeline/attach-channel-outro';
-import {createShort, type CreateShortDeps} from '../../src/pipeline/create-short';
+import {createShort, SafeStageError, type CreateShortDeps} from '../../src/pipeline/create-short';
 import type {SynthesizeSceneVoicesResult} from '../../src/voice/synthesize-scene-voices';
 
 const topic = 'Why supermarkets put milk at the back';
@@ -477,6 +478,24 @@ describe('createShort', () => {
         'grocery delivery',
       ],
     });
+  });
+
+  it('persists inner generation validation detail', async () => {
+    const events: string[] = [];
+    const {deps, persisted} = fakeDeps(events);
+    let inner: unknown;
+    try {
+      parseStoryBeats([]);
+    } catch (error) {
+      inner = error;
+    }
+    deps.generateVideoPlan = async () => {
+      throw new SafeStageError('Video plan generation failed', undefined, {cause: inner});
+    };
+
+    await expect(createShort(topic, deps)).rejects.toThrow('Video plan generation failed');
+    const persistedError = (persisted.at(-1)?.value as {error: {detail?: string}}).error;
+    expect(persistedError.detail).toMatch(/expected array to have >=5 items|at least 5/i);
   });
 
   it('never writes API keys or provider Authorization headers', async () => {

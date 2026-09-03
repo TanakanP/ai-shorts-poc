@@ -63,6 +63,7 @@ You are given:
 - SELECTED HOOK
 
 The selected hook is fixed. Do not replace it.
+Copy the selected hook spokenHook, displayText, visualIntent, requiredVisualObjects, searchQueries, and curiosityTarget into the hook beat exactly.
 
 Build exactly five beats:
 1. hook
@@ -94,8 +95,9 @@ COPY RULES
 - Do not force canned phrases such as "But here's the weird part"; describe the function, not a canned sentence.
 
 PACING
-- total story duration 20–28 seconds.
+- total story duration 20–26 seconds.
 - prefer 22–26 seconds.
+- never exceed 26 seconds; a 4-second channel outro is added later.
 - hook is fast, roughly 2–3 seconds.
 - mechanism may receive the most time.
 - do not pad beats to hit a duration.

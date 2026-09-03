@@ -2,7 +2,7 @@ import {join} from 'node:path';
 import {CHANNEL_OUTRO_SCENE_ID} from '../captions/caption-segments';
 import type {ResolvedScene, ResolvedVideo, StockScene} from '../domain/resolved-video';
 import {videoPlanFromV3, type VideoPlan, type VideoPlanV3} from '../domain/video-plan';
-import type {ProviderDiagnostic} from '../domain/provider-error';
+import {publicFailureDetail, type ProviderDiagnostic} from '../domain/provider-error';
 import {totalHookScore} from '../generation/select-hook';
 import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices';
 import {attachChannelOutro} from './attach-channel-outro';
@@ -187,6 +187,7 @@ export async function createShort(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const diagnostic = error instanceof SafeStageError ? error.diagnostic : undefined;
+    const detail = diagnostic?.detail ?? publicFailureDetail(error);
     try {
       await deps.persistJson(runPath, {
         runId,
@@ -196,7 +197,12 @@ export async function createShort(
         status: 'failed',
         startedAt,
         finishedAt: new Date().toISOString(),
-        error: {stage, message, ...diagnostic},
+        error: {
+          stage,
+          message,
+          ...diagnostic,
+          ...(detail && detail !== message ? {detail} : {}),
+        },
         ...(attribution ? {attribution} : {}),
       });
     } finally {

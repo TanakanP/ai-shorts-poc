@@ -1,5 +1,6 @@
 import {parseStoryBeats} from '../domain/video-plan';
 import type {ContentPattern, HookConcept, StoryBeat} from '../domain/video-plan';
+import {publicFailureDetail} from '../domain/provider-error';
 import {STORY_SYSTEM_PROMPT} from './prompt';
 
 export type GenerateStoryInput = {
@@ -15,6 +16,22 @@ export type GenerateStoryDeps = {
 
 function stringArraysEqual(left: readonly string[], right: readonly string[]): boolean {
   return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function applySelectedHook(raw: unknown, selectedHook: HookConcept): unknown {
+  if (!Array.isArray(raw)) return raw;
+  return raw.map((beat) => {
+    if (!beat || typeof beat !== 'object' || (beat as {role?: string}).role !== 'hook') return beat;
+    return {
+      ...beat,
+      spokenText: selectedHook.spokenHook,
+      displayText: selectedHook.displayText,
+      visualIntent: selectedHook.visualIntent,
+      requiredVisualObjects: selectedHook.requiredVisualObjects,
+      searchQueries: selectedHook.searchQueries,
+      curiosityTarget: selectedHook.curiosityTarget,
+    };
+  });
 }
 
 function assertSelectedHookContract(beats: StoryBeat[], selectedHook: HookConcept): void {
@@ -48,7 +65,12 @@ export async function generateStory(
     system: STORY_SYSTEM_PROMPT,
     input: providerInput,
   });
-  const beats = parseStoryBeats(raw);
-  assertSelectedHookContract(beats, input.selectedHook);
-  return beats;
+  try {
+    const beats = parseStoryBeats(applySelectedHook(raw, input.selectedHook));
+    assertSelectedHookContract(beats, input.selectedHook);
+    return beats;
+  } catch (cause) {
+    const detail = publicFailureDetail(cause) ?? (cause instanceof Error ? cause.message : 'invalid story');
+    throw new Error(`Story validation failed: ${detail}`, {cause});
+  }
 }

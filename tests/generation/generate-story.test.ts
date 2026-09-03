@@ -236,10 +236,17 @@ describe('generateStory', () => {
     expect(STORY_SYSTEM_PROMPT).toMatch(/search quer|stock quer/i);
   });
 
-  it('requires story duration 20–28 seconds and prefers 22–26', () => {
-    expect(STORY_SYSTEM_PROMPT).toMatch(/20–28|20-28/);
+  it('requires story duration 20–26 seconds and prefers 22–26', () => {
+    expect(STORY_SYSTEM_PROMPT).toMatch(/20–26|20-26/);
     expect(STORY_SYSTEM_PROMPT).toMatch(/22–26|22-26/);
     expect(STORY_SYSTEM_PROMPT).toMatch(/prefer/i);
+    expect(STORY_SYSTEM_PROMPT).not.toMatch(/20–28|20-28/);
+  });
+
+  it('instructs the model to copy the selected hook fields exactly', () => {
+    expect(STORY_SYSTEM_PROMPT).toMatch(/exactly/i);
+    expect(STORY_SYSTEM_PROMPT).toMatch(/spokenHook/);
+    expect(STORY_SYSTEM_PROMPT).toMatch(/displayText/);
   });
 
   it('forbids subscribe/follow CTA in payoff', () => {
@@ -253,7 +260,7 @@ describe('generateStory', () => {
     expect(STORY_SYSTEM_PROMPT).toMatch(/do not write the channel outro/i);
   });
 
-  it('rejects provider output when the hook beat does not match selectedHook', async () => {
+  it('rewrites the hook beat to match selectedHook', async () => {
     const mismatched = validBeats();
     mismatched[0] = {
       ...mismatched[0],
@@ -266,13 +273,16 @@ describe('generateStory', () => {
     expect(parseStoryBeats(mismatched)).toHaveLength(5);
 
     const generateStructured = vi.fn().mockResolvedValue(mismatched);
+    const beats = await generateStory(
+      {topic, creativeBrief, contentPattern, selectedHook: hookA},
+      {generateStructured},
+    );
 
-    await expect(
-      generateStory(
-        {topic, creativeBrief, contentPattern, selectedHook: hookA},
-        {generateStructured},
-      ),
-    ).rejects.toThrow();
+    expect(beats[0]?.spokenText).toBe(hookA.spokenHook);
+    expect(beats[0]?.displayText).toBe(hookA.displayText);
+    expect(beats[0]?.visualIntent).toBe(hookA.visualIntent);
+    expect(beats[0]?.requiredVisualObjects).toEqual(hookA.requiredVisualObjects);
+    expect(beats[0]?.searchQueries).toEqual(hookA.searchQueries);
   });
 
   it('rejects invalid role order', async () => {
