@@ -171,7 +171,7 @@ export type StoryBeat = {
   emphasisWords: string[];
   beatPurpose: string;
   newInformation: string;
-  curiosityTarget?: string;
+  curiosityTarget?: string | null;
   visualIntent: string;
   requiredVisualObjects: string[];
   searchQueries: string[];
@@ -356,7 +356,7 @@ const storyBeatSchema = z
     emphasisWords: z.array(z.string().trim().min(1)).max(2),
     beatPurpose: nonEmptyText,
     newInformation: nonEmptyText,
-    curiosityTarget: nonEmptyText.optional(),
+    curiosityTarget: z.string().nullish(),
     visualIntent: nonEmptyText,
     requiredVisualObjects: requiredVisualObjectsSchema,
     searchQueries: uniqueSearchQueries,
@@ -510,8 +510,23 @@ export const hookCandidatesEnvelopeSchema = z.object({
   hookCandidates: hookCandidatesSchema,
 });
 
+const storyBeatOpenAiSchema = z.object({
+  id: z.string().min(1),
+  role: z.enum(STORY_ROLES),
+  durationSeconds: z.number(),
+  spokenText: z.string().min(1),
+  displayText: z.string().min(1),
+  emphasisWords: z.array(z.string()),
+  beatPurpose: z.string().min(1),
+  newInformation: z.string().min(1),
+  curiosityTarget: z.string().nullable(),
+  visualIntent: z.string().min(1),
+  requiredVisualObjects: z.array(z.string()),
+  searchQueries: z.array(z.string()),
+});
+
 export const storyBeatsEnvelopeSchema = z.object({
-  beats: storyBeatsSchema,
+  beats: z.array(storyBeatOpenAiSchema).min(5).max(5),
 });
 
 export function parseHookCandidates(value: unknown): HookConcept[] {
@@ -541,7 +556,7 @@ export function videoPlanFromV3(plan: VideoPlanV3): VideoPlan {
       emphasisWords: beat.emphasisWords,
       beatPurpose: beat.beatPurpose,
       newInformation: beat.newInformation,
-      curiosityTarget: beat.curiosityTarget,
+      curiosityTarget: beat.curiosityTarget ?? undefined,
       visualIntent: beat.visualIntent,
       requiredVisualObjects: beat.requiredVisualObjects,
       searchQueries: beat.searchQueries,

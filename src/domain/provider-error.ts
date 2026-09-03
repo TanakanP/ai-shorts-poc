@@ -3,6 +3,7 @@ export type ProviderDiagnostic = {
   kind: 'auth' | 'quota' | 'transport' | 'validation';
   status?: number;
   code?: string;
+  detail?: string;
 };
 
 export class ProviderError extends Error {

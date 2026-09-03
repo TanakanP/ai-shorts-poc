@@ -1,8 +1,11 @@
 import {readFileSync} from 'node:fs';
 import {afterEach, describe, expect, it, vi} from 'vitest';
+import {zodTextFormat} from 'openai/helpers/zod';
 import {
+  hookCandidatesEnvelopeSchema,
   isGenericQuestionHook,
   parseVideoPlan,
+  storyBeatsEnvelopeSchema,
   videoPlanSchema,
 } from '../../src/domain/video-plan';
 import type {
@@ -594,6 +597,13 @@ describe('formatPlanInput', () => {
   it('sends only the topic when the brief is omitted', () => {
     expect(formatPlanInput('Why milk is at the back')).toBe('TOPIC:\nWhy milk is at the back');
     expect(formatPlanInput('Why milk is at the back', '   ')).toBe('TOPIC:\nWhy milk is at the back');
+  });
+});
+
+describe('OpenAI structured envelopes', () => {
+  it('converts hook and story envelopes to strict json schema', () => {
+    expect(() => zodTextFormat(hookCandidatesEnvelopeSchema, 'hook_candidates')).not.toThrow();
+    expect(() => zodTextFormat(storyBeatsEnvelopeSchema, 'story_beats')).not.toThrow();
   });
 });
 

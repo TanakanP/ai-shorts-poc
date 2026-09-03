@@ -124,16 +124,24 @@ export function createOpenAIStructuredPlanGenerator(
       const rawCode = typeof value?.code === 'string' ? value.code.toLowerCase() : undefined;
       const code = rawCode && /^[a-z0-9_-]{1,64}$/.test(rawCode) ? rawCode : undefined;
       const name = typeof value?.name === 'string' ? value.name : '';
+      const message = cause instanceof Error ? cause.message : '';
+      const isSchemaError = name === 'ZodError' || message.includes('not supported by the API');
       const kind = status === 401 || status === 403
         ? 'auth'
         : status === 429
           ? 'quota'
-          : name === 'ZodError'
+          : isSchemaError
             ? 'validation'
             : 'transport';
       throw new ProviderError(
         'OpenAI plan generation failed',
-        {provider: 'openai', kind, ...(status ? {status} : {}), ...(code ? {code} : {})},
+        {
+          provider: 'openai',
+          kind,
+          ...(status ? {status} : {}),
+          ...(code ? {code} : {}),
+          ...(isSchemaError && message ? {detail: message} : {}),
+        },
         {cause},
       );
     }

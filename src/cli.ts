@@ -123,6 +123,9 @@ export async function runCli(
     if (stage === 'setup' && cause instanceof Error) {
       io.error(cause.message);
     }
+    if (cause instanceof SafeStageError && cause.diagnostic?.detail) {
+      io.error(cause.diagnostic.detail);
+    }
     return 1;
   }
 }
@@ -159,7 +162,10 @@ function createProductionDeps(research: string): CreateShortDeps {
           generateStory(input, {
             generateStructured: async (args) => {
               const parsed = await generateStoryStructured(args);
-              return storyBeatsEnvelopeSchema.parse(parsed).beats;
+              return storyBeatsEnvelopeSchema.parse(parsed).beats.map((beat) => ({
+                ...beat,
+                curiosityTarget: beat.curiosityTarget ?? undefined,
+              }));
             },
           }),
       }),
