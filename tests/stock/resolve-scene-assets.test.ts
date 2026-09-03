@@ -2,7 +2,7 @@ import {access, mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {afterEach, describe, expect, it, vi} from 'vitest';
-import type {VideoPlan, VideoScene} from '../../src/domain/video-plan';
+import {videoPlanFromV3, type StoryBeat, type VideoPlan, type VideoPlanV3, type VideoScene} from '../../src/domain/video-plan';
 import {DEFAULT_TIMEOUT_MS, downloadFile} from '../../src/stock/download-file';
 import {resolveSceneAssets, type ResolveDeps} from '../../src/stock/resolve-scene-assets';
 import type {PexelsVideo} from '../../src/stock/pexels-client';
@@ -33,6 +33,33 @@ function plan(scenes: VideoScene[]): VideoPlan {
     viralAngle: 'A test viral angle for stock matching',
     scenes,
   };
+}
+
+function v3CuriosityBeat(overrides: Partial<StoryBeat> = {}): StoryBeat {
+  return {
+    id: 'curiosity-reset',
+    role: 'curiosity-reset',
+    durationSeconds: 5,
+    spokenText: 'Magnetic north itself keeps drifting, so the heading can go stale.',
+    displayText: 'NORTH KEEPS DRIFTING',
+    emphasisWords: ['DRIFTING'],
+    beatPurpose: 'Open a second gap by showing the heading can become wrong.',
+    newInformation: 'Magnetic north drift can make a correct runway number outdated.',
+    curiosityTarget: 'What happens when the painted heading no longer matches magnetic north?',
+    visualIntent: 'Airport workers painting a new runway number on asphalt',
+    requiredVisualObjects: ['runway painting crew'],
+    searchQueries: ['runway number painting', 'airport runway repaint'],
+    ...overrides,
+  };
+}
+
+function planFromV3Beat(beat: StoryBeat): VideoPlan {
+  return videoPlanFromV3({
+    topic: 'Why runway numbers change',
+    title: 'Runways Can Change Numbers',
+    viralAngle: 'The number is a heading that can go stale when magnetic north drifts.',
+    beats: [beat],
+  } as VideoPlanV3);
 }
 
 function video(downloadUrl: string, overrides: Partial<PexelsVideo> = {}): PexelsVideo {
@@ -214,7 +241,7 @@ describe('resolveSceneAssets', () => {
     deps.searchVideos.mockResolvedValue([]);
 
     await expect(resolveSceneAssets(plan([scene('missing', 'empty beach')]), await createRunDirectory(), deps))
-      .rejects.toThrow(/missing: empty beach \| missing backup/);
+      .rejects.toThrow(/missing: Watch missing happen on camera: empty beach \| missing backup/);
     expect(deps.download).not.toHaveBeenCalled();
   });
 
@@ -353,6 +380,119 @@ describe('resolveSceneAssets', () => {
       'https://videos.pexels.com/long-enough.mp4',
       join(runDirectory, 'scene-02.mp4'),
     );
+  });
+
+  it('resolves V3 beat searchQueries in existing portrait-first order', async () => {
+    const runDirectory = await createRunDirectory();
+    const deps = resolverDeps();
+    deps.searchVideos.mockResolvedValueOnce([
+      video('https://videos.pexels.com/painting.mp4', {
+        url: 'https://www.pexels.com/video/runway-number-painting-101/',
+      }),
+    ]);
+
+    const resolved = await resolveSceneAssets(planFromV3Beat(v3CuriosityBeat()), runDirectory, deps);
+
+    expect(deps.searchVideos).toHaveBeenCalledTimes(1);
+    expect(deps.searchVideos).toHaveBeenNthCalledWith(1, 'runway number painting', {
+      orientation: 'portrait',
+      perPage: 15,
+    });
+    expect(resolved[0]?.selectedSearchQuery).toBe('runway number painting');
+  });
+
+  it('preserves V3 role, spokenText, displayText, and requiredVisualObjects', async () => {
+    const runDirectory = await createRunDirectory();
+    const deps = resolverDeps();
+    deps.searchVideos.mockResolvedValueOnce([
+      video('https://videos.pexels.com/painting.mp4', {
+        url: 'https://www.pexels.com/video/runway-number-painting-101/',
+      }),
+    ]);
+
+    const beat = v3CuriosityBeat();
+    const resolved = await resolveSceneAssets(planFromV3Beat(beat), runDirectory, deps);
+
+    expect(resolved[0]).toMatchObject({
+      id: beat.id,
+      role: 'curiosity-reset',
+      durationSeconds: beat.durationSeconds,
+      text: beat.spokenText,
+      spokenText: beat.spokenText,
+      displayText: beat.displayText,
+      emphasisWords: beat.emphasisWords,
+      beatPurpose: beat.beatPurpose,
+      newInformation: beat.newInformation,
+      curiosityTarget: beat.curiosityTarget,
+      visualIntent: beat.visualIntent,
+      requiredVisualObjects: beat.requiredVisualObjects,
+      searchQueries: beat.searchQueries,
+      sourcePageUrl: 'https://www.pexels.com/video/runway-number-painting-101/',
+      creatorName: 'Test Creator',
+      creatorUrl: 'https://www.pexels.com/@test-creator',
+      localVideoPath: join(runDirectory, 'scene-01.mp4'),
+    });
+  });
+
+  it('persists selectedSearchQuery', async () => {
+    const runDirectory = await createRunDirectory();
+    const deps = resolverDeps();
+    deps.searchVideos
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        video('https://videos.pexels.com/repaint.mp4', {
+          url: 'https://www.pexels.com/video/airport-runway-repaint-202/',
+        }),
+      ]);
+
+    const resolved = await resolveSceneAssets(planFromV3Beat(v3CuriosityBeat()), runDirectory, deps);
+
+    expect(resolved[0]?.selectedSearchQuery).toBe('airport runway repaint');
+  });
+
+  it('does not alter ordered query fallback semantics', async () => {
+    const runDirectory = await createRunDirectory();
+    const deps = resolverDeps();
+    deps.searchVideos
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        video('https://videos.pexels.com/repaint.mp4', {
+          url: 'https://www.pexels.com/video/airport-runway-repaint-202/',
+        }),
+      ]);
+
+    await resolveSceneAssets(planFromV3Beat(v3CuriosityBeat()), runDirectory, deps);
+
+    expect(deps.searchVideos).toHaveBeenCalledTimes(3);
+    expect(deps.searchVideos).toHaveBeenNthCalledWith(1, 'runway number painting', {
+      orientation: 'portrait',
+      perPage: 15,
+    });
+    expect(deps.searchVideos).toHaveBeenNthCalledWith(2, 'runway number painting', {
+      orientation: 'landscape',
+      perPage: 15,
+    });
+    expect(deps.searchVideos).toHaveBeenNthCalledWith(3, 'airport runway repaint', {
+      orientation: 'portrait',
+      perPage: 15,
+    });
+    expect(deps.searchVideos).not.toHaveBeenCalledWith('airport runway repaint', {
+      orientation: 'landscape',
+      perPage: 15,
+    });
+  });
+
+  it('reports beat id, visualIntent, and attempted queries when all searches fail', async () => {
+    const deps = resolverDeps();
+    deps.searchVideos.mockResolvedValue([]);
+    const beat = v3CuriosityBeat();
+
+    await expect(resolveSceneAssets(planFromV3Beat(beat), await createRunDirectory(), deps)).rejects.toThrow(
+      /curiosity-reset[\s\S]*Airport workers painting a new runway number on asphalt[\s\S]*runway number painting \| airport runway repaint/,
+    );
+    expect(deps.download).not.toHaveBeenCalled();
   });
 });
 

@@ -58,7 +58,9 @@ async function pickClip(
   }
 
   if (!fallback) {
-    throw new Error(`No usable video for scene ${scene.id}: ${scene.searchQueries.join(' | ')}`);
+    throw new Error(
+      `No usable video for scene ${scene.id}: ${scene.visualIntent}: ${scene.searchQueries.join(' | ')}`,
+    );
   }
   return fallback;
 }

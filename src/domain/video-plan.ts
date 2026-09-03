@@ -12,6 +12,13 @@ export type VideoScene = {
   text: string;
   visualIntent: string;
   searchQueries: string[];
+  spokenText?: string;
+  displayText?: string;
+  emphasisWords?: string[];
+  beatPurpose?: string;
+  newInformation?: string;
+  curiosityTarget?: string;
+  requiredVisualObjects?: string[];
 };
 
 export type VideoPlan = {
@@ -515,7 +522,14 @@ export function videoPlanFromV3(plan: VideoPlanV3): VideoPlan {
       role: beat.role,
       durationSeconds: beat.durationSeconds,
       text: beat.spokenText,
+      spokenText: beat.spokenText,
+      displayText: beat.displayText,
+      emphasisWords: beat.emphasisWords,
+      beatPurpose: beat.beatPurpose,
+      newInformation: beat.newInformation,
+      curiosityTarget: beat.curiosityTarget,
       visualIntent: beat.visualIntent,
+      requiredVisualObjects: beat.requiredVisualObjects,
       searchQueries: beat.searchQueries,
     })),
   };
