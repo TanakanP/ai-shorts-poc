@@ -91,6 +91,58 @@ afterEach(async () => {
 });
 
 describe('resolveSceneAssets', () => {
+  it('skips rejected gas-nozzle word matches and downloads only the reviewed clip', async () => {
+    const runDir = await createRunDirectory();
+    const rejected = video('https://videos.pexels.com/lab.mp4', {
+      id: 1, url: 'https://www.pexels.com/video/gas-nozzle-tube-laboratory-1/',
+    });
+    const approved = video('https://videos.pexels.com/nozzle.mp4', {
+      id: 2, url: 'https://www.pexels.com/video/filling-car-2/',
+    });
+    const downloads: string[] = [];
+    const reviewed: number[] = [];
+    const result = await resolveSceneAssets(plan([scene('gas', 'gas nozzle tube')]), runDir, {
+      searchVideos: async () => [rejected, approved],
+      download: async (url) => { downloads.push(url); },
+      reviewClip: async (_scene, clip) => {
+        reviewed.push(clip.videoId);
+        return clip.videoId === 2;
+      },
+    });
+    expect(result[0].sourcePageUrl).toBe('https://www.pexels.com/video/filling-car-2/');
+    expect(downloads).toEqual(['https://videos.pexels.com/nozzle.mp4']);
+    expect(reviewed).toEqual([1, 2]);
+  });
+
+  it('reports missing footage when all candidates are rejected, without repeating them', async () => {
+    const runDir = await createRunDirectory();
+    const reviewed: number[] = [];
+    const downloads: string[] = [];
+    await expect(resolveSceneAssets(plan([scene('gas', 'gas nozzle')]), runDir, {
+      searchVideos: async () => [video('https://videos.pexels.com/lab.mp4')],
+      download: async (url) => { downloads.push(url); },
+      reviewClip: async (_scene, clip) => { reviewed.push(clip.videoId); return false; },
+    })).rejects.toThrow(/No approved footage.*gas/);
+    expect(downloads).toEqual([]);
+    expect(reviewed).toEqual([101]);
+  });
+
+  it('reviews all portrait queries before landscape and reuses the approved outro clip', async () => {
+    const searches: string[] = [];
+    let reviews = 0;
+    const result = await resolveSceneAssets(plan([scene('gas'), scene('channel-outro')]), await createRunDirectory(), {
+      searchVideos: async (query, options) => {
+        searches.push(`${options.orientation}: ${query}`);
+        return options.orientation === 'landscape' ? [video('https://videos.pexels.com/gas.mp4')] : [];
+      },
+      download: async () => {},
+      reviewClip: async () => { reviews++; return true; },
+    });
+    expect(searches).toEqual(['portrait: gas footage', 'portrait: gas backup', 'landscape: gas footage']);
+    expect(reviews).toBe(1);
+    expect(result[1].localVideoPath).toBe(result[0].localVideoPath);
+  });
+
   it('resolves a portrait result and downloads it once', async () => {
     const runDirectory = await createRunDirectory();
     const deps = resolverDeps();

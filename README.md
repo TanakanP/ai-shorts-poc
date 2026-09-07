@@ -111,3 +111,23 @@ The plan is five V3 story beats plus a 4-second channel outro. `plan.json` store
 The MP4 includes spoken narration, a large `displayText` card, and karaoke captions from TTS word timings. Footage has **no dark wash**. Type is **Montserrat Black** with a black stroke.
 A quiet looping music bed (`assets/music/SOUNDTRACK.mp3`, overridable with `BACKGROUND_MUSIC_PATH`) plays under the voice.
 A final **channel-outro** scene speaks **`CHANNEL_BRAND` then `CHANNEL_SIGNOFF`** as two stacked lines (keeps the brand's `?` / `!` / `.` if you set one) and reuses the opening clip so replay loops to the start. The last story beat keeps its own script and footage. Creator and source attribution is recorded in `run.json`. Manually review the rendered video for factual accuracy, caption timing, legibility, footage relevance, and narration before any public upload. Before publishing, re-check Pexels attribution and link-back requirements and decide where the public-facing attribution will live.
+
+## Footage review
+
+Run `npm run generate -- "<topic>" "<creative brief>"` in an interactive terminal.
+After voice synthesis, each stock candidate shows the scene's visual intent, required
+objects, Pexels page and playable video link. Open the preview and enter `y` to use it,
+`n` to try another clip, or `q` to stop. Accept only footage that actually shows the
+required object/action. The outro reuses the approved opening clip.
+
+Review tries the ordered portrait queries before landscape queries. Rejected clips
+are not shown again for that scene. If nothing is approved, generation stops with the
+missing scene and required shot instead of using a fallback. Refine the brief/search
+queries and retry; this small workflow does not resume a stopped run. Voice generation
+has already happened at this point, so a fresh run will incur generation/TTS costs again.
+
+For gas-pump shutoff, a generic station or laboratory tube is not proof of the nozzle
+sensing hole or shutoff mechanism. Stop if that proof shot is unavailable. Approval is
+manual: URL scoring only orders candidates and cannot establish visual relevance.
+The lower-level resolver retains automatic selection for existing programmatic callers
+that omit the review callback; the normal CLI always requires review.

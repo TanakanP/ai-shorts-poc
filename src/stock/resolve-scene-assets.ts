@@ -1,4 +1,5 @@
 import {join} from 'node:path';
+import {ProviderError} from '../domain/provider-error';
 import type {StockScene} from '../domain/resolved-video';
 import type {VideoPlan} from '../domain/video-plan';
 import type {PexelsVideo, SearchOptions} from './pexels-client';
@@ -8,6 +9,8 @@ import {selectBestVideo, type SelectedVideo} from './select-video-file';
 export type ResolveDeps = {
   searchVideos: (query: string, options: SearchOptions) => Promise<PexelsVideo[]>;
   download: (url: string, destination: string) => Promise<void>;
+  // The interactive CLI supplies this; legacy programmatic callers retain automatic selection.
+  reviewClip?: (scene: VideoPlan['scenes'][number], clip: SelectedVideo) => Promise<boolean>;
 };
 
 type PickedClip = {
@@ -25,6 +28,27 @@ async function pickClip(
   usedVideoIds: ReadonlySet<number>,
   deps: ResolveDeps,
 ): Promise<PickedClip> {
+  if (deps.reviewClip) {
+    const excluded = new Set(usedVideoIds);
+    for (const options of [portraitSearch, landscapeSearch]) {
+      for (const query of scene.searchQueries) {
+        const videos = (await deps.searchVideos(query, options)) ?? [];
+        while (true) {
+          const candidate = selectBestVideo(videos, requiredSeconds, excluded, {
+            searchQuery: query, sceneText: scene.text,
+          });
+          if (!candidate) break;
+          excluded.add(candidate.videoId);
+          if (await deps.reviewClip(scene, candidate)) {
+            return {candidate, selectedSearchQuery: query};
+          }
+        }
+      }
+    }
+    const detail = `No approved footage for scene ${scene.id}: ${scene.visualIntent}. Required: ${(scene.requiredVisualObjects ?? []).join(', ')}. Revise the shot or search queries before retrying.`;
+    throw new ProviderError(detail, {provider: 'pexels', kind: 'validation', detail});
+  }
+
   let fallback: PickedClip | undefined;
 
   for (const query of scene.searchQueries) {

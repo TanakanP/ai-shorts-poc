@@ -1728,3 +1728,20 @@ If the last case occurs, report the current abstraction and propose the smallest
 - deterministically computes the selected candidate in code,
 - guarantees the final story uses that same selected hook,
 before implementing any workaround.
+
+## September 7 attention-review follow-up: manual footage check
+
+Owner approved proceeding with the attention audit's footage-relevance step, with a
+lightweight personal-use implementation. This adds one bounded follow-up to the plan:
+
+- Add a terminal accept/skip/quit check with playable candidate links and required shots.
+- Review ordered portrait queries before landscape; do not repeat rejected candidates
+  within a scene or silently use unapproved fallback footage in the CLI.
+- Keep existing programmatic resolver compatibility, local MP4, voice, karaoke, BGM,
+  unique story clips and the reused opening clip for the outro.
+- Validate with offline regression tests, full tests and typechecking; commit together.
+
+This is manual visual review, not a semantic scoring model. There are no new runtime
+dependencies, review dashboard, resume mechanism or automatic diagrams. The gas-nozzle
+mismatch is covered by a deterministic rejected-lab/accepted-nozzle regression fixture;
+a real gas-nozzle proof clip still requires the owner's visual review.

@@ -1,4 +1,5 @@
 import {writeFile} from 'node:fs/promises';
+import {createInterface} from 'node:readline/promises';
 import {resolve as resolvePath} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {config as loadDotenv} from 'dotenv';
@@ -25,6 +26,7 @@ import {renderShort} from './remotion/render-short';
 import {downloadFile} from './stock/download-file';
 import {PexelsClient} from './stock/pexels-client';
 import {resolveSceneAssets} from './stock/resolve-scene-assets';
+import {reviewClip} from './stock/review-clip';
 import {synthesizeSceneVoices} from './voice/synthesize-scene-voices';
 import {createXaiSpeechSynthesizer} from './voice/xai-tts-client';
 
@@ -131,6 +133,9 @@ export async function runCli(
 }
 
 function createProductionDeps(research: string): CreateShortDeps {
+  if (!process.stdin.isTTY) {
+    throw new Error('Run generate in an interactive terminal to review footage before rendering.');
+  }
   const config = loadConfig();
   const generateHookStructured = createOpenAIStructuredPlanGenerator(
     config.openAiApiKey,
@@ -177,11 +182,18 @@ function createProductionDeps(research: string): CreateShortDeps {
           await writeFile(path, bytes);
         },
       }),
-    resolveSceneAssets: (plan, runDir) =>
-      resolveSceneAssets(plan, runDir, {
-        searchVideos: (query, options) => pexels.searchVideos(query, options),
-        download: downloadFile,
-      }),
+    resolveSceneAssets: async (plan, runDir) => {
+      const terminal = createInterface({input: process.stdin, output: process.stdout});
+      try {
+        return await resolveSceneAssets(plan, runDir, {
+          searchVideos: (query, options) => pexels.searchVideos(query, options),
+          download: downloadFile,
+          reviewClip: (scene, clip) => reviewClip(scene, clip, (question) => terminal.question(question), consoleIo.log),
+        });
+      } finally {
+        terminal.close();
+      }
+    },
     renderShort,
     channel: {brand: config.channelBrand, signoff: config.channelSignoff},
     backgroundMusicPath: config.backgroundMusicPath,
