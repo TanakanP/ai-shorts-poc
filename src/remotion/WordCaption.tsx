@@ -1,6 +1,6 @@
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
-import {currentWordIndexAt} from '../captions/active-word';
-import {liveCaptionLines} from '../captions/caption-segments';
+import {currentWordIndexAt, singleCaptionWordAt} from '../captions/active-word';
+import {CHANNEL_OUTRO_SCENE_ID, liveCaptionLines} from '../captions/caption-segments';
 import type {ResolvedScene} from '../domain/resolved-video';
 import {captionFontFamily} from './caption-font';
 
@@ -22,7 +22,10 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   const {fps} = useVideoConfig();
   if (scene.words.length === 0) return null;
   const timeMs = captionTimeMs(frame, fps);
-  const lines = liveCaptionLines(scene, timeMs);
+  const isOutro = scene.id === CHANNEL_OUTRO_SCENE_ID;
+  const word = isOutro ? null : singleCaptionWordAt(scene.words, timeMs);
+  const lines = isOutro ? liveCaptionLines(scene, timeMs) : word ? [[word]] : [];
+  if (lines.length === 0) return null;
   const current = currentWordIndexAt(scene.words, timeMs);
   const currentWord = current === null ? null : scene.words[current];
 
@@ -62,7 +65,7 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
                 key={`${lineIndex}-${index}-${word.startMs}-${word.text}`}
                 style={{
                   color:
-                    currentWord !== null &&
+                    isOutro && currentWord !== null &&
                     word.startMs === currentWord.startMs &&
                     word.text === currentWord.text
                       ? CAPTION_KARAOKE_FILL

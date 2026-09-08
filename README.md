@@ -108,7 +108,7 @@ runs/<run-id>/output.mp4
 ```
 
 The plan is five V3 story beats plus a 4-second channel outro. `plan.json` stores all three hooks, scores, totals, `selectedHookId`, and spoken/display copy. `run.json` stores selection, duration, and word-count diagnostics. Stock clips stay unique per educational scene and prefer ordered Pexels queries from the plan.
-The MP4 includes spoken narration, a large `displayText` card, and karaoke captions from TTS word timings. Footage has **no dark wash**. Type is **Montserrat Black** with a black stroke.
+The MP4 includes spoken narration, a large `displayText` card, and one-word replacement captions from TTS word timings (the separate outro retains its two-line treatment). Footage has **no dark wash**. Type is **Montserrat Black** with a black stroke.
 A quiet looping music bed (`assets/music/SOUNDTRACK.mp3`, overridable with `BACKGROUND_MUSIC_PATH`) plays under the voice.
 A final **channel-outro** scene speaks **`CHANNEL_BRAND` then `CHANNEL_SIGNOFF`** as two stacked lines (keeps the brand's `?` / `!` / `.` if you set one) and reuses the opening clip so replay loops to the start. The last story beat keeps its own script and footage. Creator and source attribution is recorded in `run.json`. Manually review the rendered video for factual accuracy, caption timing, legibility, footage relevance, and narration before any public upload. Before publishing, re-check Pexels attribution and link-back requirements and decide where the public-facing attribution will live.
 
@@ -137,3 +137,7 @@ padding and the spoken channel outro. An overlong result stops during voice synt
 before stock review or rendering, with its measured duration and a request to shorten
 the script/sign-off. Audio is not truncated or automatically accelerated. This total
 limit does not yet enforce a separate hook-duration limit.
+
+Story captions show one white word at a time, retaining punctuation and the existing
+position/font. Gaps up to 150 ms hold the preceding word; longer pauses and the end
+of speech clear the caption. The hook display card and separate outro are unchanged.

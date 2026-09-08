@@ -1745,3 +1745,12 @@ This is manual visual review, not a semantic scoring model. There are no new run
 dependencies, review dashboard, resume mechanism or automatic diagrams. The gas-nozzle
 mismatch is covered by a deterministic rejected-lab/accepted-nozzle regression fixture;
 a real gas-nozzle proof clip still requires the owner's visual review.
+
+
+## September 8 caption follow-up
+
+The owner approved proceeding with the audit's true one-word caption preference.
+For story scenes this supersedes the earlier karaoke requirement: render only the
+current timestamped word in white, hold gaps up to 150 ms, and clear longer pauses
+and the final word at its end time. Preserve the hook display card and the separate
+two-line channel outro. Keep the existing voice, music, positioning and local MP4.
