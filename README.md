@@ -131,3 +131,9 @@ sensing hole or shutoff mechanism. Stop if that proof shot is unavailable. Appro
 manual: URL scoring only orders candidates and cannot establish visual relevance.
 The lower-level resolver retains automatic selection for existing programmatic callers
 that omit the review callback; the normal CLI always requires review.
+
+The synthesized timeline must be 15–30 seconds, including every scene's 0.3-second
+padding and the spoken channel outro. An overlong result stops during voice synthesis,
+before stock review or rendering, with its measured duration and a request to shorten
+the script/sign-off. Audio is not truncated or automatically accelerated. This total
+limit does not yet enforce a separate hook-duration limit.

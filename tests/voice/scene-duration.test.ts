@@ -24,8 +24,12 @@ describe('sceneDurationFromAudio', () => {
 });
 
 describe('assertVoicedTimeline', () => {
-  it('accepts a 5-scene 32s voiced timeline', () => {
-    expect(() => assertVoicedTimeline([6.3, 6.3, 6.3, 6.3, 6.3])).not.toThrow();
+  it('accepts exactly 30 seconds including the outro', () => {
+    expect(() => assertVoicedTimeline([3, 5, 5, 6, 7, 4])).not.toThrow();
+  });
+
+  it('rejects a voiced timeline over 30s', () => {
+    expect(() => assertVoicedTimeline([6.3, 6.3, 6.3, 6.3, 6.3])).toThrow(/30/);
   });
 
   it('accepts a punchy 4-beat outro timeline just under 20s', () => {
@@ -36,7 +40,7 @@ describe('assertVoicedTimeline', () => {
     expect(() => assertVoicedTimeline([2.8, 2.8, 2.8, 2.8, 2.8])).toThrow(/15/);
   });
 
-  it('rejects a total above 60s', () => {
-    expect(() => assertVoicedTimeline([12.3, 12.3, 12.3, 12.3, 12.3])).toThrow(/60/);
+  it('rejects a total above 30s', () => {
+    expect(() => assertVoicedTimeline([12.3, 12.3, 12.3, 12.3, 12.3])).toThrow(/30/);
   });
 });
