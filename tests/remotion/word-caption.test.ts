@@ -31,7 +31,7 @@ describe('captionTimeMs', () => {
 describe('word caption placement', () => {
   it('sits in a lower subtitle band instead of the frame center', () => {
     expect(WORD_CAPTION_JUSTIFY).toBe('flex-end');
-    expect(WORD_CAPTION_PADDING).toBe('0 86px 400px');
+    expect(WORD_CAPTION_PADDING).toBe('0 86px 520px');
   });
 });
 
