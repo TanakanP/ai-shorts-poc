@@ -1,4 +1,4 @@
-import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import {currentWordIndexAt, singleCaptionWordAt} from '../captions/active-word';
 import {CHANNEL_OUTRO_SCENE_ID, liveCaptionLines} from '../captions/caption-segments';
 import type {ResolvedScene} from '../domain/resolved-video';
@@ -17,6 +17,15 @@ export const CAPTION_FONT_SIZE = 72;
 export const CAPTION_STROKE = '6px #000';
 export const CAPTION_SHADOW = '0 4px 12px rgba(0,0,0,0.65)';
 
+export function captionPopAt(timeMs: number, startMs: number): {scale: number; y: number} {
+  const elapsed = timeMs - startMs;
+  const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
+  return {
+    scale: interpolate(elapsed, [0, 60, 120, 200], [0.82, 1.12, 0.98, 1], clamp),
+    y: interpolate(elapsed, [0, 60, 120, 200], [8, -5, 1, 0], clamp),
+  };
+}
+
 export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -28,6 +37,7 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
   if (lines.length === 0) return null;
   const current = currentWordIndexAt(scene.words, timeMs);
   const currentWord = current === null ? null : scene.words[current];
+  const pop = word ? captionPopAt(timeMs, word.startMs) : {scale: 1, y: 0};
 
   return (
     <AbsoluteFill
@@ -53,6 +63,8 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
           textShadow: CAPTION_SHADOW,
           lineHeight: 1.08,
           textAlign: 'center',
+          transform: `translateY(${pop.y}px) scale(${pop.scale})`,
+          transformOrigin: 'center bottom',
         }}
       >
         {lines.map((line, lineIndex) => (

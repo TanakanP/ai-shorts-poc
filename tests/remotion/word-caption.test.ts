@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {
   captionTimeMs,
+  captionPopAt,
   CAPTION_FILL,
   CAPTION_FONT_SIZE,
   CAPTION_FONT_WEIGHT,
@@ -10,6 +11,14 @@ import {
   WORD_CAPTION_JUSTIFY,
   WORD_CAPTION_PADDING,
 } from '../../src/remotion/WordCaption';
+
+it('pops at each word onset and settles during a held word', () => {
+  expect(captionPopAt(1000, 1000)).toEqual({scale: 0.82, y: 8});
+  expect(captionPopAt(1060, 1000).scale).toBeGreaterThan(1);
+  expect(captionPopAt(1200, 1000)).toEqual({scale: 1, y: 0});
+  expect(captionPopAt(1800, 1000)).toEqual({scale: 1, y: 0});
+  expect(captionPopAt(1800, 1800)).toEqual({scale: 0.82, y: 8});
+});
 
 describe('captionTimeMs', () => {
   it('converts composition frames to milliseconds', () => {
