@@ -86,7 +86,10 @@ export function liveCaptionLines(
   scene: {id: string; text: string; words: readonly VoiceWord[]},
   timeMs: number,
 ): VoiceWord[][] {
-  const words = captionWords(scene.words);
+  const brandWhy = scene.id === CHANNEL_OUTRO_SCENE_ID
+    ? scene.text.split('|')[0]?.match(/\bwhy{2,}\b/i)?.[0] : undefined;
+  const words = captionWords(scene.words).map(word => brandWhy
+    ? {...word, text: word.text.replace(/\bwhy\b/i, brandWhy)} : word);
   const segments = parseCaptionSegments(scene.text).map(stripSpeechTags).filter(Boolean);
   const chunks = segments.length > 1 ? alignCaptionSegments(segments, words) : chunkCaptionClauses(words);
   if (scene.id === CHANNEL_OUTRO_SCENE_ID) return chunks;

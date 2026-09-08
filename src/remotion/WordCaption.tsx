@@ -78,8 +78,7 @@ export const WordCaption = ({scene}: {scene: ResolvedScene}) => {
                 style={{
                   color:
                     isOutro && currentWord !== null &&
-                    word.startMs === currentWord.startMs &&
-                    word.text === currentWord.text
+                    word.startMs === currentWord.startMs
                       ? CAPTION_KARAOKE_FILL
                       : CAPTION_FILL,
                 }}

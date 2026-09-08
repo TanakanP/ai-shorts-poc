@@ -1,7 +1,7 @@
 import type {VoiceWord} from '../domain/voice';
 
 const INLINE_TAG = /\[(?:pause|long-pause|laugh|chuckle)\]/gi;
-const WRAP_TAG = /<\/?(?:emphasis|fast|loud)>/gi;
+const WRAP_TAG = /<\/?(?:emphasis|fast|slow|loud)>/gi;
 
 export function stripSpeechTags(text: string): string {
   return text.replace(INLINE_TAG, ' ').replace(WRAP_TAG, '').replace(/\s+/g, ' ').trim();

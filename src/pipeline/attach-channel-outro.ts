@@ -6,6 +6,7 @@ export function attachChannelOutro(plan: VideoPlan, brand: string, signoff: stri
   const name = brand.trim();
   const spokenName = /[.!?]$/u.test(name) ? name : `${name}.`;
   const line = signoff.trim();
+  const speechName = spokenName.replace(/\bwhy{2,}\b/gi, '<slow>why</slow>');
   return {
     ...plan,
     scenes: [
@@ -15,6 +16,7 @@ export function attachChannelOutro(plan: VideoPlan, brand: string, signoff: stri
         role: 'outro',
         durationSeconds: CHANNEL_OUTRO_DURATION_SECONDS,
         text: `${spokenName} | ${line}`,
+        ...(speechName !== spokenName ? {spokenText: `${speechName} | ${line}`} : {}),
         visualIntent: first.visualIntent,
         searchQueries: first.searchQueries,
       },

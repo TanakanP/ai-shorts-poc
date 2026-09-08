@@ -15,6 +15,15 @@ const timed = (texts: string[]): VoiceWord[] =>
     endMs: index * 200 + 150,
   }));
 
+it('keeps the stretched outro spelling with normal why speech timestamps', () => {
+  const lines = liveCaptionLines({id: 'channel-outro', text: 'Tell Me Whyyyyyy? | Follow along.',
+    words: timed(['Tell', 'Me', '<slow>why</slow>?', 'Follow', 'along.'])}, 450);
+  expect(lines.map(line => line.map(word => word.text))).toEqual([
+    ['Tell', 'Me', 'Whyyyyyy?'], ['Follow', 'along.'],
+  ]);
+  expect(lines[0][2].startMs).toBe(400);
+});
+
 describe('ensureCaptionBars', () => {
   it('inserts a karaoke bar at an em dash when the hook has no split', () => {
     expect(
