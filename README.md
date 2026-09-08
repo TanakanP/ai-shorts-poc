@@ -141,3 +141,11 @@ limit does not yet enforce a separate hook-duration limit.
 Story captions show one white word at a time, retaining punctuation and the existing
 position/font. Gaps up to 150 ms hold the preceding word; longer pauses and the end
 of speech clear the caption. The hook display card and separate outro are unchanged.
+
+Hook generation aims for 6–10 spoken words and rejects candidates over 12 words
+(excluding delivery tags and caption separators). The three prompts explore a
+contradiction, a consequence and a visible mystery where the brief supports them.
+Story guidance follows one concrete example through the reset and proof. These are
+editorial directions, not verified novelty or calibrated audience predictions; the
+existing deterministic score-based selection remains unchanged. Word count alone
+does not guarantee a 2–3-second spoken hook.

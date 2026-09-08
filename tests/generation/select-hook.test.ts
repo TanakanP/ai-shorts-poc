@@ -35,7 +35,7 @@ const hookB: HookConcept = {
 
 const hookC: HookConcept = {
   id: 'hook-c',
-  spokenHook: 'A runway can keep the same asphalt and still get a new identity.',
+  spokenHook: 'A runway can keep its asphalt and still get a new identity.',
   displayText: 'NEW IDENTITY. SAME STRIP.',
   curiosityTarget: 'What identity can change if the pavement never moves?',
   visualIntent: 'Aerial view of a single runway with visible threshold numbers',

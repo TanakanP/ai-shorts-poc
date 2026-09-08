@@ -1754,3 +1754,12 @@ For story scenes this supersedes the earlier karaoke requirement: render only th
 current timestamped word in white, hold gaps up to 150 ms, and clear longer pauses
 and the final word at its end time. Preserve the hook display card and the separate
 two-line channel outro. Keep the existing voice, music, positioning and local MP4.
+
+## September 8 hook and story follow-up
+
+Owner approved the next lightweight editorial step: aim for 6–10 spoken hook words,
+enforce a maximum of 12, and exclude delivery tags/separators from that count. Request
+three distinct supported angles and one connected demonstration across story beats.
+Remove obsolete karaoke directions from the active V3 prompts. Keep existing schemas,
+three candidates and deterministic score selection. Semantic novelty, factual retrieval
+and retention gains are not established by these prompt changes.

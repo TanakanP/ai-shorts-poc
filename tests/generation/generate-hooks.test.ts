@@ -41,7 +41,7 @@ const hookB: HookConcept = {
 
 const hookC: HookConcept = {
   id: 'hook-c',
-  spokenHook: 'A runway can keep the same asphalt and still get a new identity.',
+  spokenHook: 'A runway can keep its asphalt and still get a new identity.',
   displayText: 'NEW IDENTITY. SAME STRIP.',
   curiosityTarget: 'What identity can change if the pavement never moves?',
   visualIntent: 'Aerial view of a single runway with visible threshold numbers',
@@ -116,11 +116,6 @@ describe('generateHooks', () => {
     expect(HOOK_SYSTEM_PROMPT).toMatch(/spokenHook/);
     expect(HOOK_SYSTEM_PROMPT).toMatch(/displayText/);
     expect(HOOK_SYSTEM_PROMPT).toMatch(/shorter/i);
-  });
-
-  it('asks for karaoke clause bars in the spoken hook', () => {
-    expect(HOOK_SYSTEM_PROMPT).toMatch(/\|/);
-    expect(HOOK_SYSTEM_PROMPT).toMatch(/karaoke clauses/i);
   });
 
   it('requires curiosityTarget and first-frame visual contract', () => {

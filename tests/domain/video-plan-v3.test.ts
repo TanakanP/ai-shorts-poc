@@ -47,7 +47,7 @@ const hookB: HookConcept = {
 
 const hookC: HookConcept = {
   id: 'hook-c',
-  spokenHook: 'A runway can keep the same asphalt and still get a new identity.',
+  spokenHook: 'A runway can keep its asphalt and still get a new identity.',
   displayText: 'NEW IDENTITY. SAME STRIP.',
   curiosityTarget: 'What identity can change if the pavement never moves?',
   visualIntent: 'Aerial view of a single runway with visible threshold numbers',
@@ -233,6 +233,18 @@ describe('V3 hook validation', () => {
     const candidates = validHookCandidates();
     candidates[1].spokenHook = 'A RUNWAY CAN CHANGE ITS NUMBER WITHOUT MOVING!';
     expect(() => parseHookCandidates(candidates)).toThrow();
+  });
+
+  it('rejects a 13-word opening before story generation', () => {
+    const candidates = validHookCandidates();
+    candidates[0].spokenHook = 'A runway can keep the same asphalt and still get a new identity.';
+    expect(() => parseHookCandidates(candidates)).toThrow(/12 words/);
+  });
+
+  it('accepts 12 spoken words without counting caption bars or delivery tags', () => {
+    const candidates = validHookCandidates();
+    candidates[0].spokenHook = 'A runway can keep its asphalt | and still get a <emphasis>new identity.</emphasis> [pause]';
+    expect(() => parseHookCandidates(candidates)).not.toThrow();
   });
 
   it('rejects spokenHook over 22 words', () => {

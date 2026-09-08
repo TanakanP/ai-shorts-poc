@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {ensureCaptionBars} from '../captions/caption-segments';
+import {ensureCaptionBars, spokenSceneText} from '../captions/caption-segments';
 import {stripSpeechTags} from '../captions/speech-tags';
 
 export const EDUCATIONAL_ROLES = ['hook', 'stake', 'proof', 'twist', 'payoff'] as const;
@@ -316,7 +316,7 @@ const hookConceptSchema = z
       .string()
       .trim()
       .min(1)
-      .refine(wordCountRefine(22), {message: 'Spoken hook must be 1 to 22 words'}),
+      .refine((value) => wordCountRefine(12)(stripSpeechTags(spokenSceneText(value))), {message: 'Spoken hook must be 1 to 12 words'}),
     displayText: z
       .string()
       .trim()

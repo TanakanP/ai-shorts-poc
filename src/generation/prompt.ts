@@ -29,8 +29,10 @@ HOOK RULES
 - Do not fully explain the mechanism in the hook.
 - Prefer a contradiction, personal consequence, unexpected second purpose, surprising number, or impossible-sounding fact when supported by the brief.
 - Never invent drama unsupported by the brief.
-- spokenHook sounds natural when spoken aloud.
-- If the spoken hook has two thoughts, insert | between karaoke clauses, at most twice. Do not speak the bar.
+- spokenHook is one natural spoken sentence: aim for 6–10 words, maximum 12 spoken words. Keep the unresolved surprise; remove setup and filler.
+- Try three different angles: hook-a a contradiction, hook-b a personal consequence, hook-c a visible mystery stated as a claim. Use only angles supported by the brief; do not invent stakes to fit a category.
+- Each candidate must promise a different reveal or viewer consequence, not paraphrase the same claim.
+- Captions replace one word at a time. Do not add caption clause bars.
 - displayText is shorter visual copy for the first-frame thumbnail only, not a transcript.
 - Each candidate includes curiosityTarget: the unanswered question the rest of the short must pay off.
 
@@ -51,7 +53,7 @@ Score each candidate from 1 through 5 for:
 - personalRelevance
 - visualizability
 
-Scores are planning heuristics only.
+Scores are planning heuristics only. Judge the actual wording and available proof: reserve 5 for a specific, clear strength. Do not assign every candidate near-perfect scores.
 Do not choose a winner.
 Return only structured data.`;
 
@@ -84,13 +86,16 @@ ATTENTION RULES
 COPY RULES
 - spokenText and displayText are separate fields.
 - spokenText sounds natural aloud. Write natural narration, not five headline fragments.
-- Insert | between on-screen karaoke clauses, at most twice. Each side must be a complete thought. Short lines may omit |. Do not speak the bar.
+- Captions replace one word at a time. Write continuous spoken narration without caption clause bars.
 - displayText is concise visual copy, maximum 9 words. It is stored for the hook thumbnail; later beats still include it.
 - emphasisWords is 0–2 tokens copied from displayText. Do not invent extra words.
 - every beat adds new information.
 - every beat includes beatPurpose and newInformation metadata.
 - hook and curiosity-reset require curiosityTarget.
 - do not repeat the thesis with different wording.
+- Follow one object or concrete example across all five beats. The reset deepens that same explanation with a consequence or demonstration; do not switch to a list of types or related trivia.
+- Show the proof as an action, comparison, or simple calculation the viewer can follow. Explain what it means in everyday words; keep source names and technical acronyms out of narration unless needed to understand the claim.
+- Use only supplied supported facts. A brief saying "verify" is not evidence that verification happened; do not invent evidence or claim to have checked a source.
 - avoid jargon and unsupported numbers.
 - obey the creative brief's ban list and facts fence.
 - no subscribe/follow CTA in payoff.
