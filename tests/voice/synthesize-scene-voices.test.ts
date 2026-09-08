@@ -3,6 +3,7 @@ import {describe, expect, it, vi} from 'vitest';
 import type {VideoPlan} from '../../src/domain/video-plan';
 import {VOICE_TAIL_PAD_SECONDS} from '../../src/voice/scene-duration';
 import {synthesizeSceneVoices} from '../../src/voice/synthesize-scene-voices';
+import * as outroAudio from '../../src/voice/lengthen-outro-why';
 
 const plan: VideoPlan = {
   topic: 'Why supermarkets put milk at the back',
@@ -53,6 +54,24 @@ const plan: VideoPlan = {
 };
 
 describe('synthesizeSceneVoices', () => {
+  it('lengthens only the branded outro and uses its adjusted audio and timing', async () => {
+    const adjusted = {audio: Buffer.from('long why'), durationSeconds: 3.6,
+      words: [{text: 'why?', startMs: 300, endMs: 1900}]};
+    const stretch = vi.spyOn(outroAudio, 'lengthenOutroWhy').mockResolvedValue(adjusted);
+    try {
+      const branded = {...plan, scenes: [...plan.scenes.slice(0, 4),
+        {...plan.scenes[4], id: 'channel-outro', text: 'Tell Me Whyyyyyy? | Follow along.'}]};
+      const writeAudioFile = vi.fn(async () => {});
+      const result = await synthesizeSceneVoices(branded, '/tmp/run', 'helix', {
+        synthesize: async () => ({audio: Buffer.from('normal'), durationSeconds: 4, words: []}),
+        writeAudioFile,
+      });
+      expect(stretch).toHaveBeenCalledTimes(1);
+      expect(result.manifest.scenes.at(-1)?.words).toEqual(adjusted.words);
+      expect(result.timedPlan.scenes.at(-1)?.durationSeconds).toBeCloseTo(3.9);
+      expect(writeAudioFile).toHaveBeenLastCalledWith('/tmp/run/voice-05.mp3', adjusted.audio);
+    } finally { stretch.mockRestore(); }
+  });
   it('writes deterministic mp3s, overwrites durations, and keeps plan order', async () => {
     const audioDurationSeconds = 5.2;
     const timedDurationSeconds = audioDurationSeconds + VOICE_TAIL_PAD_SECONDS;

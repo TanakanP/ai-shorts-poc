@@ -1,9 +1,10 @@
 import {join} from 'node:path';
-import {spokenSceneText} from '../captions/caption-segments';
+import {CHANNEL_OUTRO_SCENE_ID, spokenSceneText} from '../captions/caption-segments';
 import {narrationSource, type VideoPlan} from '../domain/video-plan';
 import type {SceneVoice, VoiceManifest} from '../domain/voice';
 import {assertVoicedTimeline, sceneDurationFromAudio} from './scene-duration';
 import type {SpeechSynthesizer} from './xai-tts-client';
+import {lengthenOutroWhy} from './lengthen-outro-why';
 
 export type SynthesizeSceneVoicesDeps = {
   synthesize: SpeechSynthesizer;
@@ -25,7 +26,10 @@ export async function synthesizeSceneVoices(
   const timedScenes = [];
 
   for (const [index, scene] of plan.scenes.entries()) {
-    const spoken = await deps.synthesize({text: spokenSceneText(narrationSource(scene)), voiceId});
+    let spoken = await deps.synthesize({text: spokenSceneText(narrationSource(scene)), voiceId});
+    if (scene.id === CHANNEL_OUTRO_SCENE_ID && /\bwhy{2,}\b/i.test(scene.text.split('|')[0] ?? '')) {
+      spoken = await lengthenOutroWhy(spoken);
+    }
     const durationSeconds = sceneDurationFromAudio(spoken.durationSeconds);
     const localAudioPath = join(runDir, `voice-${String(index + 1).padStart(2, '0')}.mp3`);
     await deps.writeAudioFile(localAudioPath, spoken.audio);
