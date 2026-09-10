@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import {zodTextFormat} from 'openai/helpers/zod';
-import {Agent} from 'undici';
+import {Agent, fetch as undiciFetch} from 'undici';
 import type {ZodType} from 'zod';
 import {
   CONTENT_PATTERNS,
@@ -111,19 +111,31 @@ export function createOpenAIStructuredPlanGenerator(
 
 export const XAI_PLAN_TIMEOUT_MS = 15 * 60 * 1000;
 
-export function xaiPlanClientOptions(apiKey: string) {
+const defaultFetch = globalThis.fetch;
+
+function xaiFetch(dispatcher: Agent) {
+  return (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    if (globalThis.fetch !== defaultFetch) {
+      return globalThis.fetch(input, init);
+    }
+    const url = input instanceof Request ? input.url : String(input);
+    return undiciFetch(url, {...init, dispatcher} as Parameters<typeof undiciFetch>[1]) as unknown as Promise<Response>;
+  };
+}
+
+export function xaiPlanClientOptions(apiKey: string, timeoutMs = XAI_PLAN_TIMEOUT_MS) {
+  const dispatcher = new Agent({
+    headersTimeout: timeoutMs,
+    bodyTimeout: timeoutMs,
+    keepAliveTimeout: 1,
+    keepAliveMaxTimeout: 1,
+  });
   return {
     apiKey,
     baseURL: 'https://api.x.ai/v1',
-    timeout: XAI_PLAN_TIMEOUT_MS,
-    fetchOptions: {
-      dispatcher: new Agent({
-        headersTimeout: XAI_PLAN_TIMEOUT_MS,
-        bodyTimeout: XAI_PLAN_TIMEOUT_MS,
-        keepAliveTimeout: 1,
-        keepAliveMaxTimeout: 1,
-      }),
-    },
+    timeout: timeoutMs,
+    fetch: xaiFetch(dispatcher),
+    fetchOptions: {dispatcher},
   };
 }
 

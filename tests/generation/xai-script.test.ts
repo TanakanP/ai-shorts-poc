@@ -1,3 +1,5 @@
+import {createServer} from 'node:http';
+import type {AddressInfo} from 'node:net';
 import {afterEach, expect, it, vi} from 'vitest';
 import {z} from 'zod';
 import {
@@ -29,6 +31,17 @@ it('gives grok plan requests 15 minutes before timing out', async () => {
   .find((value) => value && typeof value === 'object' && 'headersTimeout' in value);
  expect(stored).toMatchObject({headersTimeout: 15 * 60 * 1000, bodyTimeout: 15 * 60 * 1000});
  await dispatcher.close();
+});
+it('aborts an idle xAI fetch at the configured timeout instead of Node 5-minute default', async () => {
+ const server = createServer(() => {});
+ await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+ const {port} = server.address() as AddressInfo;
+ const options = xaiPlanClientOptions('secret', 200);
+ const started = Date.now();
+ await expect(options.fetch(`http://127.0.0.1:${port}/hang`)).rejects.toThrow();
+ expect(Date.now() - started).toBeLessThan(3000);
+ await (options.fetchOptions.dispatcher as {close(): Promise<void>}).close();
+ await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
 });
 it('attributes authentication errors to xAI', async () => {
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue(new Response('{}',{status:401,headers:{'content-type':'application/json'}})));
