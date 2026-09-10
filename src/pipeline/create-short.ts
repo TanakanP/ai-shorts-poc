@@ -94,6 +94,7 @@ export type CreateShortDeps = {
   channel: {brand: string; signoff: string};
   research: string;
   backgroundMusicPath: string;
+  voiceProvider?: 'xai' | 'elevenlabs';
 };
 
 export type CreateShortResult = {
@@ -127,6 +128,7 @@ export async function createShort(
       videoPlanFromV3(v3Plan),
       deps.channel.brand,
       deps.channel.signoff,
+      {slowWhy: deps.voiceProvider !== 'elevenlabs'},
     );
 
     stage = 'voice';

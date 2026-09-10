@@ -6,7 +6,9 @@ import {z} from 'zod';
 import {ProviderError} from '../domain/provider-error';
 import {stripSpeechTags} from '../captions/speech-tags';
 import {charactersToWords} from './characters-to-words';
-import {TTS_SPEECH_SPEED, type SpeechSynthesizer} from './xai-tts-client';
+import type {SpeechSynthesizer} from './xai-tts-client';
+
+export const ELEVENLABS_SPEECH_SPEED = 1;
 
 const alignmentSchema=z.object({
   characters:z.array(z.string()).min(1),
@@ -39,7 +41,7 @@ export function createElevenLabsSpeechSynthesizer(
     try {
       response=await fetchImpl(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/with-timestamps?output_format=mp3_44100_128`,{
         method:'POST',headers:{'xi-api-key':apiKey,'Content-Type':'application/json'},
-        body:JSON.stringify({text:stripSpeechTags(text),model_id:model,voice_settings:{speed:TTS_SPEECH_SPEED}}),
+        body:JSON.stringify({text:stripSpeechTags(text),model_id:model,voice_settings:{speed:ELEVENLABS_SPEECH_SPEED}}),
       });
     } catch(cause) {throw fail('transport',undefined,cause);}
     if(!response.ok) throw fail(response.status===401||response.status===403?'auth':response.status===429?'quota':response.status===400||response.status===422?'validation':'transport',response.status);

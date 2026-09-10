@@ -439,6 +439,21 @@ describe('createShort', () => {
     expect(persistedPlan.beats[0]?.displayText).toBe(hookA.displayText);
   });
 
+  it('does not wrap the ElevenLabs outro in slow tags', async () => {
+    const {deps} = fakeDeps([]);
+    let outroSpoken: string | undefined;
+    await createShort(topic, {
+      ...deps,
+      voiceProvider: 'elevenlabs',
+      channel: {brand: 'Tell Me Whyyyyyy?', signoff: 'Like and subscribe for more!'},
+      synthesizeSceneVoices: async (receivedPlan) => {
+        outroSpoken = receivedPlan.scenes.at(-1)?.spokenText;
+        return voiceResult;
+      },
+    });
+    expect(outroSpoken).toBeUndefined();
+  });
+
   it('persists requiredVisualObjects and all search queries', async () => {
     const {deps, persisted} = fakeDeps([]);
     await createShort(topic, deps);

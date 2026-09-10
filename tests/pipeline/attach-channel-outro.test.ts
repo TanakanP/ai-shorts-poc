@@ -56,4 +56,12 @@ describe('attachChannelOutro', () => {
     expect(next.scenes.at(-1)?.text).toBe('Tell Me Whyyyyyyyy? | Like and subscribe for more.');
     expect(next.scenes.at(-1)?.spokenText).toBe('Tell Me <slow>why</slow>? | Like and subscribe for more.');
   });
+
+  it('omits outro slow tags for ElevenLabs', () => {
+    const next = attachChannelOutro(plan, 'Tell Me Whyyyyyyyy?', 'Like and subscribe for more.', {
+      slowWhy: false,
+    });
+    expect(next.scenes.at(-1)?.text).toBe('Tell Me Whyyyyyyyy? | Like and subscribe for more.');
+    expect(next.scenes.at(-1)?.spokenText).toBeUndefined();
+  });
 });

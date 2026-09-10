@@ -9,7 +9,7 @@ it('returns real audio duration and aligned words, removing xAI delivery tags', 
  expect(result.words).toEqual([{text:'why?',startMs:0,endMs:400}]);
  expect(result.durationSeconds).toBeGreaterThan(.4);
  expect(fetch.mock.calls[0][0]).toContain('/voice123/with-timestamps?output_format=mp3_44100_128');
- expect(JSON.parse(fetch.mock.calls[0][1].body)).toMatchObject({text:'why?',model_id:'eleven_multilingual_v2',voice_settings:{speed:1.2}});
+ expect(JSON.parse(fetch.mock.calls[0][1].body)).toMatchObject({text:'why?',model_id:'eleven_multilingual_v2',voice_settings:{speed:1}});
 });
 it.each([401,429,500])('reports safe ElevenLabs errors for %s',async status=>{
  const synth=createElevenLabsSpeechSynthesizer('secret','m',vi.fn().mockResolvedValue(new Response('private-provider-body',{status})));

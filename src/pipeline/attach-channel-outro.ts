@@ -1,12 +1,19 @@
 import {CHANNEL_OUTRO_DURATION_SECONDS, type VideoPlan} from '../domain/video-plan';
 
-export function attachChannelOutro(plan: VideoPlan, brand: string, signoff: string): VideoPlan {
+export function attachChannelOutro(
+  plan: VideoPlan,
+  brand: string,
+  signoff: string,
+  options?: {slowWhy?: boolean},
+): VideoPlan {
   const first = plan.scenes[0];
   if (!first) return plan;
   const name = brand.trim();
   const spokenName = /[.!?]$/u.test(name) ? name : `${name}.`;
   const line = signoff.trim();
-  const speechName = spokenName.replace(/\bwhy{2,}\b/gi, '<slow>why</slow>');
+  const speechName = options?.slowWhy === false
+    ? spokenName
+    : spokenName.replace(/\bwhy{2,}\b/gi, '<slow>why</slow>');
   return {
     ...plan,
     scenes: [
