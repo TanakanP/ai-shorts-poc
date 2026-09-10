@@ -105,12 +105,27 @@ export function createOpenAIStructuredPlanGenerator(
   schema: ZodType = videoPlanSchema,
   schemaName = 'video_plan',
 ): StructuredPlanGenerator {
-  const client = new OpenAI({apiKey});
+  return createStructuredPlanGenerator(apiKey, schema, schemaName, 'openai', 'gpt-5.6');
+}
+
+export function createXaiStructuredPlanGenerator(
+  apiKey: string,
+  schema: ZodType = videoPlanSchema,
+  schemaName = 'video_plan',
+  model = 'grok-4.3',
+): StructuredPlanGenerator {
+  return createStructuredPlanGenerator(apiKey, schema, schemaName, 'xai', model);
+}
+
+function createStructuredPlanGenerator(
+  apiKey: string, schema: ZodType, schemaName: string, provider: 'openai' | 'xai', model: string,
+): StructuredPlanGenerator {
+  const client = new OpenAI({apiKey, ...(provider === 'xai' ? {baseURL: 'https://api.x.ai/v1'} : {})});
 
   return async ({system, input}) => {
     try {
       const response = await client.responses.parse({
-        model: 'gpt-5.6',
+        model,
         instructions: system,
         input,
         text: {format: zodTextFormat(schema, schemaName)},
@@ -134,9 +149,9 @@ export function createOpenAIStructuredPlanGenerator(
             ? 'validation'
             : 'transport';
       throw new ProviderError(
-        'OpenAI plan generation failed',
+        `${provider === 'xai' ? 'xAI' : 'OpenAI'} plan generation failed`,
         {
-          provider: 'openai',
+          provider,
           kind,
           ...(status ? {status} : {}),
           ...(code ? {code} : {}),

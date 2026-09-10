@@ -5,6 +5,21 @@ import {describe, expect, it} from 'vitest';
 import {findEnvFile, loadConfig} from '../src/config';
 
 describe('loadConfig', () => {
+  const base = {PEXELS_API_KEY: 'px', CHANNEL_BRAND: 'Test Brand', CHANNEL_SIGNOFF: 'Follow along.'};
+  it.each(['openai', 'xai'])('validates only selected keys for %s scripts with either voice', (script) => {
+    for (const voice of ['xai', 'elevenlabs']) {
+      const env = {...base, SCRIPT_PROVIDER: script, VOICE_PROVIDER: voice,
+        ...(script === 'openai' ? {OPENAI_API_KEY: 'oa'} : {}),
+        ...(script === 'xai' || voice === 'xai' ? {XAI_API_KEY: 'xa'} : {}),
+        ...(voice === 'elevenlabs' ? {ELEVENLABS_API_KEY: 'el', ELEVENLABS_VOICE_ID: 'voice123'} : {})};
+      expect(loadConfig(env)).toMatchObject({scriptProvider: script, voiceProvider: voice});
+    }
+  });
+  it('rejects invalid providers and missing ElevenLabs settings', () => {
+    expect(() => loadConfig({...base, SCRIPT_PROVIDER: 'bad-secret'})).toThrow(/SCRIPT_PROVIDER/);
+    expect(() => loadConfig({...base, OPENAI_API_KEY: 'oa', VOICE_PROVIDER: 'elevenlabs'})).toThrow(/ELEVENLABS_API_KEY/);
+    expect(() => loadConfig({...base, OPENAI_API_KEY: 'oa', VOICE_PROVIDER: 'elevenlabs', ELEVENLABS_API_KEY: 'el'})).toThrow(/ELEVENLABS_VOICE_ID/);
+  });
   it('requires OPENAI_API_KEY, PEXELS_API_KEY, and XAI_API_KEY', () => {
     expect(() => loadConfig({})).toThrow(/OPENAI_API_KEY/);
     expect(() =>
@@ -28,7 +43,7 @@ describe('loadConfig', () => {
         CHANNEL_BRAND: 'Curious Cart',
         CHANNEL_SIGNOFF: 'If that made you look twice, follow along.',
       }),
-    ).toEqual({
+    ).toMatchObject({
       openAiApiKey: 'oa-test',
       pexelsApiKey: 'px-test',
       xaiApiKey: 'xai-test',
