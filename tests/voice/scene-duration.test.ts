@@ -24,6 +24,11 @@ describe('sceneDurationFromAudio', () => {
 });
 
 describe('assertVoicedTimeline', () => {
+  it('attributes timeline validation to the selected voice provider', () => {
+    try { assertVoicedTimeline([34], 'elevenlabs'); }
+    catch (error) { expect(error).toMatchObject({diagnostic: {provider: 'elevenlabs'}}); return; }
+    throw new Error('Expected timeline rejection');
+  });
   it('accepts exactly 33 seconds including the outro', () => {
     expect(() => assertVoicedTimeline([3, 5, 5, 6, 7, 7])).not.toThrow();
   });

@@ -1,0 +1,20 @@
+import {expect,it,vi} from 'vitest';
+import {loadConfig} from '../src/config';
+import {createProviders} from '../src/providers';
+import {createOpenAIStructuredPlanGenerator,createXaiStructuredPlanGenerator} from '../src/generation/generate-video-plan';
+import {createXaiSpeechSynthesizer} from '../src/voice/xai-tts-client';
+import {createElevenLabsSpeechSynthesizer} from '../src/voice/elevenlabs-tts-client';
+vi.mock('../src/generation/generate-video-plan',()=>({createOpenAIStructuredPlanGenerator:vi.fn(()=> 'openai'),createXaiStructuredPlanGenerator:vi.fn(()=> 'grok')}));
+vi.mock('../src/voice/xai-tts-client',()=>({createXaiSpeechSynthesizer:vi.fn(()=> 'xai-voice')}));
+vi.mock('../src/voice/elevenlabs-tts-client',()=>({createElevenLabsSpeechSynthesizer:vi.fn(()=> 'eleven-voice')}));
+it.each([['openai','xai'],['openai','elevenlabs'],['xai','xai'],['xai','elevenlabs']])('routes %s scripts and %s voice independently',(script,voice)=>{
+ vi.clearAllMocks();
+ const config=loadConfig({SCRIPT_PROVIDER:script,VOICE_PROVIDER:voice,OPENAI_API_KEY:'oa',XAI_API_KEY:'xa',PEXELS_API_KEY:'px',ELEVENLABS_API_KEY:'el',ELEVENLABS_VOICE_ID:'voice123',XAI_VOICE_ID:'helix',CHANNEL_BRAND:'Test Brand',CHANNEL_SIGNOFF:'Follow along.'});
+ const p=createProviders(config);
+ expect(p.generateHookStructured).toBe(script==='openai'?'openai':'grok');
+ expect(p.generateStoryStructured).toBe(script==='openai'?'openai':'grok');
+ expect(p.synthesize).toBe(voice==='xai'?'xai-voice':'eleven-voice');
+ expect(p.voiceId).toBe(voice==='xai'?'helix':'voice123');
+ expect(script==='openai'?createXaiStructuredPlanGenerator:createOpenAIStructuredPlanGenerator).not.toHaveBeenCalled();
+ expect(voice==='xai'?createElevenLabsSpeechSynthesizer:createXaiSpeechSynthesizer).not.toHaveBeenCalled();
+});

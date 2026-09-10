@@ -7,6 +7,7 @@ import type {SpeechSynthesizer} from './xai-tts-client';
 import {lengthenOutroWhy} from './lengthen-outro-why';
 
 export type SynthesizeSceneVoicesDeps = {
+  provider?: 'xai' | 'elevenlabs';
   synthesize: SpeechSynthesizer;
   writeAudioFile: (path: string, bytes: Buffer) => Promise<void>;
 };
@@ -44,7 +45,7 @@ export async function synthesizeSceneVoices(
     timedScenes.push({...scene, durationSeconds});
   }
 
-  assertVoicedTimeline(timedScenes.map((scene) => scene.durationSeconds));
+  assertVoicedTimeline(timedScenes.map((scene) => scene.durationSeconds), deps.provider);
 
   return {
     timedPlan: {...plan, scenes: timedScenes},

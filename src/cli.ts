@@ -12,7 +12,6 @@ import {
 import {generateHooks} from './generation/generate-hooks';
 import {generateStory} from './generation/generate-story';
 import {
-  createOpenAIStructuredPlanGenerator,
   generateVideoPlan,
 } from './generation/generate-video-plan';
 import {createRunDirectory} from './pipeline/create-run-directory';
@@ -28,7 +27,7 @@ import {PexelsClient} from './stock/pexels-client';
 import {resolveSceneAssets} from './stock/resolve-scene-assets';
 import {reviewClip} from './stock/review-clip';
 import {synthesizeSceneVoices} from './voice/synthesize-scene-voices';
-import {createXaiSpeechSynthesizer} from './voice/xai-tts-client';
+import {createProviders} from './providers';
 
 type CliIo = {
   log: (message: string) => void;
@@ -137,18 +136,9 @@ function createProductionDeps(research: string): CreateShortDeps {
     throw new Error('Run generate in an interactive terminal to review footage before rendering.');
   }
   const config = loadConfig();
-  const generateHookStructured = createOpenAIStructuredPlanGenerator(
-    config.openAiApiKey,
-    hookCandidatesEnvelopeSchema,
-    'hook_candidates',
-  );
-  const generateStoryStructured = createOpenAIStructuredPlanGenerator(
-    config.openAiApiKey,
-    storyBeatsEnvelopeSchema,
-    'story_beats',
-  );
+  const {generateHookStructured, generateStoryStructured, synthesize, voiceId} = createProviders(config);
+  consoleIo.log(`Providers: script=${config.scriptProvider}, voice=${config.voiceProvider} (${voiceId}), video=pexels`);
   const pexels = new PexelsClient(config.pexelsApiKey);
-  const synthesize = createXaiSpeechSynthesizer(config.xaiApiKey);
 
   return {
     createRunDirectory,
@@ -176,7 +166,8 @@ function createProductionDeps(research: string): CreateShortDeps {
       }),
     persistJson,
     synthesizeSceneVoices: (plan, runDir) =>
-      synthesizeSceneVoices(plan, runDir, config.xaiVoiceId, {
+      synthesizeSceneVoices(plan, runDir, voiceId, {
+        provider: config.voiceProvider,
         synthesize,
         writeAudioFile: async (path, bytes) => {
           await writeFile(path, bytes);

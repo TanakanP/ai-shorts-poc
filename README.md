@@ -8,15 +8,14 @@ footage from Pexels, and renders an MP4 with Remotion.
 
 - Node.js 22+
 - npm
-- OpenAI API key
 - Pexels API key
-- xAI API key
+- API keys for the selected script and voice providers
 
 ## Setup
 
 1. Install dependencies: `npm install`
 2. Create a local environment file: `cp .env.example .env`
-3. Add `OPENAI_API_KEY`, `PEXELS_API_KEY`, `XAI_API_KEY`, `CHANNEL_BRAND`, and `CHANNEL_SIGNOFF` (and optional `XAI_VOICE_ID`) to `.env`.
+3. Add `PEXELS_API_KEY`, `CHANNEL_BRAND`, `CHANNEL_SIGNOFF`, and the keys for your selected providers to `.env` (see below).
 4. Run the offline test suite: `npm test`
 5. Generate a short with a topic and a **creative brief** (tone, audience, angle, proof, bans, optional content pattern):
 
@@ -25,6 +24,40 @@ npm run generate -- "<topic>" "<creative brief>"
 ```
 
 The second argument is required for retention-v3 planning (at least 5 characters). See `misc/v1_1_content_enhance.md` for how to write a brief.
+
+## Choosing providers
+
+Set these independently in `.env`; existing installations keep OpenAI scripts and xAI voice by default:
+
+```dotenv
+SCRIPT_PROVIDER=openai
+VOICE_PROVIDER=xai
+```
+
+| Setting | Choices | Required settings |
+| --- | --- | --- |
+| `SCRIPT_PROVIDER` | `openai` (default) | `OPENAI_API_KEY` |
+| | `xai` | `XAI_API_KEY`; optional `XAI_SCRIPT_MODEL` (default `grok-4.3`) |
+| `VOICE_PROVIDER` | `xai` (default) | `XAI_API_KEY`; optional `XAI_VOICE_ID` (default `eve`; keep your existing `helix` setting if preferred) |
+| | `elevenlabs` | `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`; optional `ELEVENLABS_MODEL` (default `eleven_multilingual_v2`) |
+
+For Grok scripts with ElevenLabs narration:
+
+```dotenv
+SCRIPT_PROVIDER=xai
+VOICE_PROVIDER=elevenlabs
+XAI_API_KEY=your_xai_key
+ELEVENLABS_API_KEY=your_elevenlabs_key
+ELEVENLABS_VOICE_ID=your_selected_voice_id
+```
+
+Use a voice ID available to your ElevenLabs account, not its display name. The existing xAI key must permit the chosen text model and endpoint. Only selected providers need keys; Pexels and channel settings remain required. Normal generate commands are unchanged. Provider failures stop the run rather than silently switching services.
+
+Both script providers use the same hook/story schemas, validation and deterministic hook selection. ElevenLabs uses its timestamp endpoint and MP3 44.1 kHz/128 kbps output, converts character timing to captions, and measures actual audio duration locally. It removes the supported xAI speech tags instead of reading them aloud; expressive delivery can therefore differ. Voice speed remains 1.2x, and the local 1.6-second outro “why” extension applies to both voices.
+
+References: [xAI structured output](https://docs.x.ai/developers/model-capabilities/text/structured-outputs), [ElevenLabs speech with timing](https://elevenlabs.io/docs/api-reference/text-to-speech/convert-with-timestamps), [ElevenLabs speed](https://elevenlabs.io/docs/help-center/product/core-capabilities/text-to-speech/can-i-change-the-pace-of-the-voice).
+
+Provider routing, request/response handling, timing conversion and validation are covered offline. Account access and real voice delivery still need a live run with your selected credentials.
 
 ## Retention v3 behavior
 
@@ -132,7 +165,7 @@ manual: URL scoring only orders candidates and cannot establish visual relevance
 The lower-level resolver retains automatic selection for existing programmatic callers
 that omit the review callback; the normal CLI always requires review.
 
-The synthesized timeline must be 15–30 seconds, including every scene's 0.3-second
+The synthesized timeline must be 15–33 seconds, including every scene's 0.3-second
 padding and the spoken channel outro. An overlong result stops during voice synthesis,
 before stock review or rendering, with its measured duration and a request to shorten
 the script/sign-off. Audio is not truncated or automatically accelerated. This total
