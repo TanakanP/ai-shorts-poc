@@ -451,7 +451,7 @@ describe('createShort', () => {
         return voiceResult;
       },
     });
-    expect(outroSpoken).toBeUndefined();
+    expect(outroSpoken).toBe('Tell Me Whyyyyyy? | Like and subscribe for more!');
   });
 
   it('persists requiredVisualObjects and all search queries', async () => {

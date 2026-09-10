@@ -72,6 +72,25 @@ describe('synthesizeSceneVoices', () => {
       expect(writeAudioFile).toHaveBeenLastCalledWith('/tmp/run/voice-05.mp3', adjusted.audio);
     } finally { stretch.mockRestore(); }
   });
+  it('keeps ElevenLabs outro copy as whyyyyyy and does not stretch a short why', async () => {
+    const stretch = vi.spyOn(outroAudio, 'lengthenOutroWhy');
+    try {
+      const branded = {...plan, scenes: [...plan.scenes.slice(0, 4), {
+        ...plan.scenes[4], id: 'channel-outro',
+        text: 'Tell Me Whyyyyyy? | Follow along.',
+        spokenText: 'Tell Me Whyyyyyy? | Follow along.',
+      }]};
+      const synthesize = vi.fn(async ({text}: {text: string}) => ({
+        audio: Buffer.from(text), durationSeconds: 4,
+        words: [{text: 'Whyyyyyy?', startMs: 300, endMs: 900}],
+      }));
+      await synthesizeSceneVoices(branded, '/tmp/run', 'voice123', {
+        provider: 'elevenlabs', synthesize, writeAudioFile: async () => {},
+      });
+      expect(synthesize.mock.calls.at(-1)?.[0]?.text).toBe('Tell Me Whyyyyyy? Follow along.');
+      expect(stretch).not.toHaveBeenCalled();
+    } finally { stretch.mockRestore(); }
+  });
   it('writes deterministic mp3s, overwrites durations, and keeps plan order', async () => {
     const audioDurationSeconds = 5.2;
     const timedDurationSeconds = audioDurationSeconds + VOICE_TAIL_PAD_SECONDS;

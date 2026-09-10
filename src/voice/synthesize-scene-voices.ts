@@ -28,7 +28,11 @@ export async function synthesizeSceneVoices(
 
   for (const [index, scene] of plan.scenes.entries()) {
     let spoken = await deps.synthesize({text: spokenSceneText(narrationSource(scene)), voiceId});
-    if (scene.id === CHANNEL_OUTRO_SCENE_ID && /\bwhy{2,}\b/i.test(scene.text.split('|')[0] ?? '')) {
+    if (
+      scene.id === CHANNEL_OUTRO_SCENE_ID
+      && deps.provider !== 'elevenlabs'
+      && /\bwhy{2,}\b/i.test(scene.text.split('|')[0] ?? '')
+    ) {
       spoken = await lengthenOutroWhy(spoken);
     }
     const durationSeconds = sceneDurationFromAudio(spoken.durationSeconds);

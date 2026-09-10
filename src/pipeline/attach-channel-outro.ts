@@ -11,7 +11,8 @@ export function attachChannelOutro(
   const name = brand.trim();
   const spokenName = /[.!?]$/u.test(name) ? name : `${name}.`;
   const line = signoff.trim();
-  const speechName = options?.slowWhy === false
+  const keepElongatedWhy = options?.slowWhy === false;
+  const speechName = keepElongatedWhy
     ? spokenName
     : spokenName.replace(/\bwhy{2,}\b/gi, '<slow>why</slow>');
   return {
@@ -23,7 +24,7 @@ export function attachChannelOutro(
         role: 'outro',
         durationSeconds: CHANNEL_OUTRO_DURATION_SECONDS,
         text: `${spokenName} | ${line}`,
-        ...(speechName !== spokenName ? {spokenText: `${speechName} | ${line}`} : {}),
+        ...(keepElongatedWhy || speechName !== spokenName ? {spokenText: `${speechName} | ${line}`} : {}),
         visualIntent: first.visualIntent,
         searchQueries: first.searchQueries,
       },
