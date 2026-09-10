@@ -18,3 +18,15 @@ it('extracts a JPEG from a real MP4 and can replace it on rerun', async () => {
     await rm(dir, {recursive: true, force: true});
   }
 });
+
+it('finds a video path relative to the process cwd', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'thumbnail-rel-'));
+  const output = join(dir, 'thumbnail.jpg');
+  try {
+    await extractThumbnail('tests/fixtures/tiny-video.mp4', output);
+    const jpeg = await readFile(output);
+    expect(jpeg.subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
+  } finally {
+    await rm(dir, {recursive: true, force: true});
+  }
+});

@@ -1,3 +1,4 @@
+import {resolve} from 'node:path';
 import {RenderInternals} from '@remotion/renderer';
 
 /** Decode frame zero from the finished video, preserving its dimensions. */
@@ -8,7 +9,7 @@ export async function extractThumbnail(videoPath: string, imagePath: string): Pr
     logLevel: 'error',
     binariesDirectory: null,
     cancelSignal: undefined,
-    args: ['-y', '-i', videoPath, '-map', '0:v:0', '-frames:v', '1',
-      '-q:v', '2', '-update', '1', imagePath],
+    args: ['-y', '-i', resolve(videoPath), '-map', '0:v:0', '-frames:v', '1',
+      '-q:v', '2', '-update', '1', resolve(imagePath)],
   });
 }
