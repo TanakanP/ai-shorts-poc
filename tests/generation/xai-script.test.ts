@@ -15,7 +15,11 @@ it('sends the schema to xAI and validates the returned JSON', async () => {
  const generate=createXaiStructuredPlanGenerator('secret',z.object({title:z.string()}),'story','grok-4.3');
  expect(await generate({system:'Write a story',input:'corn'})).toEqual({title:'Popcorn'});
  expect(String(fetch.mock.calls[0][0])).toBe('https://api.x.ai/v1/responses');
- expect(JSON.parse(fetch.mock.calls[0][1].body)).toMatchObject({model:'grok-4.3',text:{format:{name:'story',type:'json_schema'}}});
+ expect(JSON.parse(fetch.mock.calls[0][1].body)).toMatchObject({
+  model:'grok-4.3',
+  reasoning:{effort:'low'},
+  text:{format:{name:'story',type:'json_schema'}},
+ });
 });
 it('gives grok plan requests 15 minutes before timing out', async () => {
  expect(XAI_PLAN_TIMEOUT_MS).toBe(15 * 60 * 1000);
@@ -47,4 +51,9 @@ it('attributes authentication errors to xAI', async () => {
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue(new Response('{}',{status:401,headers:{'content-type':'application/json'}})));
  await expect(createXaiStructuredPlanGenerator('secret',z.object({title:z.string()}))({system:'s',input:'i'}))
   .rejects.toMatchObject({diagnostic:{provider:'xai',kind:'auth'}});
+});
+it('records xAI request timeouts as transport diagnostics', async () => {
+ vi.stubGlobal('fetch', vi.fn().mockRejectedValue(Object.assign(new Error('The operation was aborted due to timeout'), {name: 'AbortError'})));
+ await expect(createXaiStructuredPlanGenerator('secret', z.object({title: z.string()}))({system: 's', input: 'i'}))
+  .rejects.toMatchObject({diagnostic: {provider: 'xai', kind: 'transport', code: 'timeout', detail: 'Request timed out.'}});
 });

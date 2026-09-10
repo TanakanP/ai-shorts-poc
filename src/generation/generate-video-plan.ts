@@ -134,6 +134,7 @@ export function xaiPlanClientOptions(apiKey: string, timeoutMs = XAI_PLAN_TIMEOU
     apiKey,
     baseURL: 'https://api.x.ai/v1',
     timeout: timeoutMs,
+    maxRetries: 0,
     fetch: xaiFetch(dispatcher),
     fetchOptions: {dispatcher},
   };
@@ -160,6 +161,7 @@ function createStructuredPlanGenerator(
         instructions: system,
         input,
         text: {format: zodTextFormat(schema, schemaName)},
+        ...(provider === 'xai' ? {reasoning: {effort: 'low'}} : {}),
       });
 
       return schema.parse(response.output_parsed);
@@ -172,6 +174,7 @@ function createStructuredPlanGenerator(
       const name = typeof value?.name === 'string' ? value.name : '';
       const message = cause instanceof Error ? cause.message : '';
       const isSchemaError = name === 'ZodError' || message.includes('not supported by the API');
+      const isTimeout = name === 'APIConnectionTimeoutError' || /timed? ?out/i.test(message);
       const kind = status === 401 || status === 403
         ? 'auth'
         : status === 429
@@ -185,8 +188,8 @@ function createStructuredPlanGenerator(
           provider,
           kind,
           ...(status ? {status} : {}),
-          ...(code ? {code} : {}),
-          ...(isSchemaError && message ? {detail: message} : {}),
+          ...(isTimeout ? {code: 'timeout'} : code ? {code} : {}),
+          ...((isSchemaError || isTimeout) && message ? {detail: message} : {}),
         },
         {cause},
       );
