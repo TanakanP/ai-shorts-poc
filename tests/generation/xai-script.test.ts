@@ -1,6 +1,10 @@
 import {afterEach, expect, it, vi} from 'vitest';
 import {z} from 'zod';
-import {createXaiStructuredPlanGenerator} from '../../src/generation/generate-video-plan';
+import {
+  createXaiStructuredPlanGenerator,
+  XAI_PLAN_TIMEOUT_MS,
+  xaiPlanClientOptions,
+} from '../../src/generation/generate-video-plan';
 afterEach(() => vi.unstubAllGlobals());
 it('sends the schema to xAI and validates the returned JSON', async () => {
  const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify({id:'r', object:'response', status:'completed',
@@ -10,6 +14,21 @@ it('sends the schema to xAI and validates the returned JSON', async () => {
  expect(await generate({system:'Write a story',input:'corn'})).toEqual({title:'Popcorn'});
  expect(String(fetch.mock.calls[0][0])).toBe('https://api.x.ai/v1/responses');
  expect(JSON.parse(fetch.mock.calls[0][1].body)).toMatchObject({model:'grok-4.3',text:{format:{name:'story',type:'json_schema'}}});
+});
+it('gives grok plan requests 15 minutes before timing out', async () => {
+ expect(XAI_PLAN_TIMEOUT_MS).toBe(15 * 60 * 1000);
+ const options = xaiPlanClientOptions('secret');
+ expect(options).toMatchObject({
+  apiKey: 'secret',
+  baseURL: 'https://api.x.ai/v1',
+  timeout: 15 * 60 * 1000,
+ });
+ const dispatcher = options.fetchOptions.dispatcher as object & {close(): Promise<void>};
+ const stored = Object.getOwnPropertySymbols(dispatcher)
+  .map((symbol) => (dispatcher as Record<symbol, unknown>)[symbol])
+  .find((value) => value && typeof value === 'object' && 'headersTimeout' in value);
+ expect(stored).toMatchObject({headersTimeout: 15 * 60 * 1000, bodyTimeout: 15 * 60 * 1000});
+ await dispatcher.close();
 });
 it('attributes authentication errors to xAI', async () => {
  vi.stubGlobal('fetch',vi.fn().mockResolvedValue(new Response('{}',{status:401,headers:{'content-type':'application/json'}})));
