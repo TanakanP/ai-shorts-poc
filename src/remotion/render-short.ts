@@ -1,13 +1,15 @@
 import {createReadStream} from 'node:fs';
 import {stat} from 'node:fs/promises';
 import {createServer} from 'node:http';
-import {isAbsolute, resolve} from 'node:path';
+import {dirname, join, isAbsolute, resolve} from 'node:path';
 import {pipeline} from 'node:stream/promises';
 import {fileURLToPath} from 'node:url';
 import {bundle} from '@remotion/bundler';
 import {renderMedia, selectComposition} from '@remotion/renderer';
 import type {VideoConfig} from 'remotion/no-react';
 import type {ResolvedVideo} from '../domain/resolved-video.js';
+
+import {extractThumbnail} from './extract-thumbnail.js';
 
 type InputProps = {
   video: ResolvedVideo;
@@ -97,6 +99,7 @@ export const startAssetServer = async (allowedPaths: string[]): Promise<AssetSer
 };
 
 export type RenderDeps = {
+  extractThumbnail: (videoPath: string, imagePath: string) => Promise<void>;
   bundle: (options: {entryPoint: string}) => Promise<string>;
   selectComposition: (options: {
     serveUrl: string;
@@ -114,6 +117,7 @@ export type RenderDeps = {
 };
 
 const defaultDeps: RenderDeps = {
+  extractThumbnail,
   bundle: (options) => bundle(options),
   selectComposition: (options) => selectComposition(options),
   renderMedia: (options) => renderMedia(options),
@@ -163,6 +167,7 @@ export const renderShort = async (
         outputLocation: outputPath,
         inputProps,
       });
+      await deps.extractThumbnail(outputPath, join(dirname(outputPath), 'thumbnail.jpg'));
     } catch (error) {
       operationFailed = true;
       operationError = error;

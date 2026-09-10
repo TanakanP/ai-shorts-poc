@@ -101,7 +101,8 @@ describe('renderShort', () => {
       origin: 'http://127.0.0.1:43210',
       close,
     }));
-    const deps: RenderDeps = {bundle, selectComposition, renderMedia, startAssetServer};
+    const extractThumbnail = vi.fn(async () => undefined);
+    const deps: RenderDeps = {bundle, selectComposition, renderMedia, startAssetServer, extractThumbnail};
 
     await renderShort(video, '/tmp/output.mp4', deps);
 
@@ -136,6 +137,7 @@ describe('renderShort', () => {
         },
       },
     });
+    expect(extractThumbnail).toHaveBeenCalledWith('/tmp/output.mp4', '/tmp/thumbnail.jpg');
     expect(selectedVideo).toBe(video);
     expect(renderedVideo).toBe(video);
     expect(close).toHaveBeenCalledTimes(1);
@@ -147,6 +149,7 @@ describe('renderShort', () => {
       return {origin: 'http://127.0.0.1:43210', close: vi.fn(async () => undefined)};
     });
     const deps: RenderDeps = {
+      extractThumbnail: vi.fn(async () => undefined),
       bundle: vi.fn(async () => 'http://localhost:3000'),
       selectComposition: vi.fn(async () => composition),
       renderMedia: vi.fn(async () => undefined),
@@ -182,6 +185,7 @@ describe('renderShort', () => {
       close: vi.fn(async () => undefined),
     }));
     const deps: RenderDeps = {
+      extractThumbnail: vi.fn(async () => undefined),
       bundle: vi.fn(async () => 'http://localhost:3000'),
       selectComposition: vi.fn(async (options) => {
         selectedVideo = options.inputProps.video;
@@ -221,7 +225,8 @@ describe('renderShort', () => {
 
     await expect(
       renderShort(remoteVideo, '/tmp/output.mp4', {
-        bundle: vi.fn(),
+        extractThumbnail: vi.fn(async () => undefined),
+      bundle: vi.fn(),
         selectComposition: vi.fn(),
         renderMedia: vi.fn(),
         startAssetServer,
@@ -239,7 +244,8 @@ describe('renderShort', () => {
 
     await expect(
       renderShort(remoteAudio, '/tmp/output.mp4', {
-        bundle: vi.fn(),
+        extractThumbnail: vi.fn(async () => undefined),
+      bundle: vi.fn(),
         selectComposition: vi.fn(),
         renderMedia: vi.fn(),
         startAssetServer,
@@ -252,6 +258,7 @@ describe('renderShort', () => {
     const failure = new Error('Chromium exited');
     const close = vi.fn(async () => undefined);
     const deps: RenderDeps = {
+      extractThumbnail: vi.fn(async () => undefined),
       bundle: vi.fn(async () => 'http://localhost:3000'),
       selectComposition: vi.fn(async () => composition),
       renderMedia: vi.fn(async () => {
@@ -274,6 +281,7 @@ describe('renderShort', () => {
     const renderFailure = new Error('Chromium exited');
     const closeFailure = new Error('Asset server would not close');
     const deps: RenderDeps = {
+      extractThumbnail: vi.fn(async () => undefined),
       bundle: vi.fn(async () => 'http://localhost:3000'),
       selectComposition: vi.fn(async () => composition),
       renderMedia: vi.fn(async () => {
@@ -295,6 +303,7 @@ describe('renderShort', () => {
 
   it('preserves an undefined renderer rejection when cleanup also fails', async () => {
     const deps: RenderDeps = {
+      extractThumbnail: vi.fn(async () => undefined),
       bundle: vi.fn(async () => 'http://localhost:3000'),
       selectComposition: vi.fn(async () => composition),
       renderMedia: vi.fn(() => Promise.reject(undefined)),

@@ -182,3 +182,5 @@ Story guidance follows one concrete example through the reset and proof. These a
 editorial directions, not verified novelty or calibrated audience predictions; the
 existing deterministic score-based selection remains unchanged. Word count alone
 does not guarantee a 2–3-second spoken hook.
+
+Each completed render also saves `thumbnail.jpg` beside `output.mp4`: the first frame of the finished video at its original resolution.
