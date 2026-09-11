@@ -25,20 +25,20 @@ describe('sceneDurationFromAudio', () => {
 
 describe('assertVoicedTimeline', () => {
   it('attributes timeline validation to the selected voice provider', () => {
-    try { assertVoicedTimeline([34], 'elevenlabs'); }
+    try { assertVoicedTimeline([36], 'elevenlabs'); }
     catch (error) { expect(error).toMatchObject({diagnostic: {provider: 'elevenlabs'}}); return; }
     throw new Error('Expected timeline rejection');
   });
-  it('accepts exactly 33 seconds including the outro', () => {
-    expect(() => assertVoicedTimeline([3, 5, 5, 6, 7, 7])).not.toThrow();
+  it('accepts exactly 35 seconds including the outro', () => {
+    expect(() => assertVoicedTimeline([3, 5, 5, 6, 8, 8])).not.toThrow();
   });
 
-  it('accepts voiced timelines between 30 and 33s', () => {
-    expect(() => assertVoicedTimeline([6.3, 6.3, 6.3, 6.3, 6.3])).not.toThrow();
+  it('accepts voiced timelines between 33 and 35s', () => {
+    expect(() => assertVoicedTimeline([6.8, 6.8, 6.8, 6.8, 6.8])).not.toThrow();
   });
 
-  it('rejects just above 33s', () => {
-    expect(() => assertVoicedTimeline([30, 3.001])).toThrow(/15-33s/);
+  it('rejects just above 35s', () => {
+    expect(() => assertVoicedTimeline([30, 5.001])).toThrow(/15-35s/);
   });
 
   it('accepts a punchy 4-beat outro timeline just under 20s', () => {
@@ -49,7 +49,7 @@ describe('assertVoicedTimeline', () => {
     expect(() => assertVoicedTimeline([2.8, 2.8, 2.8, 2.8, 2.8])).toThrow(/15/);
   });
 
-  it('rejects a total above 33s', () => {
-    expect(() => assertVoicedTimeline([12.3, 12.3, 12.3, 12.3, 12.3])).toThrow(/33/);
+  it('rejects a total above 35s', () => {
+    expect(() => assertVoicedTimeline([12.3, 12.3, 12.3, 12.3, 12.3])).toThrow(/35/);
   });
 });

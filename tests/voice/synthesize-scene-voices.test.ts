@@ -235,17 +235,17 @@ describe('synthesizeSceneVoices', () => {
     expect(writeAudioFile).toHaveBeenCalledTimes(1);
   });
 
-  it('rejects actual TTS plus padding and outro over 33s with an actionable diagnostic', async () => {
+  it('rejects actual TTS plus padding and outro over 35s with an actionable diagnostic', async () => {
     const withOutro = {...plan, scenes: [...plan.scenes, {...plan.scenes[0], id: 'channel-outro'}]};
     await expect(synthesizeSceneVoices(withOutro, '/tmp/run', 'eve', {
-      synthesize: async () => ({audio: Buffer.from('x'), durationSeconds: 5.3, words: []}),
+      synthesize: async () => ({audio: Buffer.from('x'), durationSeconds: 5.6, words: []}),
       writeAudioFile: async () => {},
     })).rejects.toMatchObject({
-      diagnostic: {detail: expect.stringMatching(/33\.6s.*33s.*Shorten/)},
+      diagnostic: {detail: expect.stringMatching(/35\.4s.*35s.*Shorten/)},
     });
   });
 
-  it('rejects a voiced timeline outside 15-33 seconds', async () => {
+  it('rejects a voiced timeline outside 15-35 seconds', async () => {
     await expect(
       synthesizeSceneVoices(plan, '/tmp/run', 'eve', {
         synthesize: async () => ({
