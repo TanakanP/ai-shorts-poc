@@ -7,6 +7,9 @@ import type {SpeechSynthesizer} from './xai-tts-client';
 import {lengthenOutroWhy} from './lengthen-outro-why';
 
 export type SynthesizeSceneVoicesDeps = {
+  // V4 owns its frame-rounded final-duration policy and a single rewrite pass.
+  deferTotalValidation?: boolean;
+  previous?: SynthesizeSceneVoicesResult;
   provider?: 'xai' | 'elevenlabs';
   synthesize: SpeechSynthesizer;
   writeAudioFile: (path: string, bytes: Buffer) => Promise<void>;
@@ -27,6 +30,14 @@ export async function synthesizeSceneVoices(
   const timedScenes = [];
 
   for (const [index, scene] of plan.scenes.entries()) {
+    const previousScene = deps.previous?.timedPlan.scenes.find(s => s.id === scene.id);
+    const previousVoice = deps.previous?.manifest.scenes.find(s => s.sceneId === scene.id);
+    if (previousScene && previousVoice && previousVoice.voiceId === voiceId &&
+      narrationSource(previousScene) === narrationSource(scene)) {
+      scenes.push(previousVoice);
+      timedScenes.push({...scene, durationSeconds: previousVoice.durationSeconds});
+      continue;
+    }
     let spoken = await deps.synthesize({text: spokenSceneText(narrationSource(scene)), voiceId});
     if (
       scene.id === CHANNEL_OUTRO_SCENE_ID
@@ -49,7 +60,7 @@ export async function synthesizeSceneVoices(
     timedScenes.push({...scene, durationSeconds});
   }
 
-  assertVoicedTimeline(timedScenes.map((scene) => scene.durationSeconds), deps.provider);
+  if (!deps.deferTotalValidation) assertVoicedTimeline(timedScenes.map((scene) => scene.durationSeconds), deps.provider);
 
   return {
     timedPlan: {...plan, scenes: timedScenes},
