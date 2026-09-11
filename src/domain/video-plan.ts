@@ -7,6 +7,9 @@ export type EducationalRole = (typeof EDUCATIONAL_ROLES)[number];
 export type BeatRole = EducationalRole | StoryRole | 'outro';
 
 export type VideoScene = {
+  videoTrimStartSec?: number;
+  videoCropPosition?: string;
+  proofAssetId?: string;
   id: string;
   role: BeatRole;
   durationSeconds: number;

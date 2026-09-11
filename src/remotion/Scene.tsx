@@ -1,4 +1,4 @@
-import {AbsoluteFill, interpolate, OffthreadVideo, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, interpolate, OffthreadVideo, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {ResolvedScene} from '../domain/resolved-video';
 import type {BeatRole} from '../domain/video-plan';
 import {captionFontFamily} from './caption-font';
@@ -95,6 +95,7 @@ export const Scene = ({
   localAssetPaths,
 }: SceneProps) => {
   const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
   const opacity = sceneOpacity(frame, durationInFrames, {fadeIn, fadeOut});
   const videoScale = interpolate(
     frame,
@@ -109,13 +110,14 @@ export const Scene = ({
     <AbsoluteFill style={{opacity}}>
       <OffthreadVideo
         src={getVideoSource(scene.localVideoPath, assetBaseUrl, localAssetPaths)}
+        trimBefore={Math.round((scene.videoTrimStartSec ?? 0) * fps)}
         muted
         style={{
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          objectPosition: 'center center',
-          transform: `scale(${videoScale})`,
+          objectPosition: scene.videoCropPosition ?? 'center center',
+          transform: `scale(${scene.proofAssetId ? 1 : videoScale})`,
         }}
       />
 
