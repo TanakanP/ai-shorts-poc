@@ -1,0 +1,31 @@
+{
+  "topicId": "onion-reaction",
+  "topic": "Cutting an Onion Creates the Chemical That Makes You Cry",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: ACTION_CREATES_CAUSE\nPackaging claim: Your Knife Starts the Reaction That Makes You Cry\nCore fact: Cutting onion tissue breaks cells and brings previously separated enzymes and precursor compounds together, producing a volatile eye irritant.\nContradiction / curiosity gap: The intact onion keeps key parts of the reaction separated.\nSecond reveal: Your tears are a response to the airborne irritant produced after the cells are damaged, not simply onion juice splashing into your eyes.\nFirst-frame proof: A knife cutting directly through a fresh onion, immediately followed by watering eyes.\nPexels queries, in order: cutting onion close up; chopping onion eyes watering; onion cutting board.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Do not call the irritant onion juice flying into the eyes and do not promise guaranteed tear-free tricks.\nSource: https://www.loc.gov/everyday-mysteries/browse-all-questions/item/why-does-chopping-an-onion-make-you-cry/\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "onion",
+    "onions"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Cutting onion tissue breaks cells and brings previously separated enzymes and precursor compounds together, producing a volatile eye irritant.",
+      "sourceUrls": [
+        "https://www.acs.org/molecule-of-the-week/archive/p/syn-propanethial-s-oxide.html"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "Your tears are a response to the airborne irritant produced after the cells are damaged, not simply onion juice splashing into your eyes.",
+      "sourceUrls": [
+        "https://www.acs.org/molecule-of-the-week/archive/p/syn-propanethial-s-oxide.html"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not call the irritant onion juice flying into the eyes and do not promise guaranteed tear-free tricks."
+  ],
+  "titleSeed": "Your Knife Starts the Reaction That Makes You Cry",
+  "descriptionSeed": "The irritant is produced after the onion's cells are broken. Cutting mixes chemicals that were separated inside the intact onion, starting the reaction that reaches your eyes. #Shorts #EverydayScience",
+  "localProof": []
+}

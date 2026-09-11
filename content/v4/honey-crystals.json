@@ -1,0 +1,30 @@
+{
+  "topicId": "honey-crystals",
+  "topic": "Real Honey Can Turn Grainy",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: APPEARANCE_IS_NOT_IDENTITY\nPackaging claim: Grainy Honey Can Still Be Real Honey\nCore fact: Honey can crystallise naturally as glucose forms crystals; composition and storage conditions influence how readily this happens.\nContradiction / curiosity gap: A grainy texture is not automatic evidence that the honey is fake.\nSecond reveal: Different honeys can crystallise at very different rates because their sugar and water compositions differ.\nFirst-frame proof: A jar of visibly crystallised or grainy honey beside smooth liquid honey.\nPexels queries, in order: crystallized honey jar; grainy honey spoon; honey crystals close up.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Texture alone cannot establish purity or food safety. Avoid health claims, authenticity guarantees and heating instructions.\nSource: https://rowsehoney.co.uk/news/bee-educated/why-has-my-honey-crystallised-and-is-it-still-okay-to-eat\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "honey"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Honey can crystallise naturally as glucose forms crystals; composition and storage conditions influence how readily this happens.",
+      "sourceUrls": [
+        "https://rowsehoney.co.uk/news/bee-educated/why-has-my-honey-crystallised-and-is-it-still-okay-to-eat"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "Different honeys can crystallise at very different rates because their sugar and water compositions differ.",
+      "sourceUrls": [
+        "https://rowsehoney.co.uk/news/bee-educated/why-has-my-honey-crystallised-and-is-it-still-okay-to-eat"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Texture alone cannot establish purity or food safety. Avoid health claims, authenticity guarantees and heating instructions."
+  ],
+  "titleSeed": "Grainy Honey Can Still Be Real Honey",
+  "descriptionSeed": "A jar can turn cloudy and grainy without proving it is fake. Natural glucose crystallisation changes honey's texture while the honey remains honey. #Shorts #EverydayScience",
+  "localProof": []
+}

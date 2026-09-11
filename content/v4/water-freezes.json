@@ -1,0 +1,31 @@
+{
+  "topicId": "water-freezes",
+  "topic": "Water Gets Bigger When It Freezes",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: RULE_REVERSAL\nPackaging claim: Freezing Makes Water Bigger. That's Why Ice Floats.\nCore fact: Freezing arranges water molecules into a more open crystal structure, making ordinary ice less dense than liquid water.\nContradiction / curiosity gap: Unlike many materials, water expands as it freezes instead of packing more tightly.\nSecond reveal: That lower density is also why ordinary ice floats on liquid water.\nFirst-frame proof: An ice cube visibly floating high in a clear glass of water.\nPexels queries, in order: ice cube floating water; ice cubes clear glass; freezing water ice close up.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Explain ordinary water ice. Do not generalise the behaviour to all frozen liquids or claim trapped air is the main reason ice floats.\nSource: https://www.usgs.gov/water-science-school/science/water-density\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "water",
+    "ice"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Freezing arranges water molecules into a more open crystal structure, making ordinary ice less dense than liquid water.",
+      "sourceUrls": [
+        "https://www.usgs.gov/water-science-school/science/water-density"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "That lower density is also why ordinary ice floats on liquid water.",
+      "sourceUrls": [
+        "https://www.usgs.gov/water-science-school/science/water-density"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Explain ordinary water ice. Do not generalise the behaviour to all frozen liquids or claim trapped air is the main reason ice floats."
+  ],
+  "titleSeed": "Freezing Makes Water Bigger. That's Why Ice Floats.",
+  "descriptionSeed": "Water breaks the usual solid-state intuition: it expands when it freezes. The more open ice structure makes it less dense than liquid water, so it floats. #Shorts #EverydayScience",
+  "localProof": []
+}

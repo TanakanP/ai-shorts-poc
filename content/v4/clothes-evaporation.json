@@ -1,0 +1,32 @@
+{
+  "topicId": "clothes-evaporation",
+  "topic": "Wet Clothes Lose Water Without the Water Boiling",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: STATE_CHANGE_WITHOUT_EXPECTED_TRIGGER\nPackaging claim: Your Clothes Dry Without the Water Ever Boiling\nCore fact: Liquid water in wet clothing can evaporate into the air below its boiling point as faster-moving surface molecules escape.\nContradiction / curiosity gap: Drying is a phase change even though the water never reaches its boiling temperature.\nSecond reveal: Heat, airflow and lower humidity can speed the process, but sunlight is not required for evaporation to happen.\nFirst-frame proof: Obviously wet fabric or dripping laundry followed by the same garment drying on a line or rack.\nPexels queries, in order: wet clothes drying; laundry clothesline wet; hanging clothes indoor drying.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Do not claim sunlight is required and do not give a universal drying time; drying rate depends on temperature, airflow, humidity and fabric.\nSource: https://www.usgs.gov/water-science-school/science/evaporation-and-water-cycle?page=1\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "clothes",
+    "laundry",
+    "water"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Liquid water in wet clothing can evaporate into the air below its boiling point as faster-moving surface molecules escape.",
+      "sourceUrls": [
+        "https://www.usgs.gov/water-science-school/science/evaporation-and-water-cycle?page=1"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "Heat, airflow and lower humidity can speed the process, but sunlight is not required for evaporation to happen.",
+      "sourceUrls": [
+        "https://www.usgs.gov/water-science-school/science/evaporation-and-water-cycle?page=1"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not claim sunlight is required and do not give a universal drying time; drying rate depends on temperature, airflow, humidity and fabric."
+  ],
+  "titleSeed": "Your Clothes Dry Without the Water Ever Boiling",
+  "descriptionSeed": "The water leaves the fabric even though it never reaches 100°C. Evaporation happens molecule by molecule at the surface, far below the boiling point. #Shorts #EverydayScience",
+  "localProof": []
+}

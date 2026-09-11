@@ -1,0 +1,31 @@
+{
+  "topicId": "bread-gas",
+  "topic": "Those Holes in Bread Were Made by Gas",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: FAMILIAR_OBJECT_HIDDEN_CAUSE\nPackaging claim: Your Bread Is Full of Gas—and That's the Point\nCore fact: In yeast bread, fermentation produces carbon dioxide and the dough traps gas pockets that expand as the loaf rises.\nContradiction / curiosity gap: The holes are part of how the loaf grew; they were not punched into the bread after baking.\nSecond reveal: The same trapped gas that makes the holes also helps the loaf become larger and lighter.\nFirst-frame proof: A sliced loaf with large visible crumb holes, then dough visibly rising.\nPexels queries, in order: bread holes close up; dough rising yeast; slicing bread crumb.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Specify yeast bread. Do not say every bread uses yeast or that every hole in every loaf has exactly one cause.\nSource: https://dev-annex.exploratorium.edu/cooking/bread/bread_science.html\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "bread",
+    "loaf"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "In yeast bread, yeast produces carbon dioxide as it feeds on sugars.",
+      "sourceUrls": [
+        "https://dev-annex.exploratorium.edu/cooking/bread/bread_science.html"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "Stretchy gluten in wheat dough traps gas bubbles, allowing the dough to inflate rather than simply releasing the gas.",
+      "sourceUrls": [
+        "https://dev-annex.exploratorium.edu/cooking/bread/bread_science.html"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Specify yeast bread. Do not say every bread uses yeast or that every hole in every loaf has exactly one cause."
+  ],
+  "titleSeed": "Your Bread Is Full of Gas—and That's the Point",
+  "descriptionSeed": "Those holes are not empty accidents. Yeast makes carbon dioxide, the dough traps it, and the expanding gas helps build the loaf's airy structure. #Shorts #EverydayScience",
+  "localProof": []
+}

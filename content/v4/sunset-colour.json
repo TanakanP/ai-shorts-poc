@@ -1,0 +1,31 @@
+{
+  "topicId": "sunset-colour",
+  "topic": "The Sun Doesn't Actually Turn Red at Sunset",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: APPEARANCE_IS_NOT_OBJECT\nPackaging claim: The Sun Doesn't Turn Red at Sunset\nCore fact: Near the horizon, sunlight travels through more atmosphere; shorter wavelengths are scattered out of the direct path more strongly.\nContradiction / curiosity gap: The Sun has not suddenly changed its own colour.\nSecond reveal: The longer path through the atmosphere changes which wavelengths are most likely to reach your eyes directly.\nFirst-frame proof: A strongly orange or red Sun low on the horizon.\nPexels queries, in order: red sunset sun horizon; orange sunset close sun; sunset sky horizon.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Explain an Earth sunset. Clouds, aerosols and local conditions can alter the result; not every sunset is red.\nSource: https://spaceplace.nasa.gov/blue-sky/en/\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "sun",
+    "sunset"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Near the horizon, sunlight travels through more atmosphere; shorter wavelengths are scattered out of the direct path more strongly.",
+      "sourceUrls": [
+        "https://science.nasa.gov/earth/earth-observatory/crepuscular-rays-and-light-scattering-150090/"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "The same preferential scattering of shorter wavelengths helps explain the blue daytime sky.",
+      "sourceUrls": [
+        "https://science.nasa.gov/earth/earth-observatory/crepuscular-rays-and-light-scattering-150090/"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Explain an Earth sunset. Clouds, aerosols and local conditions can alter the result; not every sunset is red."
+  ],
+  "titleSeed": "The Sun Doesn't Turn Red at Sunset",
+  "descriptionSeed": "The Sun itself did not suddenly change colour. Near the horizon, its light travels through more atmosphere, scattering more of the shorter wavelengths out of your direct view. #Shorts #EverydayScience",
+  "localProof": []
+}

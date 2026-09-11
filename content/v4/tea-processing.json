@@ -1,0 +1,32 @@
+{
+  "topicId": "tea-processing",
+  "topic": "Black Tea and Green Tea Can Start as the Same Plant",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: SAME_SOURCE_DIFFERENT_RESULT\nPackaging claim: Black Tea and Green Tea Can Be the Same Plant\nCore fact: Black and green tea can both come from Camellia sinensis; processing, especially oxidation, changes the final tea.\nContradiction / curiosity gap: Their colour difference does not require two unrelated tea plants.\nSecond reveal: The biggest visible difference can be created after picking, by how the leaves are processed.\nFirst-frame proof: Black tea and green tea side by side, followed immediately by fresh tea leaves.\nPexels queries, in order: black tea green tea side by side; tea leaves harvest; tea leaves processing.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Exclude herbal infusions. Do not claim every flavour difference is caused only by oxidation and do not make health claims.\nSource: https://www.teaboard.gov.in/TEABOARDCSM/NDQ%3D\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "tea",
+    "black tea",
+    "green tea"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Black and green tea can both come from Camellia sinensis; processing, especially oxidation, changes the final tea.",
+      "sourceUrls": [
+        "https://www.teaboard.gov.in/TEABOARDCSM/NDQ%3D"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "Green-tea processing steams or pan-fries the leaves early, limiting oxidation before rolling and drying.",
+      "sourceUrls": [
+        "https://www.teaboard.gov.in/TEABOARDCSM/NDQ%3D"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Exclude herbal infusions. Do not claim every flavour difference is caused only by oxidation and do not make health claims."
+  ],
+  "titleSeed": "Black Tea and Green Tea Can Be the Same Plant",
+  "descriptionSeed": "Two cups that look completely different can begin with the same species of tea plant. Processing—especially oxidation—creates much of the difference. #Shorts #EverydayScience",
+  "localProof": []
+}

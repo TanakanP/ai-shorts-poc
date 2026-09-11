@@ -1,0 +1,32 @@
+{
+  "topicId": "water-drops",
+  "topic": "Water Pulls Itself Into a Rounded Drop",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: SELF_ORGANISING_SHAPE\nPackaging claim: Water Pulls Itself Into a Ball\nCore fact: Surface tension tends to reduce surface area, helping small amounts of water form rounded droplets when other forces are modest.\nContradiction / curiosity gap: The drop is not being shaped by a tiny mould; forces at its surface favour a compact shape.\nSecond reveal: The surface underneath matters too, so the same water can bead up on one material and spread out on another.\nFirst-frame proof: A sharply rounded bead of water sitting on a leaf or water-repellent surface.\nPexels queries, in order: water droplet leaf macro; water bead surface close up; droplets hydrophobic surface.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Do not claim all drops are perfect spheres. Gravity, motion and surface wetting matter, and falling raindrops are not classic teardrop shapes.\nSource: https://www.usgs.gov/water-science-school/science/surface-tension-and-water\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "water",
+    "drop",
+    "drops"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Surface tension tends to reduce surface area, helping small amounts of water form rounded droplets when other forces are modest.",
+      "sourceUrls": [
+        "https://openstax.org/books/chemistry-atoms-first-2e/pages/10-2-properties-of-liquids"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "The surface underneath matters too, so the same water can bead up on one material and spread out on another.",
+      "sourceUrls": [
+        "https://openstax.org/books/chemistry-atoms-first-2e/pages/10-2-properties-of-liquids"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not claim all drops are perfect spheres. Gravity, motion and surface wetting matter, and falling raindrops are not classic teardrop shapes."
+  ],
+  "titleSeed": "Water Pulls Itself Into a Ball",
+  "descriptionSeed": "No mould is shaping that droplet. Surface tension favours a compact surface, while the material underneath decides how much the water beads up or spreads. #Shorts #EverydayScience",
+  "localProof": []
+}

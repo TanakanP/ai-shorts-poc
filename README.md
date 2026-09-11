@@ -184,3 +184,47 @@ existing deterministic score-based selection remains unchanged. Word count alone
 does not guarantee a 2–3-second spoken hook.
 
 Each completed render also saves `thumbnail.jpg` beside `output.mp4`: the first frame of the finished video at its original resolution.
+# V4 content generation (opt-in)
+
+V4 adds five declarative hook candidates, reviewed source-backed briefs, visual proof
+approval before final scripting/TTS, a distinct second reveal, and a 25–29-second
+final-video target (hard maximum 30). Voice, karaoke, music and the channel sign-off
+remain. V3 is still the default until two real V4 samples pass review.
+
+```sh
+CONTENT_ENGINE_VERSION=v4 CONTENT_BRIEF_PATH=content/v4/straw-refraction.json npm run generate -- "A Straight Straw Can Look Bent in Water" "Use the reviewed brief"
+CONTENT_ENGINE_VERSION=v3 npm run generate -- "topic" "creative brief"
+```
+
+Run from an interactive terminal. V4 first shows the proposed hook/package, then
+downloads candidate footage and creates portrait stills and short motion previews.
+Open the paths printed in the terminal, choose the proof start time and crop, and
+approve only footage that visibly supports the intended action. Missing proof holds
+the topic before speech synthesis. The final story is reviewed before narration.
+
+The 14 rollout briefs are in `content/v4/`. Each has stable topic ID, source-backed
+facts, factual boundaries and exact workbook title/description seeds. A file brief
+is treated as reviewed content; its topic must match the command. Without a file,
+the existing creative-brief argument must contain sources, and the interpreted
+claim/source mapping requires review. The generator does not browse those URLs.
+The old workbook commands do not include the title/description columns; use the
+brief path to preserve that metadata. The original workbook is unchanged.
+
+To supply genuine local footage, add `localProof` entries to a brief, with `beatId`
+(`contradiction`, `clue`, `mechanism`, `second_reveal`, or `payoff`), `path`,
+`licenseNote`, `trimStartSec` and `cropPosition` (for example `"50% 50%"`). Paths are
+relative to the JSON file. Each story scene needs a distinct clip under the current
+footage policy; only the channel outro deliberately reuses the opening. Local clips
+still require crop/action review. Do not put unlicensed source-page media in a brief.
+
+Each V4 run saves `brief.json`, package attempts and decisions, `proof.json`,
+`content-plan.json`, `voice.json`, `resolved.json`, timing attempts, and a
+`generation-manifest.json` beside the MP4 in `runs/<runId>/`. Holds/failures retain
+their stage and reason. A timing rewrite is limited to one; unchanged speech is
+reused. There is no automatic speech speed-up or proof-action looping. Final timing
+includes per-scene pads, frame rounding and the outro, and is checked against the
+encoded MP4. A 29–30-second or short result needs an explicit timing-review reason.
+
+Implementation/research: `docs/superpowers/plans/2026-09-12-content-v4-plan.md` and
+`docs/content-v4/research-and-topic-review.md`. Publishing and analytics are outside
+this local prototype.

@@ -1,0 +1,32 @@
+{
+  "topicId": "soap-grease",
+  "topic": "Water Can't Grab Grease. Soap Can Grab Both.",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: IMPOSSIBLE_BRIDGE\nPackaging claim: Water Can't Grab Grease. Soap Can Grab Both.\nCore fact: Soap molecules have water-attracting and oil-attracting regions, helping oily material disperse in water so it can be carried away during rinsing.\nContradiction / curiosity gap: The grease does not vanish; soap helps move it into structures that water can carry away.\nSecond reveal: One part of a soap molecule can associate with oily material while another interacts with water.\nFirst-frame proof: A greasy plate resisting plain water, then detergent visibly helping the grease disperse and rinse away.\nPexels queries, in order: greasy plate water; dish soap grease close up; washing greasy dishes.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Stay with grease removal in ordinary washing. Do not make disinfectant claims and do not suggest mixing household cleaners.\nSource: https://19january2017snapshot.epa.gov/nps/darby-duck-aquatic-crusader-what-surface-tension_.html\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "soap",
+    "water",
+    "grease"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Surfactant molecules have water-attracting and oil-attracting regions that help disperse oily material in water.",
+      "sourceUrls": [
+        "https://www.teachengineering.org/lessons/usf_surfactants_les1"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "The grease is carried away in the rinse rather than being destroyed or disappearing.",
+      "sourceUrls": [
+        "https://www.teachengineering.org/lessons/usf_surfactants_les1"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Stay with grease removal in ordinary washing. Do not make disinfectant claims and do not suggest mixing household cleaners."
+  ],
+  "titleSeed": "Water Can't Grab Grease. Soap Can Grab Both.",
+  "descriptionSeed": "Plain water struggles with oily grease, but soap has a split personality. One part interacts with oil while another interacts with water, letting the mess rinse away. #Shorts #EverydayScience",
+  "localProof": []
+}

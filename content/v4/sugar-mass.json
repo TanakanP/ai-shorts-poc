@@ -1,0 +1,30 @@
+{
+  "topicId": "sugar-mass",
+  "topic": "Sugar Can Disappear Without Losing Its Mass",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: DISAPPEARS_BUT_REMAINS\nPackaging claim: The Sugar Disappeared. Its Mass Didn't.\nCore fact: When sugar dissolves, its molecules disperse among water molecules; the sugar remains present in the solution.\nContradiction / curiosity gap: Invisible does not mean gone.\nSecond reveal: If nothing spills or evaporates, the combined mass of the sugar and water is still there after dissolving.\nFirst-frame proof: Visible sugar crystals stirred into clear water until the crystals vanish from sight.\nPexels queries, in order: sugar dissolving water; sugar spoon glass water; stirring sugar clear drink.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Use dissolving, not melting. Any weighing comparison must keep the same container and avoid spills or evaporation.\nSource: https://www.acs.org/content/dam/acsorg/education/k-8/inquiry-in-action/fifth-grade/g5-l4.1-reading.pdf\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "sugar"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "When sugar dissolves, its molecules disperse among water molecules; the sugar remains present in the solution.",
+      "sourceUrls": [
+        "https://www.acs.org/content/dam/acsorg/education/k-8/inquiry-in-action/fifth-grade/g5-l4.1-reading.pdf"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "If nothing spills or evaporates, the combined mass of the sugar and water is still there after dissolving.",
+      "sourceUrls": [
+        "https://www.acs.org/content/dam/acsorg/education/k-8/inquiry-in-action/fifth-grade/g5-l4.1-reading.pdf"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Use dissolving, not melting. Any weighing comparison must keep the same container and avoid spills or evaporation."
+  ],
+  "titleSeed": "The Sugar Disappeared. Its Mass Didn't.",
+  "descriptionSeed": "The crystals vanish from sight, but the sugar is still there. Its molecules spread through the water instead of disappearing from the glass. #Shorts #EverydayScience",
+  "localProof": []
+}

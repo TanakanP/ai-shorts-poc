@@ -1,0 +1,32 @@
+{
+  "topicId": "soap-film-colours",
+  "topic": "Soap Bubbles Make Rainbow Colours Without Dye",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: VISIBLE_CAUSE_MISMATCH\nPackaging claim: Those Rainbow Colours Aren't in the Soap\nCore fact: Light reflecting from the two surfaces of a thin soap film interferes, creating colours that change with film thickness and viewing angle.\nContradiction / curiosity gap: The rainbow pattern does not require coloured pigment in the soap.\nSecond reveal: As the film drains and becomes thinner, the colours can move and change even while the bubble stays in place.\nFirst-frame proof: A close-up soap bubble with clearly shifting rainbow bands.\nPexels queries, in order: soap bubble rainbow close up; soap film colors; soap bubbles sunlight macro.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Require visible coloured soap-film interference. Do not claim every visible colour in every bubble comes only from this effect.\nSource: https://sciencedemonstrations.fas.harvard.edu/presentations/thin-film-interference\nReviewed V4 correction: use the structured facts below as authoritative; preserve channel outro. Six functions map to five voiced scenes. A visible result is not by itself proof of its microscopic mechanism.",
+  "subjectAliases": [
+    "soap",
+    "bubble",
+    "bubbles"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Light reflecting from the two surfaces of a thin soap film interferes, creating colours that change with film thickness and viewing angle.",
+      "sourceUrls": [
+        "https://sciencedemonstrations.fas.harvard.edu/presentations/thin-film-interference"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "As the film drains and becomes thinner, the colours can move and change even while the bubble stays in place.",
+      "sourceUrls": [
+        "https://sciencedemonstrations.fas.harvard.edu/presentations/thin-film-interference"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Require visible coloured soap-film interference. Do not claim every visible colour in every bubble comes only from this effect."
+  ],
+  "titleSeed": "Those Rainbow Colours Aren't in the Soap",
+  "descriptionSeed": "The soap can be colourless while the bubble flashes a rainbow. Thin-film interference makes different wavelengths reinforce or cancel as the film changes thickness. #Shorts #EverydayScience",
+  "localProof": []
+}

@@ -28,6 +28,7 @@ import {resolveSceneAssets} from './stock/resolve-scene-assets';
 import {reviewClip} from './stock/review-clip';
 import {synthesizeSceneVoices} from './voice/synthesize-scene-voices';
 import {createProviders} from './providers';
+import {runV4Cli} from './content/v4/cli';
 
 type CliIo = {
   log: (message: string) => void;
@@ -198,7 +199,9 @@ if (import.meta.url === entryPath) {
   loadDotenv(envPath ? {path: envPath, quiet: true} : {quiet: true});
   const argv = process.argv.slice(2);
   const research = argv.slice(1).join(' ').trim();
-  void runCli(argv, () => createProductionDeps(research)).then((exitCode) => {
+  const run = process.env.CONTENT_ENGINE_VERSION === 'v4'
+    ? runV4Cli(argv) : runCli(argv, () => createProductionDeps(research));
+  void run.then((exitCode) => {
     process.exitCode = exitCode;
   });
 }
