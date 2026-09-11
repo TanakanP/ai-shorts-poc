@@ -1,0 +1,32 @@
+{
+  "topicId": "paper-towel-capillary",
+  "topic": "A Paper Towel Can Pull Water Uphill",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: AGAINST_EXPECTATION\nPackaging claim: A Paper Towel Can Pull Water Uphill\nCore fact: Water wets paper fibres and moves through tiny spaces by capillary action, including a short distance upward against gravity.\nContradiction / curiosity gap: The dry paper above the waterline can become wet without ever being submerged.\nSecond reveal: Gravity still acts; the climb stops when capillary forces can no longer overcome it.\nFirst-frame proof: A strip of paper towel touching coloured water while the wet front is visibly above the waterline.\nPexels queries, in order: paper towel water capillary; paper towel colored water; kitchen paper towel water experiment.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Show actual upward wetting through paper. Do not imply water can climb indefinitely or that gravity switches off.\nSource: https://www.usgs.gov/water-science-school/science/capillary-action-and-water",
+  "subjectAliases": [
+    "paper towel",
+    "towel",
+    "paper"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Water wets paper fibres and moves through tiny spaces by capillary action, including a short distance upward against gravity.",
+      "sourceUrls": [
+        "https://www.usgs.gov/water-science-school/science/capillary-action-and-water"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "Gravity still acts; the climb stops when capillary forces can no longer overcome it.",
+      "sourceUrls": [
+        "https://www.usgs.gov/water-science-school/science/capillary-action-and-water"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Show actual upward wetting through paper. Do not imply water can climb indefinitely or that gravity switches off."
+  ],
+  "titleSeed": "A Paper Towel Can Pull Water Uphill",
+  "descriptionSeed": "The water rises even though gravity is pulling it down. Tiny spaces between the fibres create capillary action that carries water upward. #Shorts #EverydayScience",
+  "localProof": []
+}

@@ -3,6 +3,8 @@ import {dirname, join, resolve} from 'node:path';
 import {z} from 'zod';
 
 export type AppConfig = {
+  contentEngineVersion: 'v3' | 'v4';
+  contentBriefPath?: string;
   scriptProvider: 'openai' | 'xai';
   voiceProvider: 'xai' | 'elevenlabs';
   xaiScriptModel: string;
@@ -19,6 +21,8 @@ export type AppConfig = {
 };
 
 const configSchema = z.object({
+  CONTENT_ENGINE_VERSION: z.enum(['v3', 'v4']).default('v3'),
+  CONTENT_BRIEF_PATH: z.string().trim().min(1).optional(),
   SCRIPT_PROVIDER: z.enum(['openai', 'xai']).default('openai'),
   VOICE_PROVIDER: z.enum(['xai', 'elevenlabs']).default('xai'),
   XAI_SCRIPT_MODEL: z.string().trim().min(1).default('grok-4.3'),
@@ -58,6 +62,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   }
 
   return {
+    contentEngineVersion: parsed.data.CONTENT_ENGINE_VERSION,
+    contentBriefPath: parsed.data.CONTENT_BRIEF_PATH,
     scriptProvider: parsed.data.SCRIPT_PROVIDER,
     voiceProvider: parsed.data.VOICE_PROVIDER,
     xaiScriptModel: parsed.data.XAI_SCRIPT_MODEL,

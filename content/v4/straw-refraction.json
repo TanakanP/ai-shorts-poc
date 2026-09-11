@@ -1,0 +1,31 @@
+{
+  "topicId": "straw-refraction",
+  "topic": "A Straight Straw Can Look Bent in Water",
+  "creativeBrief": "Audience: Global English-speaking viewers; everyday life; instantly understandable without country-specific context.\nPattern: CONTRADICTION_REVEAL_V4\nContradiction type: VISUAL_PARADOX\nPackaging claim: The Straw Is Straight. The Light Is Bending.\nCore fact: Refraction changes the direction of light crossing water and air, so a partly submerged straight object can look displaced or bent.\nContradiction / curiosity gap: The straw never bends; the light reaching your eyes changes direction at the water-air boundary.\nSecond reveal: Lift the straw out of the water and the apparent bend disappears immediately.\nFirst-frame proof: A clearly straight straw partly submerged in a transparent glass, with the apparent break visible at the waterline.\nPexels queries, in order: straw in water glass; pencil in water refraction; clear glass water close up.\nVisual rule: Frame 1 must already show the familiar object plus the contradiction or its visible result. Do not begin on generic establishing footage. Use proof clips before filler; if the key proof asset cannot be found, hold the topic rather than fake it.\nHook rule: Generate 5 declarative hook candidates, then select one 5–10 words long. No why/how/what question, no Did you know, Have you ever wondered, Ever notice, Today we will, or generic setup. The concrete object must appear in the first clause and the contradiction must be understandable within about 1 second.\nStory clock: 0–1s show the paradox; 1–3s state the contradiction; 3–7s give a clue without fully answering; 7–14s reveal the mechanism; 14–21s deliver the second reveal or consequence; 21–27s payoff and visually echo the opening. Target 25–29 seconds total, hard max 30 seconds, roughly 65–82 spoken words. No generic outro or subscribe CTA.\nFact boundaries: Use a genuinely straight object and a view that visibly shows refraction. Do not use an actually bent straw as proof.\nSource: https://openstax.org/books/physics/pages/16-2-refraction",
+  "subjectAliases": [
+    "straw",
+    "pencil"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Refraction changes the direction of light crossing water and air, so a partly submerged straight object can look displaced or bent.",
+      "sourceUrls": [
+        "https://openstax.org/books/physics/pages/16-2-refraction"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "Lift the straw out of the water and the apparent bend disappears immediately.",
+      "sourceUrls": [
+        "https://openstax.org/books/physics/pages/16-2-refraction"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Use a genuinely straight object and a view that visibly shows refraction. Do not use an actually bent straw as proof."
+  ],
+  "titleSeed": "The Straw Is Straight. The Light Is Bending.",
+  "descriptionSeed": "The straw never bends—the light does. Refraction shifts the image at the water-air boundary and makes a straight object look broken. #Shorts #EverydayScience",
+  "localProof": []
+}
