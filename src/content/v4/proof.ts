@@ -13,6 +13,7 @@ export type ProofDeps = {
   review: (shot: Shot, previews: {stillPath: string; previewPath: string}, candidate: {source: string; start: number; crop: string}) => Promise<ProofReview>;
   probe?: typeof probeMedia;
   preview?: typeof previewProof;
+  previous?: ProofBinding[];
   record?: (bindings: ProofBinding[]) => Promise<void>;
 };
 
@@ -24,6 +25,19 @@ export async function resolveV4Proof(pack: SelectedPackage, brief: TopicBrief, r
   const preview = deps.preview ?? previewProof;
   for (const beatId of VOICED_BEATS) {
     const shot = pack.shots.find(s => s.beatId === beatId)!;
+    const saved = deps.previous?.find(p => p.beatIds.includes(beatId));
+    if (saved) {
+      const parsed = proofBindingSchema.parse(saved);
+      const media = await probe(parsed.localPath).catch(() => undefined);
+      if (media && media.durationSec + 0.001 >= parsed.trimStartSec + parsed.usableDurationSec && !usedPaths.has(resolve(parsed.localPath))) {
+        approved.push(parsed);
+        usedPaths.add(resolve(parsed.localPath));
+        const stockId = /stock-(\d+)\.mp4$/.exec(parsed.localPath);
+        if (stockId) used.add(Number(stockId[1]));
+        await deps.record?.(approved);
+        continue;
+      }
+    }
     const local = brief.localProof.find(p => p.beatId === beatId);
     let binding: ProofBinding | undefined;
     const inspect = async (path: string, source: string, defaults: {start: number; crop: string},

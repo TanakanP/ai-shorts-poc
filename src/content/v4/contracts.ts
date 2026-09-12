@@ -72,12 +72,17 @@ export type ProofBinding = z.infer<typeof proofBindingSchema>;
 export const storySchema = z.object({
   beats: z.array(z.object({
     id: z.enum(V4_BEATS), spokenText: z.string(), displayText: z.string(),
+    emphasisWords: z.array(text).max(2).optional(),
     newInformation: text, factIds: z.array(text).min(1), proofIds: z.array(text).min(1),
     targetStartSec: z.number().nonnegative(), targetEndSec: z.number().positive(),
   })).length(6),
   editorial: z.object({factsSupported: z.boolean(), distinctSecondReveal: z.boolean(),
     earlyMechanismLeak: z.boolean(), reasons: z.array(text).min(1)}),
 });
+// Strict provider envelope requires every property; local parsing accepts older plans.
+export const storyGenerationSchema = storySchema.extend({beats: z.array(storySchema.shape.beats.element.extend({
+  emphasisWords: z.array(text).max(2),
+})).length(6)});
 export type V4Story = z.infer<typeof storySchema>;
 export type V4ContentPlan = V4Story & {
   version: 'v4'; topicId: string; topic: string; package: SelectedPackage;

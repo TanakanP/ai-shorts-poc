@@ -66,3 +66,8 @@ it.each(['missing-reset', 'unknown-fact', 'changed-hook', 'unsupported', 'early-
     if (defect === 'repeated-reveal') p.beats[4].newInformation = p.beats[3].newInformation;
     expect(() => validateV4Story(p, brief, pack(), proofs(), '')).toThrow();
   });
+it('exports a strict provider story schema with explicit emphasis words', async () => {
+  const {zodTextFormat} = await import('openai/helpers/zod');
+  const {storyGenerationSchema} = await import('../../../src/content/v4/contracts');
+  expect(() => zodTextFormat(storyGenerationSchema, 'v4_story')).not.toThrow();
+});

@@ -85,6 +85,7 @@ The full mechanism starts in the mechanism beat. The second reveal must add its 
 Keep mechanism factIds separate from the second reveal's new fact. Every beat newInformation explains its contribution.
 Target 65-72 total words INCLUDING provided outro, hard cap 82; shorter is fine for clarity. Never pad to a word target.
 Do not put the outro in these six beats; it is appended separately. No subscribe/follow CTA.
+For each beat supply emphasisWords: 0–2 individual tokens copied exactly from displayText; the contradiction title needs 1–2 meaningful yellow keywords.
 Spoken/display copies remain distinct; avoid speech tags and use natural connected sentences. Provide candid editorial checks.
 When revising, preserve selected hook, supported mechanism, second reveal and payoff; compress other wording without speeding speech.
 If timing needs expansion before mechanism/reset, add a meaningful clue or observation, never filler.`,

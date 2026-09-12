@@ -15,7 +15,7 @@ export type V4Deps = {
   loadBrief: (topic: string) => Promise<TopicBrief>;
   package: (brief: TopicBrief, record: (value: unknown) => Promise<void>) => Promise<SelectedPackage>;
   approvePackage: (pack: SelectedPackage) => Promise<boolean>;
-  proof: (pack: SelectedPackage, brief: TopicBrief, runDir: string, record: (bindings: ProofBinding[]) => Promise<void>) => Promise<ProofBinding[]>;
+  proof: (pack: SelectedPackage, brief: TopicBrief, runDir: string, record: (bindings: ProofBinding[]) => Promise<void>, previous?: ProofBinding[]) => Promise<ProofBinding[]>;
   story: (brief: TopicBrief, pack: SelectedPackage, proofs: ProofBinding[], revision?: {previous: V4ContentPlan; feedback: string[]}) => Promise<V4ContentPlan>;
   approveStory: (plan: V4ContentPlan) => Promise<boolean>;
   synthesize: (plan: VideoPlan, runDir: string, previous?: SynthesizeSceneVoicesResult) => Promise<SynthesizeSceneVoicesResult>;

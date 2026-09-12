@@ -1,4 +1,5 @@
 import {ensureCaptionBars} from '../../captions/caption-segments';
+import {sanitizeEmphasisWords} from '../../domain/video-plan';
 import type {VideoPlan, BeatRole} from '../../domain/video-plan';
 import type {ResolvedScene} from '../../domain/resolved-video';
 import type {VoiceManifest} from '../../domain/voice';
@@ -15,6 +16,7 @@ export function videoPlanFromV4(plan: V4ContentPlan): VideoPlan {
       const spoken = ensureCaptionBars(beat.spokenText);
       return {id, role: roles[id], durationSeconds: beat.targetEndSec - (id === 'contradiction' ? 0 : beat.targetStartSec),
         text: spoken, spokenText: spoken, displayText: beat.displayText,
+        emphasisWords: id === 'contradiction' ? openingEmphasis(beat.displayText, beat.emphasisWords) : sanitizeEmphasisWords(beat.displayText, beat.emphasisWords ?? []),
         beatPurpose: beat.newInformation, newInformation: beat.newInformation,
         visualIntent: shot.visualIntent, searchQueries: shot.searchQueries, requiredVisualObjects: [shot.visualIntent]};
     })};
@@ -33,4 +35,14 @@ export function bindV4Scenes(timedPlan: VideoPlan, manifest: VoiceManifest, proo
       localVideoPath: proof.localPath, videoTrimStartSec: proof.trimStartSec, videoCropPosition: proof.cropPosition,
       proofAssetId: proof.id, localAudioPath: voice.localAudioPath, audioDurationSeconds: voice.audioDurationSeconds, words: voice.words};
   });
+}
+
+// Old saved plans have no emphasis field. Keep their approved copy and highlight
+// its last meaningful token instead of silently rendering an all-white title.
+export function openingEmphasis(display: string, words: readonly string[] = []): string[] {
+  const selected = sanitizeEmphasisWords(display, words);
+  if (selected.length) return selected;
+  const tokens = display.match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) ?? [];
+  const meaningful = tokens.filter(w => !/^(a|an|the|is|are|in|on|at|to|of|and|or|it|this|that)$/iu.test(w));
+  return (meaningful.length ? meaningful : tokens).slice(-1);
 }

@@ -228,3 +228,27 @@ encoded MP4. A 29–30-second or short result needs an explicit timing-review re
 Implementation/research: `docs/superpowers/plans/2026-09-12-content-v4-plan.md` and
 `docs/content-v4/research-and-topic-review.md`. Publishing and analytics are outside
 this local prototype.
+
+### Resume an interrupted V4 run
+
+New V4 runs print their resume command before generation starts:
+
+```sh
+CONTENT_ENGINE_VERSION=v4 npm run generate -- --resume runs/<runId>
+```
+
+This reuses the run's saved brief, package, successful approvals, individual approved
+footage choices, story and completed narration. It continues with the unfinished work;
+missing footage is reviewed again and missing audio is regenerated. A timing revision
+with changed content needs its own approval. Keep the original voice, channel and music
+settings. Resume uses the saved brief rather than rereading an edited topic JSON.
+If narration failed partway through synthesis, that incomplete narration stage is retried.
+The final render is retried rather than resumed frame by frame.
+
+Runs created before resumable checkpoints were added cannot reliably restore all
+approvals. Their existing diagnostic files are retained, but do not count as recorded
+approval checkpoints. No automatic approval is inferred from an unapproved draft.
+
+V4 opening titles now carry yellow emphasis words through to the renderer. Older story
+plans without keyword metadata fall back to the last meaningful title word, preserving
+the approved title text.

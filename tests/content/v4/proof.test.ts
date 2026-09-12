@@ -42,3 +42,17 @@ it('requires a concrete observed action for approval', async () => {
   const {localBrief, deps} = localSetup(); deps.review = async () => ({approved: true, observedAction: ''});
   await expect(resolveV4Proof(pack(), localBrief, '/tmp', deps)).rejects.toThrow();
 });
+it('keeps earlier footage approvals when a later review is interrupted', async () => {
+  const {localBrief, deps} = localSetup();
+  let saved: Awaited<ReturnType<typeof resolveV4Proof>> = [];
+  deps.record = async values => {saved = structuredClone(values);};
+  deps.review = vi.fn().mockResolvedValueOnce({approved: true, observedAction: 'Visible proof'})
+    .mockRejectedValueOnce(new Error('interrupted'));
+  await expect(resolveV4Proof(pack(), localBrief, '/tmp', deps)).rejects.toThrow('interrupted');
+  expect(saved).toHaveLength(1);
+  deps.review = vi.fn(async () => ({approved: true, observedAction: 'Visible proof'}));
+  const result = await resolveV4Proof(pack(), localBrief, '/tmp', {...deps, previous: saved});
+  expect(result).toHaveLength(5);
+  expect(result[0]).toEqual(saved[0]);
+  expect(deps.review).toHaveBeenCalledTimes(4);
+});
