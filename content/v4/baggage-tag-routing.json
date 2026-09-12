@@ -1,0 +1,35 @@
+{
+  "topicId": "baggage-tag-routing",
+  "topic": "Your Baggage Tag Is the Machine-Readable ID That Routes Your Suitcase",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state any country or model scope naturally. Channel angle: familiar things with an unexpected design or function.\nHook: generate five declarative candidates; select a concrete subject-first hook, preferably 6–10 words, maximum 12 only with the existing justified exception. No questions or generic trivia setup. Show the surprise without explaining the mechanism early.\nStory clock: six functions across five voiced scenes: 0–1s visual paradox; 1–3s contradiction; 3–7s clue; 7–14s mechanism; 14–21s distinct second reveal; 21–27s payoff echoing the opening. Target 25–29 seconds including the configured channel sign-off, hard maximum 30. Preserve spoken/display copy, voice, karaoke, local BGM and channel outro. Do not add a separate generic CTA.\nProof: the first frame already shows the object and surprising result or visible design detail. Review action and portrait crop before narration. Every voiced scene needs a distinct suitable clip. Stock search terms are discovery hints, not evidence. Source URLs establish facts, not media rights. Where a mechanism needs a cutaway or animation, supply an owned/licensed, clearly labelled pre-rendered local video; the current engine does not generate diagrams. Hold if genuine proof is unavailable. No dark wash.\nPackaging claim: Airport Bag Tags Are License Plates for Suitcases\nCore fact: Airline baggage tags carry a machine-readable baggage license-plate barcode plus human-readable routing information used by baggage handling systems.\nSecond reveal: IATA Resolution 753 requires member airlines to record baggage at acceptance, loading, transfer and arrival; tracking records live in the handling system, not on the paper itself.\nFirst-frame and mechanism proof: Close-up of an airport bag tag and barcode, then suitcase moving past automated scanners on a belt.\nSearch queries: airport baggage tag barcode; suitcase baggage system scanner; airport luggage tag\nFact boundaries: Do not imply the printed tag alone physically chooses every conveyor route; baggage systems combine tag data, scanners, messages, and airport automation.",
+  "subjectAliases": [
+    "baggage tag",
+    "bag tag",
+    "suitcase",
+    "luggage"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Airline baggage tags carry a machine-readable baggage license-plate barcode plus human-readable routing information used by baggage handling systems.",
+      "sourceUrls": [
+        "https://www.iata.org/contentassets/d22bcfe86aa54f22a2919b0e4224f68f/reso753-implementation-guide---2023_issue-4.0.pdf",
+        "https://www.iata.org/en/programs/ops-infra/baggage/baggage-tracking"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "IATA Resolution 753 requires member airlines to record baggage at acceptance, loading, transfer and arrival; tracking records live in the handling system, not on the paper itself.",
+      "sourceUrls": [
+        "https://www.iata.org/contentassets/d22bcfe86aa54f22a2919b0e4224f68f/reso753-implementation-guide---2023_issue-4.0.pdf",
+        "https://www.iata.org/en/programs/ops-infra/baggage/baggage-tracking"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not imply the printed tag alone physically chooses every conveyor route; baggage systems combine tag data, scanners, messages, and airport automation."
+  ],
+  "titleSeed": "Airport Bag Tags Are License Plates for Suitcases",
+  "descriptionSeed": "The paper strip on your suitcase carries machine-readable identity and routing information for the baggage system. #BaggageTag #AirportSystems #TravelTech",
+  "localProof": []
+}

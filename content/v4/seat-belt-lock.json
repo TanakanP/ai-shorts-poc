@@ -1,0 +1,32 @@
+{
+  "topicId": "seat-belt-lock",
+  "topic": "A Seat Belt Stays Loose Until a Sudden Stop Makes It Lock",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state any country or model scope naturally. Channel angle: familiar things with an unexpected design or function.\nHook: generate five declarative candidates; select a concrete subject-first hook, preferably 6–10 words, maximum 12 only with the existing justified exception. No questions or generic trivia setup. Show the surprise without explaining the mechanism early.\nStory clock: six functions across five voiced scenes: 0–1s visual paradox; 1–3s contradiction; 3–7s clue; 7–14s mechanism; 14–21s distinct second reveal; 21–27s payoff echoing the opening. Target 25–29 seconds including the configured channel sign-off, hard maximum 30. Preserve spoken/display copy, voice, karaoke, local BGM and channel outro. Do not add a separate generic CTA.\nProof: the first frame already shows the object and surprising result or visible design detail. Review action and portrait crop before narration. Every voiced scene needs a distinct suitable clip. Stock search terms are discovery hints, not evidence. Source URLs establish facts, not media rights. Where a mechanism needs a cutaway or animation, supply an owned/licensed, clearly labelled pre-rendered local video; the current engine does not generate diagrams. Hold if genuine proof is unavailable. No dark wash.\nPackaging claim: Seat Belts Can Lock Before a Crash\nCore fact: Emergency-locking retractors allow normal movement but lock during a collision, sudden stop, or sufficiently rapid belt movement depending on the design.\nSecond reveal: Many passenger belts also have a separate lockable mode used for child restraints when the belt is pulled all the way out.\nFirst-frame and mechanism proof: Slowly pull a seat belt freely, then demonstrate the belt locking when pulled sharply while the car is stationary.\nSearch queries: seat belt retractor lock; seat belt sudden pull; car seat belt mechanism\nFact boundaries: Do not stage dangerous braking or crash behavior. Demonstrate only with a stationary vehicle or animation and note designs vary. Free movement does not mean wearing a slack belt. Describe the child-restraint mode without giving installation instructions; consult the matching vehicle manual.",
+  "subjectAliases": [
+    "seat belt",
+    "seatbelt",
+    "belt"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Emergency-locking retractors allow normal movement but lock during a collision, sudden stop, or sufficiently rapid belt movement depending on the design.",
+      "sourceUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/vdirsnet/OwnerManual/Home/Content?ProcUid=G1697247&Uid=G1688532&buildtype=web&countryCode=USA&div=f&languageCode=en&moidRef=G910645&userMarket=CAN&vFilteringEnabled=False&variantid=6057"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "Many passenger belts also have a separate lockable mode used for child restraints when the belt is pulled all the way out.",
+      "sourceUrls": [
+        "https://www.fordservicecontent.com/Ford_Content/vdirsnet/OwnerManual/Home/Content?ProcUid=G1697247&Uid=G1688532&buildtype=web&countryCode=USA&div=f&languageCode=en&moidRef=G910645&userMarket=CAN&vFilteringEnabled=False&variantid=6057"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not stage dangerous braking or crash behavior. Demonstrate only with a stationary vehicle or animation and note designs vary. Free movement does not mean wearing a slack belt. Describe the child-restraint mode without giving installation instructions; consult the matching vehicle manual."
+  ],
+  "titleSeed": "Seat Belts Can Lock Before a Crash",
+  "descriptionSeed": "During normal driving it lets you move, then a sudden stop changes the rules instantly. #SeatBelt #CarSafety #HiddenMechanism",
+  "localProof": []
+}

@@ -1,0 +1,33 @@
+{
+  "topicId": "traffic-light-loops",
+  "topic": "Traffic Lights Can Detect Your Car Through Wires in the Road",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state any country or model scope naturally. Channel angle: familiar things with an unexpected design or function.\nHook: generate five declarative candidates; select a concrete subject-first hook, preferably 6–10 words, maximum 12 only with the existing justified exception. No questions or generic trivia setup. Show the surprise without explaining the mechanism early.\nStory clock: six functions across five voiced scenes: 0–1s visual paradox; 1–3s contradiction; 3–7s clue; 7–14s mechanism; 14–21s distinct second reveal; 21–27s payoff echoing the opening. Target 25–29 seconds including the configured channel sign-off, hard maximum 30. Preserve spoken/display copy, voice, karaoke, local BGM and channel outro. Do not add a separate generic CTA.\nProof: the first frame already shows the object and surprising result or visible design detail. Review action and portrait crop before narration. Every voiced scene needs a distinct suitable clip. Stock search terms are discovery hints, not evidence. Source URLs establish facts, not media rights. Where a mechanism needs a cutaway or animation, supply an owned/licensed, clearly labelled pre-rendered local video; the current engine does not generate diagrams. Hold if genuine proof is unavailable. No dark wash.\nPackaging claim: Hidden Road Loops Control the Traffic Light\nCore fact: Many intersections use inductive-loop detectors: loops of wire embedded in pavement sense the presence of a conductive metal vehicle.\nSecond reveal: The traffic controller can use that detection as an input for an actuated signal instead of relying only on a fixed timer.\nFirst-frame and mechanism proof: Visible rectangular saw cuts/loops in the lane at a red light, then a car stopping over them.\nSearch queries: inductive loop traffic signal pavement; road sensor loop intersection; car detector traffic light\nFact boundaries: Do not claim all traffic lights use loops or that a loop always changes the light immediately; intersections may use cameras, radar, fixed timing, or other logic.",
+  "subjectAliases": [
+    "traffic light",
+    "traffic signal",
+    "road",
+    "car"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Many intersections use inductive-loop detectors: loops of wire embedded in pavement sense the presence of a conductive metal vehicle.",
+      "sourceUrls": [
+        "https://www.fhwa.dot.gov/publications/research/operations/its/06108/02.cfm"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "The traffic controller can use that detection as an input for an actuated signal instead of relying only on a fixed timer.",
+      "sourceUrls": [
+        "https://www.fhwa.dot.gov/publications/research/operations/its/06108/02.cfm"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not claim all traffic lights use loops or that a loop always changes the light immediately; intersections may use cameras, radar, fixed timing, or other logic."
+  ],
+  "titleSeed": "Hidden Road Loops Control the Traffic Light",
+  "descriptionSeed": "Those cuts in the pavement can be part of a sensor waiting for your car. #TrafficSignals #StreetEngineering #DrivingDetails",
+  "localProof": []
+}

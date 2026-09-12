@@ -1,4 +1,4 @@
-import {mkdtemp, writeFile, rm, readdir} from 'node:fs/promises';
+import {mkdtemp, writeFile, rm, readdir, readFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {expect, it, vi} from 'vitest';
@@ -19,10 +19,16 @@ it('requires first-frame proof and exactly five hooks', () => {
 });
 it('validates every supplied rollout brief and preserves its stable ID', async () => {
   const files = (await readdir('content/v4')).filter(f => f.endsWith('.json'));
-  expect(files).toHaveLength(14);
+  const snapshot = JSON.parse(await readFile('docs/content-v4/unposted-workbook-snapshot-2026-09-13.json', 'utf8'));
+  expect(snapshot.topics).toHaveLength(16);
+  expect(files.sort()).toEqual(snapshot.topics.map((t: {topicId: string}) => `${t.topicId}.json`).sort());
   for (const file of files) {
-    const {readFile} = await import('node:fs/promises');
     const raw = JSON.parse(await readFile(join('content/v4', file), 'utf8'));
+    const expected = snapshot.topics.find((t: {topicId: string}) => t.topicId === raw.topicId);
+    expect(expected.schedule).toBe(false);
+    expect(raw.topic).toBe(expected.topic);
+    expect(raw.titleSeed).toBe(expected.titleSeed);
+    expect(raw.descriptionSeed).toBe(expected.descriptionSeed);
     expect((await loadV4Brief(raw.topic, '', join('content/v4', file))).topicId).toBe(raw.topicId);
   }
 });

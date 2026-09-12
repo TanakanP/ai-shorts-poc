@@ -1,0 +1,35 @@
+{
+  "topicId": "kiwi-beak-tip",
+  "topic": "New Zealand’s Kiwi Sniffs With Its Beak Tip",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state any country or model scope naturally. Channel angle: familiar things with an unexpected design or function.\nHook: generate five declarative candidates; select a concrete subject-first hook, preferably 6–10 words, maximum 12 only with the existing justified exception. No questions or generic trivia setup. Show the surprise without explaining the mechanism early.\nStory clock: six functions across five voiced scenes: 0–1s visual paradox; 1–3s contradiction; 3–7s clue; 7–14s mechanism; 14–21s distinct second reveal; 21–27s payoff echoing the opening. Target 25–29 seconds including the configured channel sign-off, hard maximum 30. Preserve spoken/display copy, voice, karaoke, local BGM and channel outro. Do not add a separate generic CTA.\nProof: the first frame already shows the object and surprising result or visible design detail. Review action and portrait crop before narration. Every voiced scene needs a distinct suitable clip. Stock search terms are discovery hints, not evidence. Source URLs establish facts, not media rights. Where a mechanism needs a cutaway or animation, supply an owned/licensed, clearly labelled pre-rendered local video; the current engine does not generate diagrams. Hold if genuine proof is unavailable. No dark wash.\nPackaging claim: A Bird With a Nose at the Tip\nCore fact: Kiwi have nostrils near the ends of their bills, allowing them to smell food under soil.\nSecond reveal: In little spotted kiwi, a large smell-processing part of the brain supports the nostrils: the bill is only part of the smelling system.\nFirst-frame and mechanism proof: A verified kiwi bill-tip close-up already showing the unusual nostril location; follow genuine kiwi ground-probing footage. For the brain reset, use a licensed, clearly labelled anatomical illustration supplied as local video; do not claim generic bird footage proves anatomy.\nSearch queries:  kiwi bird foraging; kiwi beak close up.\nFact boundaries: Do not substitute kiwi fruit or another bird, invent distances, or claim smell is its only sense. The brain example is specifically little spotted kiwi; identify that species for the second reveal.",
+  "subjectAliases": [
+    "kiwi",
+    "bird",
+    "beak",
+    "bill"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Kiwi have nostrils near the ends of their bills, allowing them to smell food under soil.",
+      "sourceUrls": [
+        "https://www.tepapa.govt.nz/digital-museum/explore-digital-museum/birds-new-zealand/north-island-brown-kiwi",
+        "https://collections.tepapa.govt.nz/topic/1003"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "In little spotted kiwi, a large smell-processing part of the brain supports the nostrils: the bill is only part of the smelling system.",
+      "sourceUrls": [
+        "https://www.tepapa.govt.nz/digital-museum/explore-digital-museum/birds-new-zealand/north-island-brown-kiwi",
+        "https://collections.tepapa.govt.nz/topic/1003"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not substitute kiwi fruit or another bird, invent distances, or claim smell is its only sense. The brain example is specifically little spotted kiwi; identify that species for the second reveal."
+  ],
+  "titleSeed": "A Bird With a Nose at the Tip",
+  "descriptionSeed": "This bird’s nose is in an unexpected place. A beak close-up changes how you see a kiwi. #NewZealand #NatureDetails #Shorts",
+  "localProof": []
+}

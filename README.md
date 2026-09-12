@@ -192,7 +192,7 @@ final-video target (hard maximum 30). Voice, karaoke, music and the channel sign
 remain. V3 is still the default until two real V4 samples pass review.
 
 ```sh
-CONTENT_ENGINE_VERSION=v4 CONTENT_BRIEF_PATH=content/v4/straw-refraction.json npm run generate -- "A Straight Straw Can Look Bent in Water" "Use the reviewed brief"
+CONTENT_ENGINE_VERSION=v4 CONTENT_BRIEF_PATH=content/v4/road-sign-retroreflection.json npm run generate -- "Road Signs Shine by Throwing Your Headlights Back" "Use the reviewed brief"
 CONTENT_ENGINE_VERSION=v3 npm run generate -- "topic" "creative brief"
 ```
 
@@ -202,8 +202,8 @@ Open the paths printed in the terminal, choose the proof start time and crop, an
 approve only footage that visibly supports the intended action. Missing proof holds
 the topic before speech synthesis. The final story is reviewed before narration.
 
-The 14 rollout briefs are in `content/v4/`. Each has stable topic ID, source-backed
-facts, factual boundaries and exact workbook title/description seeds. A file brief
+The 16 current unposted briefs and per-topic commands are in [content/v4/README.md](content/v4/README.md). Each has stable topic ID, source-backed
+facts, factual boundaries and workbook title/description seeds with documented factual corrections. A file brief
 is treated as reviewed content; its topic must match the command. Without a file,
 the existing creative-brief argument must contain sources, and the interpreted
 claim/source mapping requires review. The generator does not browse those URLs.

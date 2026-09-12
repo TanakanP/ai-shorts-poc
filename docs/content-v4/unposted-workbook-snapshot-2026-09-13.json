@@ -1,0 +1,185 @@
+{
+  "sourceFile": "Tell Me Whyyyyyy_ Schedules(1).xlsx",
+  "sourceSha256": "be7b4b56f787895cf5526a45f738511b185ac5450a18f0c67ea907337459cdee",
+  "sheet": "Lists",
+  "reviewedOn": "2026-09-13",
+  "selection": "Column I Schedule is boolean false; dates do not override this flag. Scheduled=true is excluded, not independently verified as published.",
+  "topics": [
+    {
+      "row": 30,
+      "topicId": "kiwi-beak-tip",
+      "topic": "New Zealand’s Kiwi Sniffs With Its Beak Tip",
+      "schedule": false,
+      "plannedDatetime": "06:00 10/09/2026",
+      "originalTitle": "A Bird With a Nose at the Tip",
+      "originalDescription": "This bird’s nose is in an unexpected place. A beak close-up changes how you see a kiwi. #NewZealand #NatureDetails #Shorts",
+      "titleSeed": "A Bird With a Nose at the Tip",
+      "descriptionSeed": "This bird’s nose is in an unexpected place. A beak close-up changes how you see a kiwi. #NewZealand #NatureDetails #Shorts"
+    },
+    {
+      "row": 33,
+      "topicId": "australia-green-gold",
+      "topic": "Australia’s Sporting Colours Echo a Flower",
+      "schedule": false,
+      "plannedDatetime": "08:00 10/09/2026",
+      "originalTitle": "The Flower Behind the Team Colours",
+      "originalDescription": "Look beyond the flag for a clue to Australia’s green-and-gold palette. #Australia #SportDetails #Shorts",
+      "titleSeed": "The Flower Behind the Team Colours",
+      "descriptionSeed": "Look beyond the flag for a clue to Australia’s green-and-gold palette. #Australia #SportDetails #Shorts"
+    },
+    {
+      "row": 42,
+      "topicId": "road-sign-retroreflection",
+      "topic": "Road Signs Shine by Throwing Your Headlights Back",
+      "schedule": false,
+      "plannedDatetime": "02:00 14/09/2026",
+      "originalTitle": "Night Road Signs Have No Power—Headlights Do the Work",
+      "originalDescription": "At night, the sign can look illuminated even when it has no power. #RoadSigns #NightDriving #Retroreflective",
+      "titleSeed": "Road Signs Can Shine Without Their Own Power",
+      "descriptionSeed": "At night, the sign can look illuminated even when it has no power. #RoadSigns #NightDriving #Retroreflective"
+    },
+    {
+      "row": 43,
+      "topicId": "traffic-light-loops",
+      "topic": "Traffic Lights Can Detect Your Car Through Wires in the Road",
+      "schedule": false,
+      "plannedDatetime": "04:00 14/09/2026",
+      "originalTitle": "Hidden Road Loops Control the Traffic Light",
+      "originalDescription": "Those cuts in the pavement can be part of a sensor waiting for your car. #TrafficSignals #StreetEngineering #DrivingDetails",
+      "titleSeed": "Hidden Road Loops Control the Traffic Light",
+      "descriptionSeed": "Those cuts in the pavement can be part of a sensor waiting for your car. #TrafficSignals #StreetEngineering #DrivingDetails"
+    },
+    {
+      "row": 44,
+      "topicId": "barcode-product-id",
+      "topic": "A Store Barcode Usually Identifies the Product, Not the Price",
+      "schedule": false,
+      "plannedDatetime": "02:00 15/09/2026",
+      "originalTitle": "Store Barcodes Never Carry the Price",
+      "originalDescription": "The scanner usually reads an identity, then the store looks up the price somewhere else. #Barcodes #RetailTech #Checkout",
+      "titleSeed": "Store Barcodes Usually Identify Products, Not Prices",
+      "descriptionSeed": "The scanner usually reads an identity, then the store looks up the price somewhere else. #Barcodes #RetailTech #Checkout"
+    },
+    {
+      "row": 45,
+      "topicId": "qr-code-corners",
+      "topic": "QR Codes Use Three Big Squares to Know Their Orientation",
+      "schedule": false,
+      "plannedDatetime": "04:00 15/09/2026",
+      "originalTitle": "Three Giant Squares Lock a QR Code Upright",
+      "originalDescription": "The corner squares are doing more than making the code look familiar. #QRCode #ScanTech #DesignDetails",
+      "titleSeed": "Three Giant Squares Lock a QR Code Upright",
+      "descriptionSeed": "The corner squares are doing more than making the code look familiar. #QRCode #ScanTech #DesignDetails"
+    },
+    {
+      "row": 46,
+      "topicId": "microwave-door-mesh",
+      "topic": "A Microwave Door Is Full of Holes That Still Trap Microwave Energy",
+      "schedule": false,
+      "plannedDatetime": "02:00 16/09/2026",
+      "originalTitle": "Microwave Doors Trap Waves Behind a Wall of Holes",
+      "originalDescription": "You can see dinner through the door because visible light and microwave energy interact differently with the mesh. #Microwave #KitchenDesign #EverydayEngineering",
+      "titleSeed": "Microwave Doors Trap Waves Behind a Wall of Holes",
+      "descriptionSeed": "You can see dinner through the door because visible light and microwave energy interact differently with the mesh. #Microwave #KitchenDesign #EverydayEngineering"
+    },
+    {
+      "row": 47,
+      "topicId": "freezer-defrost-heater",
+      "topic": "A Frost-Free Freezer Heats Itself on Purpose",
+      "schedule": false,
+      "plannedDatetime": "04:00 16/09/2026",
+      "originalTitle": "Frost-Free Freezers Fire Heaters On Purpose",
+      "originalDescription": "A frost-free freezer can briefly use heat to remove the ice that cooling creates. #Freezer #ApplianceDesign #HomeTech",
+      "titleSeed": "Frost-Free Freezers Fire Heaters On Purpose",
+      "descriptionSeed": "A frost-free freezer can briefly use heat to remove the ice that cooling creates. #Freezer #ApplianceDesign #HomeTech"
+    },
+    {
+      "row": 48,
+      "topicId": "dishwasher-detergent-timing",
+      "topic": "A Dishwasher Waits Before Releasing the Detergent",
+      "schedule": false,
+      "plannedDatetime": "02:00 17/09/2026",
+      "originalTitle": "Dishwashers Hide Soap Until Mid-Cycle",
+      "originalDescription": "The detergent door can stay shut through the beginning of the cycle and open later when the program wants it. #Dishwasher #KitchenTech #ApplianceSecrets",
+      "titleSeed": "Dishwashers Time When They Release Detergent",
+      "descriptionSeed": "The detergent door can stay shut through the beginning of the cycle and open later when the program wants it. #Dishwasher #KitchenTech #ApplianceSecrets"
+    },
+    {
+      "row": 49,
+      "topicId": "toilet-water-seal",
+      "topic": "A Toilet Uses Standing Water as a Sewer-Gas Seal",
+      "schedule": false,
+      "plannedDatetime": "04:00 17/09/2026",
+      "originalTitle": "Standing Toilet Water Is the Sewer-Gas Seal",
+      "originalDescription": "The water sitting in the bend is doing a job even when nobody is flushing. #Plumbing #ToiletDesign #HomeSystems",
+      "titleSeed": "Standing Toilet Water Is the Sewer-Gas Seal",
+      "descriptionSeed": "The water sitting in the bend is doing a job even when nobody is flushing. #Plumbing #ToiletDesign #HomeSystems"
+    },
+    {
+      "row": 50,
+      "topicId": "seat-belt-lock",
+      "topic": "A Seat Belt Stays Loose Until a Sudden Stop Makes It Lock",
+      "schedule": false,
+      "plannedDatetime": "02:00 18/09/2026",
+      "originalTitle": "Seat Belts Stay Loose Until the Crash Hits",
+      "originalDescription": "During normal driving it lets you move, then a sudden stop changes the rules instantly. #SeatBelt #CarSafety #HiddenMechanism",
+      "titleSeed": "Seat Belts Can Lock Before a Crash",
+      "descriptionSeed": "During normal driving it lets you move, then a sudden stop changes the rules instantly. #SeatBelt #CarSafety #HiddenMechanism"
+    },
+    {
+      "row": 51,
+      "topicId": "headrest-crash-safety",
+      "topic": "A Car Headrest Is Built for Rear-End Crashes, Not Just Comfort",
+      "schedule": false,
+      "plannedDatetime": "04:00 18/09/2026",
+      "originalTitle": "Car Headrests Are Crash Gear, Not Pillows",
+      "originalDescription": "It looks like comfort equipment, but its regulated job is limiting how far your head moves backward in a rear impact. #HeadRestraint #CrashSafety #CarDesign",
+      "titleSeed": "Car Headrests Are Crash Gear, Not Pillows",
+      "descriptionSeed": "It looks like comfort equipment, but its regulated job is limiting how far your head moves backward in a rear impact. #HeadRestraint #CrashSafety #CarDesign"
+    },
+    {
+      "row": 52,
+      "topicId": "pen-cap-hole",
+      "topic": "A Pen-Cap Hole Is an Airway Safety Feature",
+      "schedule": false,
+      "plannedDatetime": "02:00 19/09/2026",
+      "originalTitle": "Pen-Cap Holes Exist Because Caps Get Swallowed",
+      "originalDescription": "The cap was redesigned around a risk most people never think about when they borrow a pen. #PenCap #ProductSafety #TinyDetails",
+      "titleSeed": "The Pen-Cap Hole Has an Airway Safety Job",
+      "descriptionSeed": "The cap was redesigned around a risk most people never think about when they borrow a pen. #PenCap #ProductSafety #TinyDetails"
+    },
+    {
+      "row": 53,
+      "topicId": "elevator-star",
+      "topic": "The Star on an Elevator Button Marks the Main Entry Floor",
+      "schedule": false,
+      "plannedDatetime": "04:00 19/09/2026",
+      "originalTitle": "Elevator Stars Mark the Official Main Floor",
+      "originalDescription": "That little star isn't decoration—it is a standardized symbol for the building's main entry floor. #Elevator #Accessibility #HiddenSymbols",
+      "titleSeed": "The Elevator Star Marks the Main Entry Floor in the U.S.",
+      "descriptionSeed": "In U.S. accessibility standards, that little star identifies the main entry floor. #Elevator #Accessibility #HiddenSymbols"
+    },
+    {
+      "row": 54,
+      "topicId": "chip-card-cryptogram",
+      "topic": "A Chip Card Creates a One-Time Security Code for Every Purchase",
+      "schedule": false,
+      "plannedDatetime": "02:00 20/09/2026",
+      "originalTitle": "Chip Cards Burn a New Code at Every Checkout",
+      "originalDescription": "The chip doesn't just repeat the same secret number at every checkout. #ChipCard #PaymentSecurity #CardTech",
+      "titleSeed": "Chip Cards Burn a New Code at Every Checkout",
+      "descriptionSeed": "The chip doesn't just repeat the same secret number at every checkout. #ChipCard #PaymentSecurity #CardTech"
+    },
+    {
+      "row": 55,
+      "topicId": "baggage-tag-routing",
+      "topic": "Your Baggage Tag Is the Machine-Readable ID That Routes Your Suitcase",
+      "schedule": false,
+      "plannedDatetime": "04:00 20/09/2026",
+      "originalTitle": "Airport Bag Tags Are License Plates for Suitcases",
+      "originalDescription": "The paper strip on your suitcase carries machine-readable identity and routing information for the baggage system. #BaggageTag #AirportSystems #TravelTech",
+      "titleSeed": "Airport Bag Tags Are License Plates for Suitcases",
+      "descriptionSeed": "The paper strip on your suitcase carries machine-readable identity and routing information for the baggage system. #BaggageTag #AirportSystems #TravelTech"
+    }
+  ]
+}

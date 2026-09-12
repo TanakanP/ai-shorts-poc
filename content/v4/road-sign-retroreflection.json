@@ -1,0 +1,32 @@
+{
+  "topicId": "road-sign-retroreflection",
+  "topic": "Road Signs Shine by Throwing Your Headlights Back",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state any country or model scope naturally. Channel angle: familiar things with an unexpected design or function.\nHook: generate five declarative candidates; select a concrete subject-first hook, preferably 6–10 words, maximum 12 only with the existing justified exception. No questions or generic trivia setup. Show the surprise without explaining the mechanism early.\nStory clock: six functions across five voiced scenes: 0–1s visual paradox; 1–3s contradiction; 3–7s clue; 7–14s mechanism; 14–21s distinct second reveal; 21–27s payoff echoing the opening. Target 25–29 seconds including the configured channel sign-off, hard maximum 30. Preserve spoken/display copy, voice, karaoke, local BGM and channel outro. Do not add a separate generic CTA.\nProof: the first frame already shows the object and surprising result or visible design detail. Review action and portrait crop before narration. Every voiced scene needs a distinct suitable clip. Stock search terms are discovery hints, not evidence. Source URLs establish facts, not media rights. Where a mechanism needs a cutaway or animation, supply an owned/licensed, clearly labelled pre-rendered local video; the current engine does not generate diagrams. Hold if genuine proof is unavailable. No dark wash.\nPackaging claim: Road Signs Can Shine Without Their Own Power\nCore fact: Retroreflective sign materials direct vehicle headlight light back toward the source, making signs look bright to the driver.\nSecond reveal: The material can use tiny beads or microprismatic elements; the sign is not generating its own light.\nFirst-frame and mechanism proof: A real unpowered retroreflective road sign already shining in headlights; then compare it with the same sign outside the beam. Macro material proof must match beads or prisms actually described.\nSearch queries: retroreflective road sign night; headlights road sign reflection; traffic sign close up reflective\nFact boundaries: Do not imply every glowing roadside object is unpowered or that the material reflects all light equally in every direction.",
+  "subjectAliases": [
+    "road sign",
+    "sign",
+    "headlights"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Retroreflective sign materials direct vehicle headlight light back toward the source, making signs look bright to the driver.",
+      "sourceUrls": [
+        "https://highways.fhwa.dot.gov/safety/other/visibility/workshops-nighttime-visibility-traffic-signs-summary-workshop-findings-13"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "The material can use tiny beads or microprismatic elements; the sign is not generating its own light.",
+      "sourceUrls": [
+        "https://highways.fhwa.dot.gov/safety/other/visibility/workshops-nighttime-visibility-traffic-signs-summary-workshop-findings-13"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not imply every glowing roadside object is unpowered or that the material reflects all light equally in every direction."
+  ],
+  "titleSeed": "Road Signs Can Shine Without Their Own Power",
+  "descriptionSeed": "At night, the sign can look illuminated even when it has no power. #RoadSigns #NightDriving #Retroreflective",
+  "localProof": []
+}

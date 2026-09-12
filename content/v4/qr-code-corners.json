@@ -1,0 +1,34 @@
+{
+  "topicId": "qr-code-corners",
+  "topic": "QR Codes Use Three Big Squares to Know Their Orientation",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state any country or model scope naturally. Channel angle: familiar things with an unexpected design or function.\nHook: generate five declarative candidates; select a concrete subject-first hook, preferably 6–10 words, maximum 12 only with the existing justified exception. No questions or generic trivia setup. Show the surprise without explaining the mechanism early.\nStory clock: six functions across five voiced scenes: 0–1s visual paradox; 1–3s contradiction; 3–7s clue; 7–14s mechanism; 14–21s distinct second reveal; 21–27s payoff echoing the opening. Target 25–29 seconds including the configured channel sign-off, hard maximum 30. Preserve spoken/display copy, voice, karaoke, local BGM and channel outro. Do not add a separate generic CTA.\nProof: the first frame already shows the object and surprising result or visible design detail. Review action and portrait crop before narration. Every voiced scene needs a distinct suitable clip. Stock search terms are discovery hints, not evidence. Source URLs establish facts, not media rights. Where a mechanism needs a cutaway or animation, supply an owned/licensed, clearly labelled pre-rendered local video; the current engine does not generate diagrams. Hold if genuine proof is unavailable. No dark wash.\nPackaging claim: Three Giant Squares Lock a QR Code Upright\nCore fact: QR Codes use three position-detection patterns so scanners can locate and orient the code from different scanning angles.\nSecond reveal: QR Codes also contain error-correction data, allowing some damaged or dirty symbols to be read within the selected recovery capacity.\nFirst-frame and mechanism proof: Rotate the same QR code 90 and 180 degrees while highlighting the three large corner squares.\nSearch queries: QR code close up; QR code position markers; phone scanning QR code rotated\nFact boundaries: Do not promise every damaged QR code scans; recovery depends on damage level and error-correction capacity.",
+  "subjectAliases": [
+    "QR code",
+    "QR",
+    "squares"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "QR Codes use three position-detection patterns so scanners can locate and orient the code from different scanning angles.",
+      "sourceUrls": [
+        "https://www.qrcode.com/en/about/featurePage/featurePage5.html",
+        "https://www.qrcode.com/en/about/error_correction.html"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "QR Codes also contain error-correction data, allowing some damaged or dirty symbols to be read within the selected recovery capacity.",
+      "sourceUrls": [
+        "https://www.qrcode.com/en/about/featurePage/featurePage5.html",
+        "https://www.qrcode.com/en/about/error_correction.html"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not promise every damaged QR code scans; recovery depends on damage level and error-correction capacity."
+  ],
+  "titleSeed": "Three Giant Squares Lock a QR Code Upright",
+  "descriptionSeed": "The corner squares are doing more than making the code look familiar. #QRCode #ScanTech #DesignDetails",
+  "localProof": []
+}

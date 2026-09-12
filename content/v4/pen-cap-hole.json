@@ -1,0 +1,32 @@
+{
+  "topicId": "pen-cap-hole",
+  "topic": "A Pen-Cap Hole Is an Airway Safety Feature",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state any country or model scope naturally. Channel angle: familiar things with an unexpected design or function.\nHook: generate five declarative candidates; select a concrete subject-first hook, preferably 6–10 words, maximum 12 only with the existing justified exception. No questions or generic trivia setup. Show the surprise without explaining the mechanism early.\nStory clock: six functions across five voiced scenes: 0–1s visual paradox; 1–3s contradiction; 3–7s clue; 7–14s mechanism; 14–21s distinct second reveal; 21–27s payoff echoing the opening. Target 25–29 seconds including the configured channel sign-off, hard maximum 30. Preserve spoken/display copy, voice, karaoke, local BGM and channel outro. Do not add a separate generic CTA.\nProof: the first frame already shows the object and surprising result or visible design detail. Review action and portrait crop before narration. Every voiced scene needs a distinct suitable clip. Stock search terms are discovery hints, not evidence. Source URLs establish facts, not media rights. Where a mechanism needs a cutaway or animation, supply an owned/licensed, clearly labelled pre-rendered local video; the current engine does not generate diagrams. Hold if genuine proof is unavailable. No dark wash.\nPackaging claim: The Pen-Cap Hole Has an Airway Safety Job\nCore fact: BIC says its vented pen caps comply with ISO 11540, a safety standard intended to reduce the risk from accidental inhalation of pen caps.\nSecond reveal: The same vent also allows more air circulation around the pen point when capped, according to BIC.\nFirst-frame and mechanism proof: Macro shot of the hole in a familiar BIC-style pen cap, then light passing through the vent.\nSearch queries: BIC pen cap hole; vented pen cap; pen cap safety hole\nFact boundaries: Do not say the hole makes swallowing safe or guarantees breathing. Say it is designed to reduce risk and comply with safety standards.",
+  "subjectAliases": [
+    "pen",
+    "cap",
+    "pen cap"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "BIC says its vented pen caps comply with ISO 11540, a safety standard intended to reduce the risk from accidental inhalation of pen caps.",
+      "sourceUrls": [
+        "https://us.bic.com/en_us/stationary-faq"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "The same vent also allows more air circulation around the pen point when capped, according to BIC.",
+      "sourceUrls": [
+        "https://us.bic.com/en_us/stationary-faq"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not say the hole makes swallowing safe or guarantees breathing. Say it is designed to reduce risk and comply with safety standards."
+  ],
+  "titleSeed": "The Pen-Cap Hole Has an Airway Safety Job",
+  "descriptionSeed": "The cap was redesigned around a risk most people never think about when they borrow a pen. #PenCap #ProductSafety #TinyDetails",
+  "localProof": []
+}

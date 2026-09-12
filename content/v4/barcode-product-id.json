@@ -1,0 +1,32 @@
+{
+  "topicId": "barcode-product-id",
+  "topic": "A Store Barcode Usually Identifies the Product, Not the Price",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state any country or model scope naturally. Channel angle: familiar things with an unexpected design or function.\nHook: generate five declarative candidates; select a concrete subject-first hook, preferably 6–10 words, maximum 12 only with the existing justified exception. No questions or generic trivia setup. Show the surprise without explaining the mechanism early.\nStory clock: six functions across five voiced scenes: 0–1s visual paradox; 1–3s contradiction; 3–7s clue; 7–14s mechanism; 14–21s distinct second reveal; 21–27s payoff echoing the opening. Target 25–29 seconds including the configured channel sign-off, hard maximum 30. Preserve spoken/display copy, voice, karaoke, local BGM and channel outro. Do not add a separate generic CTA.\nProof: the first frame already shows the object and surprising result or visible design detail. Review action and portrait crop before narration. Every voiced scene needs a distinct suitable clip. Stock search terms are discovery hints, not evidence. Source URLs establish facts, not media rights. Where a mechanism needs a cutaway or animation, supply an owned/licensed, clearly labelled pre-rendered local video; the current engine does not generate diagrams. Hold if genuine proof is unavailable. No dark wash.\nPackaging claim: Store Barcodes Usually Identify Products, Not Prices\nCore fact: A UPC carries a GTIN that identifies the product; the point-of-sale system uses that identity to look up price and inventory data.\nSecond reveal: That is why the same packaged product can have the same barcode but different prices at different stores or times.\nFirst-frame and mechanism proof: Scan one familiar grocery barcode, then show the product ID lookup becoming a price on the register.\nSearch queries: UPC barcode grocery scan; supermarket checkout barcode; retail POS barcode\nFact boundaries: Say usually for standard UPC retail use. Do not claim no barcode format can ever encode price or other data.",
+  "subjectAliases": [
+    "barcode",
+    "UPC",
+    "scanner"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "A UPC carries a GTIN that identifies the product; the point-of-sale system uses that identity to look up price and inventory data.",
+      "sourceUrls": [
+        "https://support.gs1.org/support/solutions/articles/43000734158-are-the-description-and-price-of-the-item-included-in-the-barcode-"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "That is why the same packaged product can have the same barcode but different prices at different stores or times.",
+      "sourceUrls": [
+        "https://support.gs1.org/support/solutions/articles/43000734158-are-the-description-and-price-of-the-item-included-in-the-barcode-"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Say usually for standard UPC retail use. Do not claim no barcode format can ever encode price or other data."
+  ],
+  "titleSeed": "Store Barcodes Usually Identify Products, Not Prices",
+  "descriptionSeed": "The scanner usually reads an identity, then the store looks up the price somewhere else. #Barcodes #RetailTech #Checkout",
+  "localProof": []
+}

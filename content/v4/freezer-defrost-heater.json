@@ -1,0 +1,34 @@
+{
+  "topicId": "freezer-defrost-heater",
+  "topic": "A Frost-Free Freezer Heats Itself on Purpose",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state any country or model scope naturally. Channel angle: familiar things with an unexpected design or function.\nHook: generate five declarative candidates; select a concrete subject-first hook, preferably 6–10 words, maximum 12 only with the existing justified exception. No questions or generic trivia setup. Show the surprise without explaining the mechanism early.\nStory clock: six functions across five voiced scenes: 0–1s visual paradox; 1–3s contradiction; 3–7s clue; 7–14s mechanism; 14–21s distinct second reveal; 21–27s payoff echoing the opening. Target 25–29 seconds including the configured channel sign-off, hard maximum 30. Preserve spoken/display copy, voice, karaoke, local BGM and channel outro. Do not add a separate generic CTA.\nProof: the first frame already shows the object and surprising result or visible design detail. Review action and portrait crop before narration. Every voiced scene needs a distinct suitable clip. Stock search terms are discovery hints, not evidence. Source URLs establish facts, not media rights. Where a mechanism needs a cutaway or animation, supply an owned/licensed, clearly labelled pre-rendered local video; the current engine does not generate diagrams. Hold if genuine proof is unavailable. No dark wash.\nPackaging claim: Frost-Free Freezers Fire Heaters On Purpose\nCore fact: Automatic-defrost freezers periodically activate a defrost heater to melt frost from the evaporator coils.\nSecond reveal: During the defrost cycle the compressor and fans can stop; the brief controlled heating is part of keeping the freezer working without manual defrosting.\nFirst-frame and mechanism proof: A frost-free freezer paired with a clearly labelled, licensed local cutaway video showing its defrost heater at the evaporator; generic freezer exteriors do not prove heating.\nSearch queries: frost free freezer; freezer evaporator frost; refrigerator defrost heater\nFact boundaries: Do not claim every freezer has a heater; manual-defrost and some compact models differ. Do not imply food is intentionally warmed or thawed.",
+  "subjectAliases": [
+    "freezer",
+    "heater",
+    "frost"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Automatic-defrost freezers periodically activate a defrost heater to melt frost from the evaporator coils.",
+      "sourceUrls": [
+        "https://products.geappliances.com/appliance/gea-support-search-content?contentId=16679",
+        "https://products.geappliances.com/appliance/gea-support-search-content?contentId=19471"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "During the defrost cycle the compressor and fans can stop; the brief controlled heating is part of keeping the freezer working without manual defrosting.",
+      "sourceUrls": [
+        "https://products.geappliances.com/appliance/gea-support-search-content?contentId=16679",
+        "https://products.geappliances.com/appliance/gea-support-search-content?contentId=19471"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not claim every freezer has a heater; manual-defrost and some compact models differ. Do not imply food is intentionally warmed or thawed."
+  ],
+  "titleSeed": "Frost-Free Freezers Fire Heaters On Purpose",
+  "descriptionSeed": "A frost-free freezer can briefly use heat to remove the ice that cooling creates. #Freezer #ApplianceDesign #HomeTech",
+  "localProof": []
+}

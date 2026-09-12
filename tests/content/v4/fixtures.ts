@@ -5,7 +5,7 @@ import {videoPlanFromV4} from '../../../src/content/v4/adapter';
 import {attachChannelOutro} from '../../../src/pipeline/attach-channel-outro';
 import type {SynthesizeSceneVoicesResult} from '../../../src/voice/synthesize-scene-voices';
 
-export const brief = briefSchema.parse(JSON.parse(readFileSync('content/v4/straw-refraction.json', 'utf8')));
+export const brief = briefSchema.parse(JSON.parse(readFileSync('tests/content/v4/straw-brief.fixture.json', 'utf8')));
 export function rawPackage(): V4Package {
   return {contradictionType: 'VISUAL_PARADOX', packagingClaim: 'Straight straw looks bent', firstFrameProof: 'Visible displacement at waterline',
     secondReveal: brief.facts[1].statement, secondRevealFactId: 'consequence',
