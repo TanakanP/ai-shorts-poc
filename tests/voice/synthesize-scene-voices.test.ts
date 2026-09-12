@@ -54,6 +54,18 @@ const plan: VideoPlan = {
 };
 
 describe('synthesizeSceneVoices', () => {
+  it('reuses unchanged V4 narration and synthesizes only the rewritten scene', async () => {
+    const synthesize = vi.fn(async () => ({audio: Buffer.from('audio'), durationSeconds: 5,
+      words: [{text: 'Word', startMs: 0, endMs: 200}]}));
+    const writeAudioFile = vi.fn(async () => {});
+    const previous = await synthesizeSceneVoices(plan, '/tmp/run', 'eve', {synthesize, writeAudioFile, deferTotalValidation: true});
+    synthesize.mockClear(); writeAudioFile.mockClear();
+    const changed = {...plan, scenes: plan.scenes.map((s, i) => i === 2 ? {...s, text: 'A tighter new line.'} : s)};
+    const next = await synthesizeSceneVoices(changed, '/tmp/run', 'eve', {synthesize, writeAudioFile, deferTotalValidation: true, previous});
+    expect(synthesize).toHaveBeenCalledTimes(1);
+    expect(writeAudioFile).toHaveBeenCalledTimes(1);
+    expect(next.manifest.scenes[0]).toBe(previous.manifest.scenes[0]);
+  });
   it('lengthens only the branded outro and uses its adjusted audio and timing', async () => {
     const adjusted = {audio: Buffer.from('long why'), durationSeconds: 3.6,
       words: [{text: 'why?', startMs: 300, endMs: 1900}]};

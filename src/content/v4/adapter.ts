@@ -28,7 +28,7 @@ export function bindV4Scenes(timedPlan: VideoPlan, manifest: VoiceManifest, proo
     if (!proof || !voice?.words.length) throw new ContentHold([`Missing approved proof or aligned voice for ${scene.id}`]);
     if (proof.usableDurationSec + 0.001 < Math.round(scene.durationSeconds * 30) / 30 + (i === 0 ? 0 : 0.2))
       throw new ContentHold([`Approved footage is too short after TTS for ${scene.id}; review a longer interval or different clip`]);
-    return {...scene, selectedSearchQuery: scene.searchQueries[0] ?? '',
+    return {...scene, selectedSearchQuery: proof.selectedSearchQuery ?? '',
       sourcePageUrl: proof.sourcePageUrl ?? '', creatorName: proof.creatorName ?? 'Local proof', creatorUrl: proof.creatorUrl ?? '',
       localVideoPath: proof.localPath, videoTrimStartSec: proof.trimStartSec, videoCropPosition: proof.cropPosition,
       proofAssetId: proof.id, localAudioPath: voice.localAudioPath, audioDurationSeconds: voice.audioDurationSeconds, words: voice.words};

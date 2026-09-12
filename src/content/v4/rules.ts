@@ -38,7 +38,7 @@ export function preflightScore(rubric: V4Package['rubric']): number {
 export function selectV4Hook(candidates: EvaluatedHook[]): EvaluatedHook {
   const surviving = candidates.filter(c => c.violations.length === 0).sort((a, b) =>
     b.score - a.score || b.clarity - a.clarity || a.id.localeCompare(b.id));
-  if (!surviving[0]) throw new ContentHold(['No hook survived the V4 rules'], 'revise');
+  if (!surviving[0]) throw new ContentHold(['No hook survived the V4 rules'], 'revise', {candidates});
   return surviving[0];
 }
 

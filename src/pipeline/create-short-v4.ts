@@ -1,9 +1,10 @@
 import {join} from 'node:path';
 import type {VideoPlan} from '../domain/video-plan';
 import type {ResolvedVideo} from '../domain/resolved-video';
+import {ProviderError} from '../domain/provider-error';
 import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices';
 import {attachChannelOutro} from './attach-channel-outro';
-import {ContentHold, type TopicBrief, type SelectedPackage, type ProofBinding, type V4ContentPlan} from '../content/v4/contracts';
+import {ContentHold, StoryRevisionNeeded, type TopicBrief, type SelectedPackage, type ProofBinding, type V4ContentPlan} from '../content/v4/contracts';
 import {bindV4Scenes, videoPlanFromV4} from '../content/v4/adapter';
 import {evaluateV4Timing, type TimingResult} from '../content/v4/timing';
 import {countSpokenWords} from '../content/v4/rules';
@@ -65,7 +66,15 @@ export async function createShortV4(topic: string, deps: V4Deps) {
     if (['contradiction', 'clue', 'mechanism', 'second_reveal', 'payoff'].some(id => !proofs.some(p => p.approved && p.beatIds.some(b => b === id))))
       throw new ContentHold(['Every story scene requires an approved proof asset']);
     setStage('story');
-    plan = await deps.story(brief, pack, proofs);
+    try {
+      plan = await deps.story(brief, pack, proofs);
+    } catch (error) {
+      if (!(error instanceof StoryRevisionNeeded)) throw error;
+      rewriteCount = 1;
+      await save('rejected-story.json', {draft: error.draft, reasons: error.reasons});
+      setStage('rewrite');
+      plan = await deps.story(brief, pack, proofs, {previous: error.draft, feedback: error.reasons});
+    }
     await save('content-plan.json', plan);
     if (!await deps.approveStory(plan)) throw new ContentHold(['Story or factual review declined']);
     const voicedPlan = () => attachChannelOutro(videoPlanFromV4(plan!), deps.channel.brand, deps.channel.signoff,
@@ -75,7 +84,7 @@ export async function createShortV4(topic: string, deps: V4Deps) {
     timing = evaluateV4Timing(voiced.timedPlan, voiced.manifest);
     await save('voice.json', voiced.manifest);
     await save('timing-attempt-0.json', timing);
-    if (timing.needsRewrite) {
+    if (timing.needsRewrite && rewriteCount === 0) {
       rewriteCount = 1;
       setStage('rewrite');
       plan = await deps.story(brief, pack, proofs, {previous: plan, feedback: timing.gate.reasons});
@@ -93,7 +102,7 @@ export async function createShortV4(topic: string, deps: V4Deps) {
     }
     setStage('asset-length');
     const scenes = bindV4Scenes(voiced.timedPlan, voiced.manifest, proofs);
-    const video: ResolvedVideo = {runId, title: plan.title, fps: 30, width: 1080, height: 1920,
+    const video: ResolvedVideo = {engineVersion: 'v4', runId, title: plan.title, fps: 30, width: 1080, height: 1920,
       backgroundMusicPath: deps.backgroundMusicPath, scenes};
     await save('resolved.json', video);
     await save('generation-manifest.json', summary('rendering'));
@@ -110,7 +119,8 @@ export async function createShortV4(topic: string, deps: V4Deps) {
     return {runId, outputPath, planPath: join(runDir, 'content-plan.json'), manifestPath: join(runDir, 'generation-manifest.json')};
   } catch (error) {
     const status = error instanceof ContentHold ? error.decision : 'failed';
-    const failed = {...summary(status), error: {stage, message: error instanceof Error ? error.message : 'Generation failed'}};
+    const failed = {...summary(status), error: {stage, message: error instanceof Error ? error.message : 'Generation failed',
+      ...(error instanceof ProviderError ? {diagnostic: error.diagnostic} : {})}};
     await save('generation-manifest.json', failed);
     await save('run.json', failed);
     throw error;

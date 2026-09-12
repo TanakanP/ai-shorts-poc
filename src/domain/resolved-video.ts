@@ -18,6 +18,7 @@ export type StockScene = Omit<
 >;
 
 export type ResolvedVideo = {
+  engineVersion?: 'v4';
   runId: string;
   title: string;
   fps: 30;

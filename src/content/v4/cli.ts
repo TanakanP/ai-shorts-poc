@@ -1,6 +1,7 @@
 import {writeFile} from 'node:fs/promises';
 import {createInterface} from 'node:readline/promises';
 import type {AppConfig} from '../../config';
+import {ProviderError} from '../../domain/provider-error';
 import {loadConfig} from '../../config';
 import {createProviders} from '../../providers';
 import {createRunDirectory} from '../../pipeline/create-run-directory';
@@ -87,6 +88,7 @@ export async function runV4Cli(args: string[]): Promise<number> {
     return 0;
   } catch (error) {
     console.error(error instanceof Error ? error.message : 'V4 generation failed');
+    if (error instanceof ProviderError) console.error(JSON.stringify(error.diagnostic));
     return 1;
   } finally {terminal?.close();}
 }

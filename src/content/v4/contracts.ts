@@ -30,7 +30,7 @@ export const interpretedBriefSchema = z.object({
 export type TopicBrief = z.infer<typeof briefSchema>;
 export type GateResult = {decision: 'hold' | 'revise' | 'ready'; reasons: string[]};
 export class ContentHold extends Error {
-  constructor(readonly reasons: string[], readonly decision: 'hold' | 'revise' = 'hold') {
+  constructor(readonly reasons: string[], readonly decision: 'hold' | 'revise' = 'hold', readonly details?: unknown) {
     super(reasons.join('; ')); this.name = 'ContentHold';
   }
 }
@@ -63,6 +63,7 @@ export const proofBindingSchema = z.object({
   id: text, beatIds: z.array(z.enum(V4_BEATS)).min(1), factIds: z.array(text).min(1),
   kind: z.enum(['stock', 'local']), localPath: text, sourcePageUrl: url.nullable(),
   creatorName: z.string().nullable(), creatorUrl: z.string().nullable(), licenseNote: text,
+  selectedSearchQuery: z.string().nullable().default(null),
   trimStartSec: z.number().nonnegative(), usableDurationSec: z.number().positive(),
   cropPosition: z.string().regex(/^\d+(?:\.\d+)?% \d+(?:\.\d+)?%$/),
   observedAction: text, approved: z.literal(true),
@@ -82,3 +83,10 @@ export type V4ContentPlan = V4Story & {
   version: 'v4'; topicId: string; topic: string; package: SelectedPackage;
   facts: TopicBrief['facts']; factBoundaries: string[]; title: string; description: string;
 };
+
+export class StoryRevisionNeeded extends ContentHold {
+  constructor(reasons: string[], readonly draft: V4ContentPlan) {
+    super(reasons, 'revise');
+    this.name = 'StoryRevisionNeeded';
+  }
+}

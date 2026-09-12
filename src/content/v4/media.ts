@@ -1,6 +1,7 @@
 import {resolve} from 'node:path';
 import {RenderInternals} from '@remotion/renderer';
 import {ContentHold} from './contracts';
+import {renderProofPreview} from '../../remotion/render-proof-preview';
 
 const ff = (bin: 'ffmpeg' | 'ffprobe', args: string[]) => RenderInternals.callFf({
   bin, args, indent: false, logLevel: 'error', binariesDirectory: null, cancelSignal: undefined,
@@ -25,12 +26,7 @@ export function cropFractions(position: string): [number, number] {
 }
 
 export async function previewProof(path: string, start: number, crop: string, outputBase: string, durationSec: number) {
-  const [x, y] = cropFractions(crop);
-  const filter = `scale=360:640:force_original_aspect_ratio=increase,crop=360:640:(iw-ow)*${x}:(ih-oh)*${y},setsar=1`;
-  const common = ['-y', '-ss', String(start), '-i', resolve(path), '-an', '-vf', filter];
-  const stillPath = resolve(`${outputBase}.jpg`);
-  const previewPath = resolve(`${outputBase}.mp4`);
-  await ff('ffmpeg', [...common, '-frames:v', '1', '-update', '1', stillPath]);
-  await ff('ffmpeg', [...common, '-t', String(Math.min(8, durationSec)), '-r', '30', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', previewPath]);
-  return {stillPath, previewPath};
+  cropFractions(crop);
+  // Bundled FFmpeg omits crop/setsar filters; use the same CSS/video renderer as the final MP4.
+  return renderProofPreview(path, start, crop, outputBase, durationSec);
 }

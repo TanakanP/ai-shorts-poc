@@ -1,5 +1,5 @@
 import type {StructuredPlanGenerator} from '../../generation/generate-video-plan';
-import {ContentHold, packageSchema, storySchema, V4_BEATS, type TopicBrief, type SelectedPackage,
+import {ContentHold, StoryRevisionNeeded, packageSchema, storySchema, V4_BEATS, type TopicBrief, type SelectedPackage,
   type ProofBinding, type V4ContentPlan, type V4Story} from './contracts';
 import {comparable, countSpokenWords, evaluatePackage} from './rules';
 
@@ -29,6 +29,7 @@ wordCountException must be null for normal hooks; outside 5-10 words explain the
       return pack;
     } catch (error) {
       feedback = error instanceof Error ? [error.message] : ['Invalid package'];
+      await record({attempt, rejection: feedback, details: error instanceof ContentHold ? error.details : undefined});
       if (error instanceof ContentHold && error.decision === 'hold') throw error;
       if (attempt === 1) throw new ContentHold(feedback);
     }
@@ -89,7 +90,13 @@ When revising, preserve selected hook, supported mechanism, second reveal and pa
 If timing needs expansion before mechanism/reset, add a meaningful clue or observation, never filler.`,
     input: JSON.stringify({brief, package: pack, proofs, outro, revision}),
   }));
-  validateV4Story(story, brief, pack, proofs, outro);
-  return {...story, version: 'v4', topicId: brief.topicId, topic: brief.topic, package: pack,
+  const plan: V4ContentPlan = {...story, version: 'v4', topicId: brief.topicId, topic: brief.topic, package: pack,
     facts: brief.facts, factBoundaries: brief.factBoundaries, title: pack.title, description: pack.description};
+  try {
+    validateV4Story(story, brief, pack, proofs, outro);
+  } catch (error) {
+    if (error instanceof ContentHold) throw new StoryRevisionNeeded(error.reasons, plan);
+    throw error;
+  }
+  return plan;
 }

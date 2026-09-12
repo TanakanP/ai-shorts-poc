@@ -53,6 +53,13 @@ const video: ResolvedVideo = {
 };
 
 describe('SilentShort composition timing', () => {
+  it('uses the same per-scene frame rounding as V4 voice and duration gates', () => {
+    const fractional: ResolvedVideo = {...video, engineVersion: 'v4',
+      scenes: video.scenes.map(s => ({...s, durationSeconds: 3.016}))};
+    const frames = createVoiceTimeline(fractional).reduce((total, s) => total + s.durationInFrames, 0);
+    expect(calculateVideoMetadata(fractional).durationInFrames).toBe(frames);
+    expect(frames).toBe(180);
+  });
   it('derives metadata duration from the supplied scene durations', () => {
     expect(calculateVideoMetadata(video)).toEqual({durationInFrames: 330});
   });

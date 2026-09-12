@@ -6,6 +6,13 @@ import {findEnvFile, loadConfig} from '../src/config';
 
 describe('loadConfig', () => {
   const base = {PEXELS_API_KEY: 'px', CHANNEL_BRAND: 'Test Brand', CHANNEL_SIGNOFF: 'Follow along.'};
+  it('keeps V3 as default, supports V4 brief paths and rejects unknown engines', () => {
+    const env = {...base, OPENAI_API_KEY: 'oa', XAI_API_KEY: 'xa'};
+    expect(loadConfig(env).contentEngineVersion).toBe('v3');
+    expect(loadConfig({...env, CONTENT_ENGINE_VERSION: 'v4', CONTENT_BRIEF_PATH: 'content/v4/straw-refraction.json'}))
+      .toMatchObject({contentEngineVersion: 'v4', contentBriefPath: 'content/v4/straw-refraction.json'});
+    expect(() => loadConfig({...env, CONTENT_ENGINE_VERSION: 'v5'})).toThrow(/CONTENT_ENGINE_VERSION/);
+  });
   it.each(['openai', 'xai'])('validates only selected keys for %s scripts with either voice', (script) => {
     for (const voice of ['xai', 'elevenlabs']) {
       const env = {...base, SCRIPT_PROVIDER: script, VOICE_PROVIDER: voice,

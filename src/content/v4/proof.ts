@@ -27,7 +27,7 @@ export async function resolveV4Proof(pack: SelectedPackage, brief: TopicBrief, r
     const local = brief.localProof.find(p => p.beatId === beatId);
     let binding: ProofBinding | undefined;
     const inspect = async (path: string, source: string, defaults: {start: number; crop: string},
-      metadata: Pick<ProofBinding, 'kind' | 'sourcePageUrl' | 'creatorName' | 'creatorUrl' | 'licenseNote'>) => {
+      metadata: Pick<ProofBinding, 'kind' | 'sourcePageUrl' | 'creatorName' | 'creatorUrl' | 'licenseNote' | 'selectedSearchQuery'>) => {
       if (usedPaths.has(resolve(path))) throw new ContentHold(['Story clips must be distinct under the current footage policy']);
       const media = await probe(path);
       const view = await deps.chooseView(shot, path, media.durationSec, defaults);
@@ -45,7 +45,7 @@ export async function resolveV4Proof(pack: SelectedPackage, brief: TopicBrief, r
     };
     if (local) {
       await inspect(local.path, local.path, {start: local.trimStartSec, crop: local.cropPosition}, {
-        kind: 'local', sourcePageUrl: null, creatorName: null, creatorUrl: null, licenseNote: local.licenseNote});
+        kind: 'local', sourcePageUrl: null, creatorName: null, creatorUrl: null, licenseNote: local.licenseNote, selectedSearchQuery: null});
     } else {
       const rejected = new Set(used);
       search: for (const query of shot.searchQueries) {
@@ -60,7 +60,7 @@ export async function resolveV4Proof(pack: SelectedPackage, brief: TopicBrief, r
             await deps.download(candidate.downloadUrl, path);
             await inspect(path, candidate.sourcePageUrl, {start: 0, crop: '50% 50%'}, {
               kind: 'stock', sourcePageUrl: candidate.sourcePageUrl, creatorName: candidate.creatorName,
-              creatorUrl: candidate.creatorUrl, licenseNote: 'Pexels stock video; retain source attribution and applicable license.'});
+              creatorUrl: candidate.creatorUrl, licenseNote: 'Pexels stock video; retain source attribution and applicable license.', selectedSearchQuery: query});
             if (binding) {used.add(candidate.videoId); break search;}
           }
         }
