@@ -40,9 +40,10 @@ export function bindV4Scenes(timedPlan: VideoPlan, manifest: VoiceManifest, proo
 // Old saved plans have no emphasis field. Keep their approved copy and highlight
 // its last meaningful token instead of silently rendering an all-white title.
 export function openingEmphasis(display: string, words: readonly string[] = []): string[] {
-  const selected = sanitizeEmphasisWords(display, words);
-  if (selected.length) return selected;
   const tokens = display.match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) ?? [];
+  const selected = sanitizeEmphasisWords(display, words)
+    .find(word => tokens.some(token => token.toLowerCase() === word.toLowerCase()));
+  if (selected) return [selected];
   const meaningful = tokens.filter(w => !/^(a|an|the|is|are|in|on|at|to|of|and|or|it|this|that)$/iu.test(w));
   return (meaningful.length ? meaningful : tokens).slice(-1);
 }

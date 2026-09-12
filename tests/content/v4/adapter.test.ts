@@ -24,7 +24,7 @@ it('rejects footage too short for the rewritten scene plus transition', () => {
 it('restores yellow opening emphasis for old plans and preserves explicit keywords', () => {
   const draft = contentPlan();
   expect(videoPlanFromV4(draft).scenes[0].emphasisWords).toEqual(['broken']);
-  draft.beats[1].emphasisWords = ['Straight', 'invented'];
+  draft.beats[1].emphasisWords = ['Straight', 'broken'];
   expect(videoPlanFromV4(draft).scenes[0].emphasisWords).toEqual(['Straight']);
   expect(bindV4Scenes(voiced().timedPlan, voiced().manifest, proofs())[0].emphasisWords).toEqual(['broken']);
 });
