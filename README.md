@@ -197,9 +197,15 @@ CONTENT_ENGINE_VERSION=v3 npm run generate -- "topic" "creative brief"
 ```
 
 Run from an interactive terminal. V4 first shows the proposed hook/package, then
-downloads candidate footage and creates portrait stills and short motion previews.
-Open the paths printed in the terminal, choose the proof start time and crop, and
-approve only footage that visibly supports the intended action. Missing proof holds
+asks how to search Pexels for each unfinished scene: press Enter/1 to use the
+suggested keywords, or 2 to type your own (separate alternative phrases with `;`).
+Manual keywords replace the suggested terms for that scene's search.
+After downloading a candidate, V4 prints the original video path and source link.
+Watch it and answer whether it contains the required object/action. Rejecting it
+skips start/crop questions and tries another candidate. Only accepted candidates
+ask for start time and crop, then show portrait stills and motion previews for final
+approval. This final check confirms the detail survived the crop. Approved scenes
+are reused on resume without asking for search or review again. Missing proof holds
 the topic before speech synthesis. The final story is reviewed before narration.
 
 The 16 current unposted briefs and per-topic commands are in [content/v4/README.md](content/v4/README.md). Each has stable topic ID, source-backed

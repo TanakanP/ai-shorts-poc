@@ -17,6 +17,7 @@ import {ContentHold, interpretedBriefSchema, packageSchema, storyGenerationSchem
 import {loadV4Brief} from './brief';
 import {planV4Package, planV4Story} from './plan';
 import {resolveV4Proof} from './proof';
+import {chooseProofSearch, reviewProofCandidate} from './proof-prompts';
 import {probeMedia} from './media';
 
 export function createV4ProductionDeps(config: AppConfig, research: string,
@@ -42,6 +43,8 @@ export function createV4ProductionDeps(config: AppConfig, research: string,
     },
     proof: (pack, brief, dir, record, previous) => resolveV4Proof(pack, brief, dir, {
       searchVideos: (q, options) => pexels.searchVideos(q, options), download: downloadFile, record, previous,
+      chooseSearch: shot => chooseProofSearch(shot, ask, log),
+      reviewCandidate: (shot, path, source, duration) => reviewProofCandidate(shot, path, source, duration, ask, log),
       chooseView: async (shot, path, duration, defaults) => {
         log(`${shot.beatId}: ${shot.visualIntent}\nSource file: ${path} (${duration.toFixed(1)}s)`);
         const start = await ask(`Proof start in seconds [${defaults.start}]: `);

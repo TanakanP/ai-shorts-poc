@@ -9,6 +9,8 @@ export type ProofReview = {approved: boolean; observedAction: string};
 export type ProofDeps = {
   searchVideos: (query: string, options: SearchOptions) => Promise<PexelsVideo[]>;
   download: (url: string, destination: string) => Promise<void>;
+  reviewCandidate?: (shot: Shot, path: string, source: string, durationSec: number) => Promise<boolean>;
+  chooseSearch?: (shot: Shot) => Promise<string[]>;
   chooseView: (shot: Shot, path: string, durationSec: number, defaults: {start: number; crop: string}) => Promise<{start: number; crop: string}>;
   review: (shot: Shot, previews: {stillPath: string; previewPath: string}, candidate: {source: string; start: number; crop: string}) => Promise<ProofReview>;
   probe?: typeof probeMedia;
@@ -44,6 +46,7 @@ export async function resolveV4Proof(pack: SelectedPackage, brief: TopicBrief, r
       metadata: Pick<ProofBinding, 'kind' | 'sourcePageUrl' | 'creatorName' | 'creatorUrl' | 'licenseNote' | 'selectedSearchQuery'>) => {
       if (usedPaths.has(resolve(path))) throw new ContentHold(['Story clips must be distinct under the current footage policy']);
       const media = await probe(path);
+      if (deps.reviewCandidate && !await deps.reviewCandidate(shot, path, source, media.durationSec)) return;
       const view = await deps.chooseView(shot, path, media.durationSec, defaults);
       cropFractions(view.crop);
       // Render at 30fps; review exactly the frame that the renderer will use.
@@ -62,7 +65,9 @@ export async function resolveV4Proof(pack: SelectedPackage, brief: TopicBrief, r
         kind: 'local', sourcePageUrl: null, creatorName: null, creatorUrl: null, licenseNote: local.licenseNote, selectedSearchQuery: null});
     } else {
       const rejected = new Set(used);
-      search: for (const query of shot.searchQueries) {
+      const queries = deps.chooseSearch ? await deps.chooseSearch(shot) : shot.searchQueries;
+      if (!queries.length || queries.some(q => !q.trim())) throw new ContentHold(['Search terms cannot be empty']);
+      search: for (const query of queries) {
         for (const orientation of ['portrait', 'landscape'] as const) {
           const videos = await deps.searchVideos(query, {orientation, perPage: 15});
           // Bounded candidate review; try the next query if none of its five best shots works.

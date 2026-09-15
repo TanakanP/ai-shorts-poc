@@ -56,3 +56,40 @@ it('keeps earlier footage approvals when a later review is interrupted', async (
   expect(result[0]).toEqual(saved[0]);
   expect(deps.review).toHaveBeenCalledTimes(4);
 });
+it('rejects an unsuitable original before asking for trim/crop or making previews', async () => {
+  const {localBrief, deps} = localSetup();
+  deps.reviewCandidate = vi.fn(async () => false);
+  deps.chooseView = vi.fn();
+  await expect(resolveV4Proof(pack(), localBrief, '/tmp', deps)).rejects.toThrow(/No approved proof/);
+  expect(deps.chooseView).not.toHaveBeenCalled();
+  expect(deps.preview).not.toHaveBeenCalled();
+  expect(deps.review).not.toHaveBeenCalled();
+});
+it('checks the original before crop selection and still reviews the final crop', async () => {
+  const {localBrief, deps} = localSetup(); const order: string[] = [];
+  deps.reviewCandidate = async () => {order.push('original'); return true;};
+  deps.chooseView = async (_s, _p, _d, defaults) => {order.push('crop'); return defaults;};
+  deps.review = async () => {order.push('final'); return {approved: true, observedAction: 'Proof'};};
+  await resolveV4Proof(pack(), localBrief, '/tmp', deps);
+  expect(order).toEqual(VOICED_BEATS.flatMap(() => ['original', 'crop', 'final']));
+});
+it('uses manual keywords exclusively and asks before any Pexels request', async () => {
+  const {deps} = localSetup(); const order: string[] = [];
+  deps.chooseSearch = async () => {order.push('choose'); return ['my exact keywords'];};
+  deps.searchVideos = vi.fn(async () => {order.push('search'); return [];});
+  await expect(resolveV4Proof(pack(), brief, '/tmp', deps)).rejects.toThrow(/No approved proof/);
+  expect(order).toEqual(['choose', 'search', 'search']);
+  expect(deps.searchVideos).toHaveBeenNthCalledWith(1, 'my exact keywords', {orientation: 'portrait', perPage: 15});
+  expect(deps.searchVideos).toHaveBeenNthCalledWith(2, 'my exact keywords', {orientation: 'landscape', perPage: 15});
+});
+it('does not repeat search or original/crop reviews for resumed approved scenes', async () => {
+  const {localBrief, deps} = localSetup();
+  const saved = await resolveV4Proof(pack(), localBrief, '/tmp', deps);
+  deps.chooseSearch = vi.fn(); deps.reviewCandidate = vi.fn(); deps.chooseView = vi.fn();
+  deps.review = vi.fn();
+  expect(await resolveV4Proof(pack(), localBrief, '/tmp', {...deps, previous: saved})).toEqual(saved);
+  expect(deps.chooseSearch).not.toHaveBeenCalled();
+  expect(deps.reviewCandidate).not.toHaveBeenCalled();
+  expect(deps.chooseView).not.toHaveBeenCalled();
+  expect(deps.review).not.toHaveBeenCalled();
+});
