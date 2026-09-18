@@ -179,17 +179,19 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     await save('package.json', pack);
     if (!await deps.approvePackage(pack)) throw new ContentHold(['Contradiction package not approved']);
     setStage('story');
+    let storyRewritten = false;
     try {
       plan = await deps.story(brief, pack);
     } catch (error) {
       if (!(error instanceof V5StoryRevisionNeeded)) throw error;
-      await persistRewriteCount(1);
       await save('rejected-story.json', {draft: error.draft, reasons: error.reasons});
       setStage('rewrite');
       plan = await deps.story(brief, pack, {previous: error.draft, feedback: error.reasons});
+      storyRewritten = true;
     }
     await save('content-plan.json', plan);
     if (!await deps.approveStory(plan)) throw new ContentHold(['Story or factual review declined']);
+    if (storyRewritten) await persistRewriteCount(1);
     const voicedPlan = () => attachChannelOutro(videoPlanFromV5(plan!), deps.channel.brand, deps.channel.signoff,
       {slowWhy: deps.voiceProvider !== 'elevenlabs'});
     setStage('voice');
@@ -199,11 +201,11 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     await save('timing-attempt-0.json', timing);
     await saveTimedPlan(voiced);
     if (timing.needsRewrite && rewriteCount === 0) {
-      await persistRewriteCount(1);
       setStage('rewrite');
       plan = await deps.story(brief, pack, {previous: plan, feedback: timing.gate.reasons});
       await save('content-plan.json', plan);
       if (!await deps.approveStory(plan)) throw new ContentHold(['Revised story not approved']);
+      await persistRewriteCount(1);
       voiced = await deps.synthesize(voicedPlan(), runDir, voiced);
       timing = evaluateV5Timing(voiced.timedPlan, voiced.manifest);
       await save('voice.json', voiced.manifest);

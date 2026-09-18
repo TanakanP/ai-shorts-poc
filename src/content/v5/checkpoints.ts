@@ -151,7 +151,6 @@ export function withV5Checkpoints(deps: V5Deps, run: {runId: string; runDir: str
     }
     return value;
   }
-  const persistRewrite = async () => writeCheckpoint(join(run.runDir, 'rewrite-count.json'), {rewriteCount: 1});
   const readFinalStory = (brief: V5Brief, pack: V5ContentPlan['package']) =>
     readEnvelope(join(run.runDir, `checkpoint-story-final-${storyFinalKey({
       topicId: brief.topicId, package: pack, facts: brief.facts, factBoundaries: brief.factBoundaries,
@@ -184,7 +183,6 @@ export function withV5Checkpoints(deps: V5Deps, run: {runId: string; runDir: str
       return approved;
     },
     story: async (brief, pack, revision) => {
-      if (revision) await persistRewrite();
       if (!revision) {
         const accepted = await readFinalStory(brief, pack);
         if (accepted) return accepted;
@@ -192,10 +190,7 @@ export function withV5Checkpoints(deps: V5Deps, run: {runId: string; runDir: str
       const result = await cached('story', {brief, pack, revision}, async () => {
         try {return {plan: await deps.story(brief, pack, revision)};}
         catch (error) {
-          if (error instanceof V5StoryRevisionNeeded) {
-            await persistRewrite();
-            return {plan: error.draft, reasons: error.reasons};
-          }
+          if (error instanceof V5StoryRevisionNeeded) return {plan: error.draft, reasons: error.reasons};
           throw error;
         }
       }, storyCacheSchema);
