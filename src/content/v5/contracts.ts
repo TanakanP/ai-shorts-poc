@@ -97,6 +97,15 @@ export type V5ContentPlan = V5Story & {
   facts: V5Brief['facts']; factBoundaries: string[]; title: string; description: string;
 };
 
+export type Revision = {previous: V5ContentPlan; feedback: string[]};
+
+export class V5StoryRevisionNeeded extends ContentHold {
+  constructor(reasons: string[], readonly draft: V5ContentPlan) {
+    super(reasons, 'revise');
+    this.name = 'V5StoryRevisionNeeded';
+  }
+}
+
 export const scenePromptSchema = z.object({
   sceneId: v5SceneIdSchema, factIds: z.array(text).min(1), visualIntent: text,
   imagePrompt: text, videoPrompt: text,
