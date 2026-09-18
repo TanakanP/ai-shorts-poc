@@ -6,12 +6,29 @@ import {findEnvFile, loadConfig} from '../src/config';
 
 describe('loadConfig', () => {
   const base = {PEXELS_API_KEY: 'px', CHANNEL_BRAND: 'Test Brand', CHANNEL_SIGNOFF: 'Follow along.'};
-  it('keeps V3 as default, supports V4 brief paths and rejects unknown engines', () => {
+  it('keeps V3 as default, supports V4/V5 brief paths and rejects unknown engines', () => {
     const env = {...base, OPENAI_API_KEY: 'oa', XAI_API_KEY: 'xa'};
     expect(loadConfig(env).contentEngineVersion).toBe('v3');
     expect(loadConfig({...env, CONTENT_ENGINE_VERSION: 'v4', CONTENT_BRIEF_PATH: 'content/v4/straw-refraction.json'}))
       .toMatchObject({contentEngineVersion: 'v4', contentBriefPath: 'content/v4/straw-refraction.json'});
-    expect(() => loadConfig({...env, CONTENT_ENGINE_VERSION: 'v5'})).toThrow(/CONTENT_ENGINE_VERSION/);
+    expect(loadConfig({...env, CONTENT_ENGINE_VERSION: 'v5', CONTENT_BRIEF_PATH: 'content/v5/pen-cap-hole.json'}))
+      .toMatchObject({contentEngineVersion: 'v5', contentBriefPath: 'content/v5/pen-cap-hole.json'});
+    expect(() => loadConfig({...env, CONTENT_ENGINE_VERSION: 'v6'})).toThrow(/CONTENT_ENGINE_VERSION/);
+  });
+  it('accepts V5 without Pexels while V3/V4 still require it, and keeps selected credentials required', () => {
+    const creds = {OPENAI_API_KEY: 'oa', XAI_API_KEY: 'xa', CHANNEL_BRAND: 'Test Brand', CHANNEL_SIGNOFF: 'Follow along.'};
+    expect(loadConfig({...creds, CONTENT_ENGINE_VERSION: 'v5'})).toMatchObject({
+      contentEngineVersion: 'v5', pexelsApiKey: '',
+    });
+    expect(() => loadConfig(creds)).toThrow(/PEXELS_API_KEY/);
+    expect(() => loadConfig({...creds, CONTENT_ENGINE_VERSION: 'v3'})).toThrow(/PEXELS_API_KEY/);
+    expect(() => loadConfig({...creds, CONTENT_ENGINE_VERSION: 'v4'})).toThrow(/PEXELS_API_KEY/);
+    expect(() => loadConfig({
+      CONTENT_ENGINE_VERSION: 'v5', CHANNEL_BRAND: 'Test Brand', CHANNEL_SIGNOFF: 'Follow along.',
+    })).toThrow(/OPENAI_API_KEY/);
+    expect(() => loadConfig({
+      CONTENT_ENGINE_VERSION: 'v5', SCRIPT_PROVIDER: 'xai', CHANNEL_BRAND: 'Test Brand', CHANNEL_SIGNOFF: 'Follow along.',
+    })).toThrow(/XAI_API_KEY/);
   });
   it.each(['openai', 'xai'])('validates only selected keys for %s scripts with either voice', (script) => {
     for (const voice of ['xai', 'elevenlabs']) {

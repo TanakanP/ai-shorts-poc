@@ -3,7 +3,7 @@ import {dirname, join, resolve} from 'node:path';
 import {z} from 'zod';
 
 export type AppConfig = {
-  contentEngineVersion: 'v3' | 'v4';
+  contentEngineVersion: 'v3' | 'v4' | 'v5';
   contentBriefPath?: string;
   scriptProvider: 'openai' | 'xai';
   voiceProvider: 'xai' | 'elevenlabs';
@@ -21,7 +21,7 @@ export type AppConfig = {
 };
 
 const configSchema = z.object({
-  CONTENT_ENGINE_VERSION: z.enum(['v3', 'v4']).default('v3'),
+  CONTENT_ENGINE_VERSION: z.enum(['v3', 'v4', 'v5']).default('v3'),
   CONTENT_BRIEF_PATH: z.string().trim().min(1).optional(),
   SCRIPT_PROVIDER: z.enum(['openai', 'xai']).default('openai'),
   VOICE_PROVIDER: z.enum(['xai', 'elevenlabs']).default('xai'),
@@ -30,7 +30,7 @@ const configSchema = z.object({
   ELEVENLABS_API_KEY: z.string().trim().default(''),
   ELEVENLABS_VOICE_ID: z.string().trim().default(''),
   OPENAI_API_KEY: z.string().trim().default(''),
-  PEXELS_API_KEY: z.string().min(1),
+  PEXELS_API_KEY: z.string().trim().default(''),
   XAI_API_KEY: z.string().trim().default(''),
   XAI_VOICE_ID: z.string().trim().min(1).regex(/^[a-z0-9-]+$/i).optional(),
   CHANNEL_BRAND: z.string().trim().min(2).max(40),
@@ -52,6 +52,7 @@ export function findEnvFile(startDir: string): string | undefined {
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const parsed = configSchema.safeParse(env);
   const required = [
+    ...(env.CONTENT_ENGINE_VERSION !== 'v5' ? ['PEXELS_API_KEY'] : []),
     ...((env.SCRIPT_PROVIDER ?? 'openai') === 'openai' ? ['OPENAI_API_KEY'] : []),
     ...(env.SCRIPT_PROVIDER === 'xai' || (env.VOICE_PROVIDER ?? 'xai') === 'xai' ? ['XAI_API_KEY'] : []),
     ...(env.VOICE_PROVIDER === 'elevenlabs' ? ['ELEVENLABS_API_KEY', 'ELEVENLABS_VOICE_ID'] : []),

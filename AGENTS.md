@@ -1,16 +1,19 @@
 # Project Instructions
 
-This project implements voiced AI Shorts. V4 adds contradiction-first planning and reviewed visual proof while preserving V3 as a rollback path, spoken/display copy, karaoke, unique stock, channel sign-off and local music.
+This project implements voiced AI Shorts. V5 adds original Grok-generated animation import beside V3 and V4. V4 adds contradiction-first planning and reviewed visual proof while preserving V3 as a rollback path. Spoken/display copy, karaoke, channel sign-off and local music are shared. Unique stock and reviewed visual proof apply to V3/V4.
 
-Primary implementation plan:
+Authorized V5 implementation plan:
+docs/superpowers/plans/2026-09-18-content-v5-plan.md
+
+V4 maintenance plan:
 docs/superpowers/plans/2026-09-12-content-v4-plan.md
 
 Content owner notes (not code):
 misc/v1_1_content_enhance.md
 
 Rules:
-- Follow the implementation plan task-by-task and in order.
-- Implement code first; add focused unit tests as final polish, per the approved V4 workflow.
+- Follow the implementation plan task-by-task and in order. For V5 work use the V5 plan; for V4 maintenance use the V4 plan.
+- Implement code first; add focused unit tests as final polish, per the approved workflow.
 - Do not add features outside this plan.
 - Output is still a locally rendered MP4.
 - Keep voice, karaoke, BGM, and the channel outro.
