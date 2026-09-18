@@ -119,12 +119,13 @@ export type ScenePrompt = {
   promptHash: string;
 };
 
+// Provider envelope: continuity + five ordered scene prompts. Hashes, version and timing are filled locally.
 export const promptPackGenerationSchema = z.object({
-  continuity: z.string(),
+  continuity: text,
   scenes: z.array(z.object({
-    sceneId: v5SceneIdSchema, imagePrompt: z.string(), videoPrompt: z.string(),
-  })),
-});
+    sceneId: v5SceneIdSchema, imagePrompt: text, videoPrompt: text,
+  })).length(5),
+}).superRefine((pack, ctx) => exactSceneIds(pack.scenes.map(s => s.sceneId), ctx, true));
 export const promptPackSchema = z.object({
   schemaVersion: z.literal(1), engineVersion: z.literal('v5'), planHash: text,
   visualStyle: text, continuity: text, scenes: z.array(scenePromptSchema).length(5),
