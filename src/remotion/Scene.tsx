@@ -117,7 +117,7 @@ export const Scene = ({
           height: '100%',
           objectFit: 'cover',
           objectPosition: scene.videoCropPosition ?? 'center center',
-          transform: `scale(${scene.proofAssetId ? 1 : videoScale})`,
+          transform: `scale(${scene.proofAssetId || scene.disableVideoZoom ? 1 : videoScale})`,
         }}
       />
 

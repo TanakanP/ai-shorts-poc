@@ -10,6 +10,7 @@ export type ResolvedScene = VideoScene & {
   localAudioPath: string;
   audioDurationSeconds: number;
   words: VoiceWord[];
+  generatedAsset?: {provider: 'grok-imagine'; sceneId: string; sha256: string; promptHash: string};
 };
 
 export type StockScene = Omit<
@@ -18,7 +19,7 @@ export type StockScene = Omit<
 >;
 
 export type ResolvedVideo = {
-  engineVersion?: 'v4';
+  engineVersion?: 'v4' | 'v5';
   runId: string;
   title: string;
   fps: 30;

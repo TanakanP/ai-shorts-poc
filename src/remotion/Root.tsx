@@ -36,7 +36,7 @@ const fixtureVideo: ResolvedVideo = {
 export const calculateVideoMetadata = (
   video: ResolvedVideo,
 ): {durationInFrames: number} => ({
-  durationInFrames: video.engineVersion === 'v4'
+  durationInFrames: video.engineVersion === 'v4' || video.engineVersion === 'v5'
     ? video.scenes.reduce((frames, scene) => frames + Math.round(scene.durationSeconds * video.fps), 0)
     : Math.round(
     video.scenes.reduce((seconds, scene) => seconds + scene.durationSeconds, 0) * FPS,

@@ -10,6 +10,7 @@ export type VideoScene = {
   videoTrimStartSec?: number;
   videoCropPosition?: string;
   proofAssetId?: string;
+  disableVideoZoom?: boolean;
   id: string;
   role: BeatRole;
   durationSeconds: number;

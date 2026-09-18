@@ -1,8 +1,14 @@
 import {ensureCaptionBars} from '../../captions/caption-segments';
 import {sanitizeEmphasisWords} from '../../domain/video-plan';
 import type {VideoPlan, BeatRole} from '../../domain/video-plan';
-import {VOICED_BEATS, type V5ContentPlan} from './contracts';
+import type {ResolvedScene} from '../../domain/resolved-video';
+import type {VoiceManifest} from '../../domain/voice';
 import {openingEmphasis} from '../v4/adapter';
+import {
+  ContentHold, generatedBindingSchema, promptPackSchema, VOICED_BEATS, type GeneratedBinding, type PromptPack,
+  type SceneId, type V5ContentPlan,
+} from './contracts';
+import {requiredSourceFrames} from './timing';
 
 const roles: Record<typeof VOICED_BEATS[number], BeatRole> = {
   contradiction: 'hook', clue: 'context', mechanism: 'mechanism', second_reveal: 'curiosity-reset', payoff: 'payoff',
@@ -20,4 +26,49 @@ export function videoPlanFromV5(plan: V5ContentPlan): VideoPlan {
         beatPurpose: beat.newInformation, newInformation: beat.newInformation,
         visualIntent: shot.visualIntent, searchQueries: [], requiredVisualObjects: [shot.visualIntent]};
     })};
+}
+
+export function bindV5Scenes(
+  timedPlan: VideoPlan, manifest: VoiceManifest, prompts: PromptPack, bindings: GeneratedBinding[],
+): ResolvedScene[] {
+  const pack = promptPackSchema.parse(prompts);
+  const approved = bindings.map(binding => generatedBindingSchema.parse(binding));
+  const byScene = new Map<SceneId, GeneratedBinding>();
+  const hashes = new Set<string>();
+  for (const id of VOICED_BEATS) {
+    const matches = approved.filter(binding => binding.sceneId === id && binding.approved);
+    if (matches.length !== 1) {
+      throw new ContentHold([matches.length
+        ? `${id}: multiple generated bindings` : `Missing approved generated clip for ${id}`]);
+    }
+    const binding = matches[0];
+    if (!binding) throw new ContentHold([`Missing approved generated clip for ${id}`]);
+    const scene = pack.scenes.find(item => item.sceneId === id);
+    if (!scene || binding.promptHash !== scene.promptHash)
+      throw new ContentHold([`${id}: prompt hash does not match the approved prompt pack`]);
+    if (hashes.has(binding.sha256))
+      throw new ContentHold([`${id}: story clips must use distinct source files`]);
+    hashes.add(binding.sha256);
+    byScene.set(id, binding);
+  }
+  return timedPlan.scenes.map((scene, index) => {
+    const voice = manifest.scenes.find(item => item.sceneId === scene.id);
+    if (!voice?.words.length) throw new ContentHold([`Missing aligned voice for ${scene.id}`]);
+    const storyId = scene.id === 'channel-outro' ? 'contradiction' : scene.id;
+    const binding = byScene.get(storyId as SceneId);
+    if (!binding) throw new ContentHold([`Missing approved generated clip for ${scene.id}`]);
+    const availableFrames = Math.floor((binding.media.durationSec - binding.trimStartSec) * 30 + 1e-6);
+    if (availableFrames < requiredSourceFrames(scene.durationSeconds, index)) {
+      throw new ContentHold([`${scene.id}: clip does not cover the reviewed scene interval`]);
+    }
+    return {
+      ...scene, selectedSearchQuery: '', sourcePageUrl: '', creatorName: 'Owner-generated animation', creatorUrl: '',
+      localVideoPath: binding.localPath, videoTrimStartSec: binding.trimStartSec, videoCropPosition: binding.cropPosition,
+      disableVideoZoom: true,
+      generatedAsset: {
+        provider: 'grok-imagine', sceneId: binding.sceneId, sha256: binding.sha256, promptHash: binding.promptHash,
+      },
+      localAudioPath: voice.localAudioPath, audioDurationSeconds: voice.audioDurationSeconds, words: voice.words,
+    };
+  });
 }
