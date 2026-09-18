@@ -11,7 +11,7 @@ import {createShortV5, type V5Deps} from '../../pipeline/create-short-v5';
 import {synthesizeSceneVoices} from '../../voice/synthesize-scene-voices';
 import {renderShort} from '../../remotion/render-short';
 import {
-  ContentHold, VOICED_BEATS, interpretedBriefSchema, promptPackGenerationSchema, promptPackSchema,
+  ContentHold, VOICED_BEATS, interpretedBriefSchema, parseOrHold, promptPackGenerationSchema, promptPackSchema,
   v5PackageGenerationSchema, v5StoryGenerationSchema, type GeneratedBinding, type PromptPack,
 } from './contracts';
 import {loadV5Brief} from './brief';
@@ -46,8 +46,8 @@ async function resumeSettings(config: AppConfig) {
   });
 }
 
-async function validateGeneratedAssets(pack: PromptPack, timed: VideoPlan, bindings: GeneratedBinding[]): Promise<void> {
-  const prompts = promptPackSchema.parse(pack);
+async function validateGeneratedAssets(pack: PromptPack, timed: VideoPlan, bindings: GeneratedBinding[]): Promise<GeneratedBinding[]> {
+  const prompts = parseOrHold(promptPackSchema, pack, 'Prompt pack is invalid');
   const seen = new Set<string>();
   for (const id of VOICED_BEATS) {
     const binding = bindings.find(item => item.sceneId === id && item.approved);
@@ -64,6 +64,7 @@ async function validateGeneratedAssets(pack: PromptPack, timed: VideoPlan, bindi
     if (availableSourceFrames(binding.media.durationSec, binding.trimStartSec) < requiredImportFrames(scene, timed))
       throw new ContentHold([`${id}: clip does not cover the reviewed scene interval`]);
   }
+  return bindings;
 }
 
 export function createV5ProductionDeps(config: AppConfig, research: string,

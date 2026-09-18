@@ -1,4 +1,6 @@
 import {expect, it} from 'vitest';
+import {z} from 'zod';
+import {ContentHold} from '../../../src/content/v5/contracts';
 import {bindV5Scenes, videoPlanFromV5} from '../../../src/content/v5/adapter';
 import {contentPlan, promptPack, voiced, writeBindings} from './fixtures';
 import {mkdtemp, rm} from 'node:fs/promises';
@@ -37,6 +39,26 @@ it('binds by scene ID, reuses opening for outro, and keeps payoff on its own ass
     });
     expect(JSON.stringify(scenes)).not.toMatch(/pexels/i);
     expect(scenes[2].generatedAsset).toMatchObject({provider: 'grok-imagine', sceneId: 'mechanism'});
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
+it('holds invalid prompt packs and bindings instead of throwing a schema dump', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-bind-hold-'));
+  try {
+    const voice = voiced();
+    const prompts = promptPack(contentPlan(), voice.timedPlan);
+    const approved = await writeBindings(dir, prompts);
+    const invalid = [{...approved[0], approved: false}, ...approved.slice(1)];
+    expect(() => bindV5Scenes(voice.timedPlan, voice.manifest, prompts, invalid as never)).toThrow(ContentHold);
+    try {
+      bindV5Scenes(voice.timedPlan, voice.manifest, prompts, invalid as never);
+    } catch (error) {
+      expect(error).toBeInstanceOf(ContentHold);
+      expect(error).not.toBeInstanceOf(z.ZodError);
+      expect((error as ContentHold).decision).toBe('hold');
+    }
+    expect(() => bindV5Scenes(voice.timedPlan, voice.manifest, {...prompts, scenes: []}, approved))
+      .toThrow(ContentHold);
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 

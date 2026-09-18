@@ -5,8 +5,8 @@ import type {ResolvedScene} from '../../domain/resolved-video';
 import type {VoiceManifest} from '../../domain/voice';
 import {openingEmphasis} from '../v4/adapter';
 import {
-  ContentHold, generatedBindingSchema, promptPackSchema, VOICED_BEATS, type GeneratedBinding, type PromptPack,
-  type SceneId, type V5ContentPlan,
+  ContentHold, generatedBindingSchema, parseOrHold, promptPackSchema, VOICED_BEATS, type GeneratedBinding,
+  type PromptPack, type SceneId, type V5ContentPlan,
 } from './contracts';
 import {requiredSourceFrames} from './timing';
 
@@ -31,8 +31,9 @@ export function videoPlanFromV5(plan: V5ContentPlan): VideoPlan {
 export function bindV5Scenes(
   timedPlan: VideoPlan, manifest: VoiceManifest, prompts: PromptPack, bindings: GeneratedBinding[],
 ): ResolvedScene[] {
-  const pack = promptPackSchema.parse(prompts);
-  const approved = bindings.map(binding => generatedBindingSchema.parse(binding));
+  const pack = parseOrHold(promptPackSchema, prompts, 'Prompt pack is invalid');
+  const approved = bindings.map(binding => parseOrHold(generatedBindingSchema, binding,
+    `${typeof binding === 'object' && binding && 'sceneId' in binding ? String(binding.sceneId) : 'scene'}: generated binding is invalid`));
   const byScene = new Map<SceneId, GeneratedBinding>();
   const hashes = new Set<string>();
   for (const id of VOICED_BEATS) {

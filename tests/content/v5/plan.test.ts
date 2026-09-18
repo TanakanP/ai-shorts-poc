@@ -38,6 +38,18 @@ it('raises V5StoryRevisionNeeded with a v5 draft when editorial review fails', a
   });
 });
 
+it('raises V5StoryRevisionNeeded with a draft when paradox does not map to contradiction', async () => {
+  const story = rawStory();
+  story.beats[0].sceneId = 'clue';
+  await expect(planV5Story(brief, pack(), async () => story, outro)).rejects.toSatisfy((error: unknown) => {
+    expect(error).toBeInstanceOf(V5StoryRevisionNeeded);
+    expect((error as V5StoryRevisionNeeded).draft.beats[0].sceneId).toBe('clue');
+    expect((error as V5StoryRevisionNeeded).draft.version).toBe('v5');
+    expect((error as V5StoryRevisionNeeded).draft.topicId).toBe(brief.topicId);
+    return /contradiction/i.test((error as Error).message);
+  });
+});
+
 it('returns a versioned plan that preserves selected hook and metadata', async () => {
   const plan = await planV5Story(brief, pack(), async () => rawStory(), outro);
   expect(plan).toMatchObject({version: 'v5', topicId: brief.topicId, title: brief.titleSeed});

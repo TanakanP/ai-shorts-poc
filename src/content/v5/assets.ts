@@ -5,8 +5,8 @@ import {basename, isAbsolute, join, relative, sep} from 'node:path';
 import {cropFractions} from '../v4/media';
 import {z} from 'zod';
 import {
-  ContentHold, generatedBindingSchema, mediaInfoSchema, type GeneratedBinding, type MediaInfo, type PromptPack,
-  type SceneId, type ScenePrompt,
+  ContentHold, generatedBindingSchema, mediaInfoSchema, parseOrHold, type GeneratedBinding, type MediaInfo,
+  type PromptPack, type SceneId, type ScenePrompt,
 } from './contracts';
 import {requiredSourceFrames} from './timing';
 import type {VideoPlan} from '../../domain/video-plan';
@@ -126,12 +126,12 @@ export async function inspectGeneratedAsset(
   if (availableFrames < input.scene.requiredFrames) {
     throw new ContentHold([`${input.scene.sceneId}: clip does not cover the reviewed scene interval`]);
   }
-  return generatedBindingSchema.parse({
+  return parseOrHold(generatedBindingSchema, {
     sceneId: input.scene.sceneId, kind: 'generated', provider: 'grok-imagine',
     fileName: input.fileName.trim(), localPath, sha256: await hashFile(localPath),
     promptHash: input.scene.promptHash, trimStartSec, cropPosition: input.cropPosition,
     media, observedAction, approved: true,
-  });
+  }, `${input.scene.sceneId}: generated binding is invalid`);
 }
 
 export async function revalidateGeneratedBinding(

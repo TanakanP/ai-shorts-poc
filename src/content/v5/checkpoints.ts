@@ -1,13 +1,14 @@
 import {createHash} from 'node:crypto';
-import {access} from 'node:fs/promises';
+import {access, readdir} from 'node:fs/promises';
 import {join} from 'node:path';
 import {z, type ZodType} from 'zod';
 import {readCheckpoint, writeCheckpoint} from '../v4/checkpoints';
 import type {V5Deps} from '../../pipeline/create-short-v5';
 import type {SynthesizeSceneVoicesResult} from '../../voice/synthesize-scene-voices';
 import {
-  ContentHold, V5StoryRevisionNeeded, VOICED_BEATS, generatedBindingSchema, promptPackSchema, v5BriefSchema,
-  v5ContentPlanSchema, v5SelectedPackageSchema, type GeneratedBinding, type V5Brief, type V5ContentPlan,
+  ContentHold, V5StoryRevisionNeeded, VOICED_BEATS, generatedBindingSchema, parseOrHold, promptPackSchema,
+  v5BriefSchema, v5ContentPlanSchema, v5SelectedPackageSchema, v5StoryObjectSchema, type GeneratedBinding,
+  type V5Brief, type V5ContentPlan,
 } from './contracts';
 import {hashFile, revalidateGeneratedBinding} from './assets';
 
@@ -45,10 +46,16 @@ const checkpointEnvelopeSchema = z.object({
   schemaVersion: z.literal(V5_CHECKPOINT_SCHEMA_VERSION),
   value: z.unknown(),
 });
+const storyDraftPlanSchema = v5StoryObjectSchema.extend({
+  version: z.literal('v5'), topicId: z.string().trim().min(1), topic: z.string().trim().min(1),
+  package: v5SelectedPackageSchema, facts: v5BriefSchema.shape.facts, factBoundaries: v5BriefSchema.shape.factBoundaries,
+  title: z.string().trim().min(1), description: z.string().trim().min(1),
+});
 const storyCacheSchema = z.object({
-  plan: v5ContentPlanSchema,
+  plan: z.union([v5ContentPlanSchema, storyDraftPlanSchema]),
   reasons: z.array(z.string().trim().min(1)).min(1).optional(),
 });
+const rewriteCountSchema = z.object({rewriteCount: z.number().int().min(0).max(1)});
 const voiceWordSchema = z.object({text: z.string(), startMs: z.number(), endMs: z.number()});
 const synthesizeCacheSchema = z.object({
   timedPlan: z.object({
@@ -146,6 +153,35 @@ function keepValidBindings(value: unknown): GeneratedBinding[] {
   return kept;
 }
 
+export async function loadV5RewriteCount(runDir: string): Promise<number> {
+  const path = join(runDir, 'rewrite-count.json');
+  const saved = await readCheckpoint<unknown>(path);
+  let fromFile: number | undefined;
+  if (saved !== undefined) {
+    const parsed = rewriteCountSchema.safeParse(saved);
+    if (!parsed.success) throw new Error('Malformed rewrite checkpoint. Start a fresh run.');
+    fromFile = parsed.data.rewriteCount;
+    if (fromFile === 1) return 1;
+  }
+  let files: string[] = [];
+  try {files = await readdir(runDir);}
+  catch {return fromFile ?? 0;}
+  const hasFinal = files.some(name => name.startsWith('checkpoint-story-final-'));
+  const rejected = hasFinal ? await readCheckpoint(join(runDir, 'rejected-story.json')) : undefined;
+  const approved = files.filter(name => name.startsWith('checkpoint-story-approved-')).length;
+  if ((rejected !== undefined && hasFinal) || approved >= 2) {
+    await writeCheckpoint(path, {rewriteCount: 1});
+    return 1;
+  }
+  return fromFile ?? 0;
+}
+
+async function persistAcceptedRewrite(runDir: string, plan: V5ContentPlan, previousFinal?: V5ContentPlan) {
+  const rejected = await readCheckpoint(join(runDir, 'rejected-story.json'));
+  if (rejected === undefined && (!previousFinal || keyFor(previousFinal) === keyFor(plan))) return;
+  await writeCheckpoint(join(runDir, 'rewrite-count.json'), {rewriteCount: 1});
+}
+
 // Replay the pipeline, reusing completed operations only for identical accepted inputs.
 export function withV5Checkpoints(deps: V5Deps, run: {runId: string; runDir: string}): V5Deps {
   const file = (stage: string, input: unknown) => join(run.runDir, `checkpoint-${stage}-${keyFor(input)}.json`);
@@ -215,7 +251,10 @@ export function withV5Checkpoints(deps: V5Deps, run: {runId: string; runDir: str
       const approved = saved === true ? true : await deps.approveStory(plan);
       if (!approved) return false;
       if (saved !== true) await writeEnvelope(file('story-approved', plan), true);
-      await writeEnvelope(join(run.runDir, `checkpoint-story-final-${storyFinalKey(plan)}.json`), plan);
+      const finalPath = join(run.runDir, `checkpoint-story-final-${storyFinalKey(plan)}.json`);
+      const previousFinal = await readEnvelope(finalPath, v5ContentPlanSchema);
+      await writeEnvelope(finalPath, plan);
+      await persistAcceptedRewrite(run.runDir, plan, previousFinal);
       return true;
     },
     synthesize: async (plan, dir, previous) => {
@@ -257,19 +296,23 @@ export function withV5Checkpoints(deps: V5Deps, run: {runId: string; runDir: str
       }, saved);
     },
     validateAssets: async (pack, timed, bindings) => {
-      const parsed = bindingsSchema.parse(bindings);
+      const parsed = parseOrHold(bindingsSchema, bindings, 'Generated scene bindings are invalid');
+      const valid: GeneratedBinding[] = [];
       const seen = new Set<string>();
       for (const id of VOICED_BEATS) {
         const binding = parsed.find(item => item.sceneId === id);
         if (!binding) throw new ContentHold([`Missing approved generated clip for ${id}`]);
-        const valid = await revalidateGeneratedBinding(binding, {
+        const revalidated = await revalidateGeneratedBinding(binding, {
           runDir: run.runDir, prompts: pack, timedPlan: timed,
         }, {probe: deps.probe});
-        if (!valid) throw new ContentHold([`${id}: approved media is missing or changed`]);
-        if (seen.has(valid.sha256)) throw new ContentHold([`${id}: story clips must use distinct source files`]);
-        seen.add(valid.sha256);
+        if (!revalidated) throw new ContentHold([`${id}: approved media is missing or changed`]);
+        if (seen.has(revalidated.sha256)) throw new ContentHold([`${id}: story clips must use distinct source files`]);
+        seen.add(revalidated.sha256);
+        valid.push(revalidated);
       }
-      await deps.validateAssets(pack, timed, parsed);
+      await writeEnvelope(file('assets', {pack, timed}), valid);
+      const checked = await deps.validateAssets(pack, timed, valid);
+      return Array.isArray(checked) && checked.length === VOICED_BEATS.length ? checked : valid;
     },
   };
 }

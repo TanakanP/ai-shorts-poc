@@ -3,8 +3,8 @@ import {join} from 'node:path';
 import type {VideoPlan} from '../../domain/video-plan';
 import {cropFractions, previewProof, probeMedia} from '../v4/media';
 import {
-  ContentHold, promptPackSchema, VOICED_BEATS, type GeneratedBinding, type MediaInfo, type PromptPack, type SceneId,
-  type ScenePrompt,
+  ContentHold, parseOrHold, promptPackSchema, VOICED_BEATS, type GeneratedBinding, type MediaInfo, type PromptPack,
+  type SceneId, type ScenePrompt,
 } from './contracts';
 import {
   duplicateStoryScene, GENERATED_PREVIEW_DIR, inspectGeneratedAsset, requiredImportFrames, resolveGeneratedFile,
@@ -189,7 +189,7 @@ async function reviewOneScene(input: {
 export async function reviewGeneratedAssets(
   input: ReviewGeneratedAssetsInput, deps: ReviewGeneratedAssetsDeps,
 ): Promise<ReviewGeneratedAssetsResult> {
-  const prompts = promptPackSchema.parse(input.prompts);
+  const prompts = parseOrHold(promptPackSchema, input.prompts, 'Prompt pack is invalid');
   const probe = deps.probe ?? probeMedia;
   const preview = deps.preview ?? previewProof;
   await mkdir(join(input.runDir, GENERATED_PREVIEW_DIR), {recursive: true});

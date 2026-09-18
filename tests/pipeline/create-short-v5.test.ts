@@ -1,12 +1,14 @@
-import {mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
+import {mkdtemp, readFile, realpath, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {expect, it, vi} from 'vitest';
-import {V5StoryRevisionNeeded, VOICED_BEATS} from '../../src/content/v5/contracts';
+import {z} from 'zod';
+import {ContentHold, V5StoryRevisionNeeded, VOICED_BEATS} from '../../src/content/v5/contracts';
 import {withV5Checkpoints} from '../../src/content/v5/checkpoints';
+import {planV5Story} from '../../src/content/v5/plan';
 import {createShortV5, type V5Deps} from '../../src/pipeline/create-short-v5';
 import {persistJson} from '../../src/pipeline/persist-json';
-import {brief, contentPlan, promptPack, voiced, writeBindings, writeVoice} from '../content/v5/fixtures';
+import {CHANNEL, brief, contentPlan, promptPack, voiced, writeBindings, writeVoice} from '../content/v5/fixtures';
 
 async function setup(dir: string, resume = false) {
   await writeFile(join(dir, 'music.mp3'), 'music');
@@ -100,6 +102,47 @@ it('keeps the single rewrite cap across resume', async () => {
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 
+it('uses the rewrite budget when paradox does not map to contradiction', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-map-rewrite-'));
+  try {
+    const {deps, plan} = await setup(dir, false);
+    const outro = `${CHANNEL.brand}. ${CHANNEL.signoff}`;
+    const bad = {
+      beats: plan.beats.map(beat => ({
+        ...beat, sceneId: beat.id === 'paradox' ? 'clue' : beat.sceneId,
+        emphasisWords: beat.id === 'contradiction' ? ['broken'] : [],
+      })),
+      editorial: plan.editorial,
+    };
+    deps.story = vi.fn()
+      .mockImplementationOnce((briefArg, packArg) => planV5Story(briefArg, packArg, async () => bad, outro))
+      .mockResolvedValue(plan);
+    await createShortV5(brief.topic, deps);
+    expect(deps.story).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(await readFile(join(dir, 'rewrite-count.json'), 'utf8'))).toEqual({rewriteCount: 1});
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
+it('does not take a second timing rewrite if rewrite-count is missing after accept', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-rewrite-heal-'));
+  try {
+    const {deps, plan} = await setup(dir, false);
+    deps.story = vi.fn()
+      .mockRejectedValueOnce(new V5StoryRevisionNeeded(['Early mechanism leak'], plan))
+      .mockResolvedValue(plan);
+    deps.synthesize = vi.fn(async () => voiced([3, 4, 7, 7, 4, 3]));
+    const run = {runId: 'test', runDir: dir};
+    await expect(createShortV5(brief.topic, withV5Checkpoints({...deps, resume: false}, run)))
+      .rejects.toThrow(/frames exceed six-second source/);
+    expect(deps.story).toHaveBeenCalledTimes(2);
+    await rm(join(dir, 'rewrite-count.json'));
+    await expect(createShortV5(brief.topic, withV5Checkpoints({...deps, resume: true}, run)))
+      .rejects.toThrow(/frames exceed six-second source/);
+    expect(deps.story).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(await readFile(join(dir, 'rewrite-count.json'), 'utf8'))).toEqual({rewriteCount: 1});
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
 it('never renders when clip capacity still fails after the rewrite', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'v5-capacity-'));
   try {
@@ -150,6 +193,45 @@ it('cannot reuse a final output after source bytes change', async () => {
     await expect(createShortV5(brief.topic, withV5Checkpoints({...deps, resume: true}, run)))
       .rejects.toThrow(/missing or changed/);
     expect(deps.render).toHaveBeenCalledTimes(1);
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
+it('holds invalid imported bindings instead of failing with a schema dump', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-bind-zod-'));
+  try {
+    const {deps, bindings} = await setup(dir, true);
+    deps.assets = vi.fn(async (_p, _t, _d, record) => {
+      const invalid = bindings.map(binding => ({...binding, approved: false}));
+      await record(invalid as never);
+      return {status: 'ready' as const, bindings: invalid as never};
+    });
+    await expect(createShortV5(brief.topic, deps)).rejects.toSatisfy((error: unknown) => {
+      expect(error).toBeInstanceOf(ContentHold);
+      expect(error).not.toBeInstanceOf(z.ZodError);
+      return (error as ContentHold).decision === 'hold';
+    });
+    expect(await manifest(dir)).toMatchObject({status: 'hold'});
+    expect(deps.render).not.toHaveBeenCalled();
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
+it('renders with revalidated local paths after checkpoint asset rehash', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-revalidate-bind-'));
+  try {
+    const {deps, prompts} = await setup(dir, true);
+    const original = await writeBindings(dir, prompts);
+    const stale = original.map(binding => binding.sceneId === 'mechanism'
+      ? {...binding, localPath: join(dir, 'stale-mechanism.mp4')} : binding);
+    deps.assets = vi.fn(async (_p, _t, _d, record) => {
+      await record(stale);
+      return {status: 'ready' as const, bindings: stale};
+    });
+    const run = {runId: 'test', runDir: dir};
+    const result = await createShortV5(brief.topic, withV5Checkpoints({...deps, resume: true}, run));
+    expect(result.status).toBe('rendered');
+    const resolved = JSON.parse(await readFile(join(dir, 'resolved.json'), 'utf8'));
+    expect(resolved.scenes[2].localVideoPath).toBe(await realpath(join(dir, 'Ptko4.mp4')));
+    expect(resolved.scenes[2].localVideoPath).not.toContain('stale-mechanism');
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 

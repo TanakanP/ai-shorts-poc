@@ -8,6 +8,7 @@ import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices
 import {attachChannelOutro} from './attach-channel-outro';
 import {readCheckpoint, writeCheckpoint} from '../content/v4/checkpoints';
 import {countSpokenWords} from '../content/v4/rules';
+import {loadV5RewriteCount} from '../content/v5/checkpoints';
 import {
   ContentHold, V5StoryRevisionNeeded, VOICED_BEATS, mediaInfoSchema, type GeneratedBinding, type PromptPack,
   type Revision, type SceneId, type V5Brief, type V5ContentPlan, type V5SelectedPackage,
@@ -40,14 +41,13 @@ export type V5Deps = {
   assets: (pack: PromptPack, timed: VideoPlan, runDir: string,
     record: (bindings: GeneratedBinding[]) => Promise<void>,
     previous?: GeneratedBinding[]) => Promise<{status: 'ready' | 'awaiting-assets'; bindings: GeneratedBinding[]}>;
-  validateAssets: (pack: PromptPack, timed: VideoPlan, bindings: GeneratedBinding[]) => Promise<void>;
+  validateAssets: (pack: PromptPack, timed: VideoPlan, bindings: GeneratedBinding[]) => Promise<GeneratedBinding[] | void>;
   render: V4Deps['render']; probe: V4Deps['probe'];
   channel: V4Deps['channel']; voiceProvider: V4Deps['voiceProvider'];
   backgroundMusicPath: string; stage?: (name: string) => void;
   resume: boolean;
 };
 
-const rewriteCountSchema = z.object({rewriteCount: z.number().int().min(0).max(1)});
 const renderedRecordSchema = z.object({
   engineVersion: z.literal('v5'), schemaVersion: z.literal(1),
   inputFingerprint: z.string().trim().min(1),
@@ -60,14 +60,6 @@ const renderedRecordSchema = z.object({
 
 function missingSceneIds(bindings: GeneratedBinding[]): SceneId[] {
   return VOICED_BEATS.filter(id => !bindings.some(binding => binding.sceneId === id && binding.approved));
-}
-
-async function loadRewriteCount(runDir: string): Promise<number> {
-  const saved = await readCheckpoint<unknown>(join(runDir, 'rewrite-count.json'));
-  if (saved === undefined) return 0;
-  const parsed = rewriteCountSchema.safeParse(saved);
-  if (!parsed.success) throw new Error('Malformed rewrite checkpoint. Start a fresh run.');
-  return parsed.data.rewriteCount;
 }
 
 function stableRecord(record: Record<string, string>): Record<string, string> {
@@ -131,7 +123,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
   let promptPack: PromptPack | undefined;
   let bindings: GeneratedBinding[] = [];
   let timing: V5TimingResult | undefined;
-  let rewriteCount = await loadRewriteCount(runDir);
+  let rewriteCount = await loadV5RewriteCount(runDir);
   let timingException: string | null = null;
   const save = (file: string, value: unknown) => deps.persistJson(join(runDir, file), value);
   const setStage = (value: string) => {stage = value; deps.stage?.(value);};
@@ -190,6 +182,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
       storyRewritten = true;
     }
     await save('content-plan.json', plan);
+    if (storyRewritten) rewriteCount = 1;
     if (!await deps.approveStory(plan)) throw new ContentHold(['Story or factual review declined']);
     if (storyRewritten) await persistRewriteCount(1);
     const voicedPlan = () => attachChannelOutro(videoPlanFromV5(plan!), deps.channel.brand, deps.channel.signoff,
@@ -204,6 +197,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
       setStage('rewrite');
       plan = await deps.story(brief, pack, {previous: plan, feedback: timing.gate.reasons});
       await save('content-plan.json', plan);
+      rewriteCount = 1;
       if (!await deps.approveStory(plan)) throw new ContentHold(['Revised story not approved']);
       await persistRewriteCount(1);
       voiced = await deps.synthesize(voicedPlan(), runDir, voiced);
@@ -243,7 +237,8 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     await saveTimedPlan(voiced);
     if (assetResult.status === 'awaiting-assets') return waitingResult(missingSceneIds(bindings));
     setStage('validate-assets');
-    await deps.validateAssets(promptPack, voiced.timedPlan, bindings);
+    bindings = await deps.validateAssets(promptPack, voiced.timedPlan, bindings) ?? bindings;
+    await save('scene-assets.json', bindings);
     setStage('resolved');
     const scenes = bindV5Scenes(voiced.timedPlan, voiced.manifest, promptPack, bindings);
     const video: ResolvedVideo = {engineVersion: 'v5', runId, title: plan.title, fps: 30, width: 1080, height: 1920,

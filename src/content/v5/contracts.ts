@@ -65,7 +65,7 @@ function refineStoryBeats(story: {beats: {id: typeof V4_BEATS[number]; sceneId: 
       ctx.addIssue({code: 'custom', message: `Beat ${beat.id} must map to scene ${expected}`});
   }
 }
-const v5StoryObjectSchema = v4StorySchema.extend({beats: z.array(v5BeatObjectSchema).length(6)});
+export const v5StoryObjectSchema = v4StorySchema.extend({beats: z.array(v5BeatObjectSchema).length(6)});
 export const v5StoryGenerationSchema = v5StoryObjectSchema.extend({
   beats: z.array(v5BeatObjectSchema.extend({emphasisWords: z.array(text).max(2)})).length(6),
 });
@@ -104,6 +104,12 @@ export class V5StoryRevisionNeeded extends ContentHold {
     super(reasons, 'revise');
     this.name = 'V5StoryRevisionNeeded';
   }
+}
+
+export function parseOrHold<T>(schema: z.ZodType<T>, value: unknown, message: string): T {
+  const parsed = schema.safeParse(value);
+  if (!parsed.success) throw new ContentHold([message]);
+  return parsed.data;
 }
 
 export const scenePromptSchema = z.object({

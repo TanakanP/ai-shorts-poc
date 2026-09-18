@@ -2,6 +2,7 @@ import {mkdtemp, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {expect, it, vi} from 'vitest';
+import {ContentHold} from '../../../src/content/v5/contracts';
 import {reviewGeneratedAssets} from '../../../src/content/v5/asset-review';
 import {hashFile} from '../../../src/content/v5/assets';
 import {contentPlan, okMedia, promptPack, voiced, writeBindings} from './fixtures';
@@ -56,6 +57,20 @@ it('assigns shuffled filenames by scene ID, including Ptko4.mp4 for mechanism', 
     expect(questions.some(q => /mechanism/.test(q))).toBe(true);
     expect(preview.mock.calls.some(call => String(call[3]).includes('channel-outro'))).toBe(true);
     expect(recorded.at(-1)).toHaveLength(5);
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
+it('holds an invalid prompt pack instead of throwing a schema dump', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-review-pack-'));
+  try {
+    await expect(reviewGeneratedAssets(
+      {runDir: dir, prompts: {...promptPack(), scenes: []} as never, timedPlan: voiced().timedPlan, previous: []},
+      {ask: async () => '', log: () => {}, probe: async () => okMedia, record: async () => {}},
+    )).rejects.toSatisfy((error: unknown) => {
+      expect(error).toBeInstanceOf(ContentHold);
+      expect((error as ContentHold).decision).toBe('hold');
+      return true;
+    });
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 
