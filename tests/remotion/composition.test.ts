@@ -53,8 +53,8 @@ const video: ResolvedVideo = {
 };
 
 describe('SilentShort composition timing', () => {
-  it('uses the same per-scene frame rounding as V4 voice and duration gates', () => {
-    const fractional: ResolvedVideo = {...video, engineVersion: 'v4',
+  it.each(['v4', 'v5'] as const)('uses the same per-scene frame rounding as %s voice and duration gates', engineVersion => {
+    const fractional: ResolvedVideo = {...video, engineVersion,
       scenes: video.scenes.map(s => ({...s, durationSeconds: 3.016}))};
     const frames = createVoiceTimeline(fractional).reduce((total, s) => total + s.durationInFrames, 0);
     expect(calculateVideoMetadata(fractional).durationInFrames).toBe(frames);

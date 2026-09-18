@@ -71,7 +71,17 @@ const synthesizeCacheSchema = z.object({
 });
 const bindingsSchema = z.array(generatedBindingSchema);
 
-export const keyFor = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
+function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value as Record<string, unknown>)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, nested]) => [key, canonical(nested)]));
+  }
+  return value;
+}
+export const keyFor = (value: unknown) =>
+  createHash('sha256').update(JSON.stringify(canonical(JSON.parse(JSON.stringify(value))))).digest('hex');
 
 export function v5BriefIdentity(brief: V5Brief): string {
   return keyFor({
@@ -147,7 +157,10 @@ export function withV5Checkpoints(deps: V5Deps, run: {runId: string; runDir: str
     const value = await perform();
     if (shouldCache(value)) {
       const parsed = schema.safeParse(value);
-      if (parsed.success) await writeEnvelope(path, parsed.data);
+      if (parsed.success) {
+        await writeEnvelope(path, parsed.data);
+        return parsed.data;
+      }
     }
     return value;
   }

@@ -1,3 +1,4 @@
+import {readFileSync} from 'node:fs';
 import {describe, expect, it} from 'vitest';
 import {SCENE_FADE_FRAMES, SCENE_WASH_OPACITY, sceneOpacity} from '../../src/remotion/Scene';
 
@@ -28,6 +29,15 @@ describe('sceneOpacity', () => {
 
 describe('scene wash', () => {
   it('leaves footage undimmed', () => {
+    expect(SCENE_WASH_OPACITY).toBe(0);
+  });
+});
+
+describe('V5 clip presentation', () => {
+  it('mutes imported video and disables decorative zoom', () => {
+    const src = readFileSync('src/remotion/Scene.tsx', 'utf8');
+    expect(src).toMatch(/\n\s+muted\n/);
+    expect(src).toContain('scene.proofAssetId || scene.disableVideoZoom ? 1 : videoScale');
     expect(SCENE_WASH_OPACITY).toBe(0);
   });
 });
