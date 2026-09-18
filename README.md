@@ -2,20 +2,22 @@
 
 Generate one vertical Tell Me Whyyyyyy Short from a topic and creative brief. The local
 pipeline creates a retention-v3 video plan, synthesizes spoken narration, downloads stock
-footage from Pexels, and renders an MP4 with Remotion.
+footage from Pexels, and renders an MP4 with Remotion. V3 is the default. Opt into V4
+for reviewed stock proof, or V5 for manual Grok animation import. `npm run generate`
+without `CONTENT_ENGINE_VERSION` still uses V3 and does not produce original animation.
 
 ## Requirements
 
 - Node.js 22+
 - npm
-- Pexels API key
+- Pexels API key for V3/V4 (V5 does not need it)
 - API keys for the selected script and voice providers
 
 ## Setup
 
 1. Install dependencies: `npm install`
 2. Create a local environment file: `cp .env.example .env`
-3. Add `PEXELS_API_KEY`, `CHANNEL_BRAND`, `CHANNEL_SIGNOFF`, and the keys for your selected providers to `.env` (see below).
+3. Add `CHANNEL_BRAND`, `CHANNEL_SIGNOFF`, and the keys for your selected providers to `.env` (see below). Add `PEXELS_API_KEY` for V3/V4. V5 does not need a Pexels key.
 4. Run the offline test suite: `npm test`
 5. Generate a short with a topic and a **creative brief** (tone, audience, angle, proof, bans, optional content pattern):
 
@@ -51,7 +53,7 @@ ELEVENLABS_API_KEY=your_elevenlabs_key
 ELEVENLABS_VOICE_ID=your_selected_voice_id
 ```
 
-Use a voice ID available to your ElevenLabs account, not its display name. The existing xAI key must permit the chosen text model and endpoint. Only selected providers need keys; Pexels and channel settings remain required. Normal generate commands are unchanged. Provider failures stop the run rather than silently switching services.
+Use a voice ID available to your ElevenLabs account, not its display name. The existing xAI key must permit the chosen text model and endpoint. Only selected providers need keys. Channel settings remain required. Pexels is required for V3/V4, not for V5. Normal generate commands are unchanged and still use V3 unless you set `CONTENT_ENGINE_VERSION`. Provider failures stop the run rather than silently switching services.
 
 Both script providers use the same hook/story schemas, validation and deterministic hook selection. ElevenLabs uses its timestamp endpoint and MP3 44.1 kHz/128 kbps output, converts character timing to captions, and measures actual audio duration locally. It removes the supported xAI speech tags instead of reading them aloud; expressive delivery can therefore differ. Voice speed remains 1.2x, and the local 1.6-second outro “why” extension applies to both voices.
 
@@ -258,3 +260,38 @@ approval checkpoints. No automatic approval is inferred from an unapproved draft
 V4 opening titles now carry yellow emphasis words through to the renderer. Older story
 plans without keyword metadata fall back to the last meaningful title word, preserving
 the approved title text.
+
+# V5 original animation (opt-in)
+
+V5 plans a source-backed voiced Short, then exports Grok first-frame and six-second
+animation prompts. You generate the clips in Grok, copy the MP4s into the printed run
+directory, and resume to bind filenames to scenes. Voice, karaoke, music and the
+channel sign-off remain. V3 is still the default; `npm run generate` without
+`CONTENT_ENGINE_VERSION=v5` does not produce original animation.
+
+V5 does not need a Pexels key and never searches stock. Script and voice API keys for
+the selected providers are still required. Grok generation stays manual; this program
+does not call Imagine.
+
+```sh
+CONTENT_ENGINE_VERSION=v5 CONTENT_BRIEF_PATH=content/v5/pen-cap-hole.json \
+  npm run generate -- "A Pen-Cap Hole Is an Airway Safety Feature" "Use the reviewed brief"
+```
+
+Run from an interactive terminal. The first successful run exits 0 with
+`Status: awaiting-assets`, missing scene IDs, the prompts path, and a resume command.
+It does not print `Done: output.mp4` while waiting.
+
+Resume (the CLI quotes the run directory, so paths with spaces stay valid):
+
+```sh
+CONTENT_ENGINE_VERSION=v5 npm run generate -- --resume runs/<runId>
+```
+
+Owner workflow — both copyable prompt blocks per scene, using the still as the video's
+first frame, copying arbitrary names such as `Ptko4.mp4` into the printed run,
+`Video filename for mechanism (or q to save and stop):`, replacements, `q` pauses,
+six-second sources versus shorter used durations, outro reuse of the opening, and
+muted clips — is in [content/v5/README.md](content/v5/README.md). The reviewed sample
+is [content/v5/pen-cap-hole.json](content/v5/pen-cap-hole.json). Generated illustrations
+are not documentary proof. Source review is still required if claims change.
