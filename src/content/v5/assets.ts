@@ -37,7 +37,7 @@ function isReservedGeneratedPath(realRun: string, realFile: string, fileName: st
   return false;
 }
 
-async function hashFile(path: string): Promise<string> {
+export async function hashFile(path: string): Promise<string> {
   const hash = createHash('sha256');
   for await (const chunk of createReadStream(path)) hash.update(chunk);
   return hash.digest('hex');

@@ -29,6 +29,7 @@ import {reviewClip} from './stock/review-clip';
 import {synthesizeSceneVoices} from './voice/synthesize-scene-voices';
 import {createProviders} from './providers';
 import {runV4Cli} from './content/v4/cli';
+import {runV5Cli} from './content/v5/cli';
 
 type CliIo = {
   log: (message: string) => void;
@@ -193,15 +194,24 @@ function createProductionDeps(research: string): CreateShortDeps {
   };
 }
 
+async function dispatchCli(argv: string[]): Promise<number> {
+  const config = loadConfig();
+  if (config.contentEngineVersion === 'v5') return runV5Cli(argv);
+  if (config.contentEngineVersion === 'v4') return runV4Cli(argv);
+  if (config.contentEngineVersion === 'v3') {
+    return runCli(argv, () => createProductionDeps(argv.slice(1).join(' ').trim()));
+  }
+  throw new Error('Unsupported content engine. Start with CONTENT_ENGINE_VERSION=v3, v4 or v5.');
+}
+
 const entryPath = process.argv[1] ? pathToFileURL(resolvePath(process.argv[1])).href : undefined;
 if (import.meta.url === entryPath) {
   const envPath = findEnvFile(process.cwd());
   loadDotenv(envPath ? {path: envPath, quiet: true} : {quiet: true});
-  const argv = process.argv.slice(2);
-  const research = argv.slice(1).join(' ').trim();
-  const run = process.env.CONTENT_ENGINE_VERSION === 'v4'
-    ? runV4Cli(argv) : runCli(argv, () => createProductionDeps(research));
-  void run.then((exitCode) => {
+  void dispatchCli(process.argv.slice(2)).then((exitCode) => {
     process.exitCode = exitCode;
+  }, (error: unknown) => {
+    console.error(error instanceof Error ? error.message : 'Generation failed');
+    process.exitCode = 1;
   });
 }
