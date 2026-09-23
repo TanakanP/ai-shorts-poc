@@ -1,6 +1,6 @@
 # Project Instructions
 
-This project implements voiced AI Shorts. V5 adds original Grok-generated animation import beside V3 and V4. V4 adds contradiction-first planning and reviewed visual proof while preserving V3 as a rollback path. Spoken/display copy, karaoke, channel sign-off and local music are shared. Unique stock and reviewed visual proof apply to V3/V4.
+This project implements voiced AI Shorts. V5 adds original Gemini still and Google Flow animation import beside V3 and V4. V4 adds contradiction-first planning and reviewed visual proof while preserving V3 as a rollback path. Spoken/display copy, karaoke, channel sign-off and local music are shared. Unique stock and reviewed visual proof apply to V3/V4.
 
 Authorized V5 implementation plan:
 docs/superpowers/plans/2026-09-18-content-v5-plan.md

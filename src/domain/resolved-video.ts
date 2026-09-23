@@ -10,7 +10,7 @@ export type ResolvedScene = VideoScene & {
   localAudioPath: string;
   audioDurationSeconds: number;
   words: VoiceWord[];
-  generatedAsset?: {provider: 'grok-imagine'; sceneId: string; sha256: string; promptHash: string};
+  generatedAsset?: {provider: 'grok-imagine' | 'google-flow'; sceneId: string; sha256: string; promptHash: string};
 };
 
 export type StockScene = Omit<

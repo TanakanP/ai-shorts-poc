@@ -39,7 +39,7 @@ it('assigns shuffled filenames by scene ID, including Ptko4.mp4 for mechanism', 
   const dir = await mkdtemp(join(tmpdir(), 'v5-review-'));
   try {
     await prepare(dir);
-    const prompts = promptPack();
+    const prompts = {...promptPack(), workflow: 'gemini-flow' as const};
     const recorded: unknown[] = [];
     const {ask, questions} = scriptedAsk([
       ...approve(files.contradiction), ...approve(files.clue), ...approve(files.mechanism),
@@ -51,6 +51,7 @@ it('assigns shuffled filenames by scene ID, including Ptko4.mp4 for mechanism', 
       {ask, log: () => {}, probe: async () => okMedia, preview, record: async value => {recorded.push(structuredClone(value));}},
     );
     expect(result.status).toBe('ready');
+    expect(result.bindings.every(binding => binding.provider === 'google-flow')).toBe(true);
     expect(result.bindings.map(b => `${b.sceneId}:${b.fileName}`)).toEqual([
       'contradiction:opening.mp4', 'clue:clue.mp4', 'mechanism:Ptko4.mp4', 'second_reveal:reveal.mp4', 'payoff:payoff.mp4',
     ]);

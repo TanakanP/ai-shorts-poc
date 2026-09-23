@@ -62,6 +62,18 @@ it('exports prompts and waits on the first run without importing or rendering', 
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 
+it('uses Flow prompt artifact names for a new Gemini and Flow run', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-flow-wait-'));
+  try {
+    const {deps, prompts} = await setup(dir, false);
+    deps.prompts = async () => ({...prompts, workflow: 'gemini-flow'});
+    const result = await createShortV5(brief.topic, deps);
+    expect(result.status).toBe('awaiting-assets');
+    if (result.status === 'awaiting-assets') expect(result.promptsPath).toBe(join(dir, 'flow-prompts.json'));
+    expect(JSON.parse(await readFile(join(dir, 'flow-prompts.json'), 'utf8')).workflow).toBe('gemini-flow');
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
 it('resumes approved story, prompts and audio and binds imported clips', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'v5-resume-pipe-'));
   try {

@@ -93,6 +93,7 @@ async function revalidatePrevious(
 
 async function reviewOneScene(input: {
   runDir: string; scene: ScenePrompt; timedPlan: VideoPlan; approved: GeneratedBinding[];
+  provider: GeneratedBinding['provider'];
   ask: ReviewGeneratedAssetsDeps['ask']; log: (value: string) => void;
   probe: (path: string) => Promise<MediaInfo>; preview: PreviewFn;
 }): Promise<{kind: 'quit'} | {kind: 'binding'; binding: GeneratedBinding}> {
@@ -175,7 +176,7 @@ async function reviewOneScene(input: {
     try {
       const binding = await inspectGeneratedAsset({
         runDir, fileName: fileAnswer.value, scene: {...scene, requiredFrames},
-        trimStartSec, cropPosition, observedAction,
+        trimStartSec, cropPosition, observedAction, provider: input.provider,
       }, {probe});
       const duplicate = duplicateStoryScene(input.approved, binding);
       if (duplicate) {
@@ -190,6 +191,7 @@ export async function reviewGeneratedAssets(
   input: ReviewGeneratedAssetsInput, deps: ReviewGeneratedAssetsDeps,
 ): Promise<ReviewGeneratedAssetsResult> {
   const prompts = parseOrHold(promptPackSchema, input.prompts, 'Prompt pack is invalid');
+  const provider = prompts.workflow === 'gemini-flow' ? 'google-flow' : 'grok-imagine';
   const probe = deps.probe ?? probeMedia;
   const preview = deps.preview ?? previewProof;
   await mkdir(join(input.runDir, GENERATED_PREVIEW_DIR), {recursive: true});
@@ -199,7 +201,7 @@ export async function reviewGeneratedAssets(
   for (const scene of prompts.scenes) {
     if (approved.some(item => item.sceneId === scene.sceneId)) continue;
     const result = await reviewOneScene({
-      runDir: input.runDir, scene, timedPlan: input.timedPlan, approved,
+      runDir: input.runDir, scene, timedPlan: input.timedPlan, approved, provider,
       ask: deps.ask, log: deps.log, probe, preview,
     });
     if (result.kind === 'quit') return {status: 'awaiting-assets', bindings: approved};
@@ -221,7 +223,7 @@ export async function reviewGeneratedAssets(
     if (!scene) {deps.log(`Unknown scene ${replace.value}`); continue;}
     const others = approved.filter(item => item.sceneId !== sceneId);
     const result = await reviewOneScene({
-      runDir: input.runDir, scene, timedPlan: input.timedPlan, approved: others,
+      runDir: input.runDir, scene, timedPlan: input.timedPlan, approved: others, provider,
       ask: deps.ask, log: deps.log, probe, preview,
     });
     if (result.kind === 'quit') return {status: 'awaiting-assets', bindings: approved};

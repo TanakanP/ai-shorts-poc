@@ -15,6 +15,7 @@ import {
 } from '../content/v5/contracts';
 import {bindV5Scenes, videoPlanFromV5} from '../content/v5/adapter';
 import {hashFile} from '../content/v5/assets';
+import {promptFileBase} from '../content/v5/prompts';
 import {evaluateV5Timing, type V5TimingResult} from '../content/v5/timing';
 import type {V4Deps} from './create-short-v4';
 
@@ -115,7 +116,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
   const startedAt = new Date().toISOString();
   const {runId, runDir} = await deps.createRunDirectory(topic);
   const outputPath = join(runDir, 'output.mp4');
-  const promptsPath = join(runDir, 'grok-prompts.json');
+  const promptsPath = () => join(runDir, `${promptFileBase(promptPack!)}.json`);
   let stage = 'brief';
   let brief: V5Brief | undefined;
   let pack: V5SelectedPackage | undefined;
@@ -155,11 +156,11 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
   };
   const waitingResult = async (missing: SceneId[]): Promise<V5Result> => {
     setStage('awaiting-assets');
-    const waiting = {...summary('awaiting-assets'), promptsPath, missingSceneIds: missing};
+    const waiting = {...summary('awaiting-assets'), promptsPath: promptsPath(), missingSceneIds: missing};
     await save('generation-manifest.json', waiting);
     await save('run.json', waiting);
     return {status: 'awaiting-assets', runId, runDir, manifestPath: join(runDir, 'generation-manifest.json'),
-      promptsPath, missingSceneIds: missing};
+      promptsPath: promptsPath(), missingSceneIds: missing};
   };
   try {
     setStage('brief');
@@ -221,10 +222,10 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     }
     if (!await deps.approvePrompts(promptPack)) {
       await save('rejected-prompts.json', promptPack);
-      throw new ContentHold(['Grok prompts not approved'], 'hold', promptPack);
+      throw new ContentHold(['Image and video prompts not approved'], 'hold', promptPack);
     }
     await deps.exportPrompts(runDir, promptPack, plan);
-    await save('grok-prompts.json', promptPack);
+    await save(`${promptFileBase(promptPack)}.json`, promptPack);
     await saveTimedPlan(voiced);
     if (!deps.resume) return waitingResult([...VOICED_BEATS]);
     setStage('assets');

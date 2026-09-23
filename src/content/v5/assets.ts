@@ -16,6 +16,7 @@ export const GENERATED_PREVIEW_DIR = 'asset-previews';
 export type InspectGeneratedAssetInput = {
   runDir: string; fileName: string; scene: ScenePrompt;
   trimStartSec: number; cropPosition: string; observedAction: string;
+  provider?: GeneratedBinding['provider'];
 };
 export type InspectGeneratedAssetDeps = {probe: (path: string) => Promise<MediaInfo>};
 
@@ -127,7 +128,7 @@ export async function inspectGeneratedAsset(
     throw new ContentHold([`${input.scene.sceneId}: clip does not cover the reviewed scene interval`]);
   }
   return parseOrHold(generatedBindingSchema, {
-    sceneId: input.scene.sceneId, kind: 'generated', provider: 'grok-imagine',
+    sceneId: input.scene.sceneId, kind: 'generated', provider: input.provider ?? 'grok-imagine',
     fileName: input.fileName.trim(), localPath, sha256: await hashFile(localPath),
     promptHash: input.scene.promptHash, trimStartSec, cropPosition: input.cropPosition,
     media, observedAction, approved: true,
@@ -140,12 +141,15 @@ export async function revalidateGeneratedBinding(
 ): Promise<GeneratedBinding | undefined> {
   try {
     const parsed = generatedBindingSchema.parse(binding);
+    const expectedProvider = input.prompts.workflow === 'gemini-flow' ? 'google-flow' : 'grok-imagine';
+    if (parsed.provider !== expectedProvider) return undefined;
     const scene = input.prompts.scenes.find(item => item.sceneId === parsed.sceneId);
     if (!scene || scene.promptHash !== parsed.promptHash) return undefined;
     const inspected = await inspectGeneratedAsset({
       runDir: input.runDir, fileName: parsed.fileName,
       scene: {...scene, requiredFrames: requiredImportFrames(scene, input.timedPlan)},
       trimStartSec: parsed.trimStartSec, cropPosition: parsed.cropPosition, observedAction: parsed.observedAction,
+      provider: parsed.provider,
     }, deps);
     if (inspected.sha256 !== parsed.sha256) return undefined;
     return inspected;

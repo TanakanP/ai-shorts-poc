@@ -3,7 +3,7 @@
 Generate one vertical Tell Me Whyyyyyy Short from a topic and creative brief. The local
 pipeline creates a retention-v3 video plan, synthesizes spoken narration, downloads stock
 footage from Pexels, and renders an MP4 with Remotion. V3 is the default. Opt into V4
-for reviewed stock proof, or V5 for manual Grok animation import. `npm run generate`
+for reviewed stock proof, or V5 for manual Gemini and Google Flow animation import. `npm run generate`
 without `CONTENT_ENGINE_VERSION` still uses V3 and does not produce original animation.
 
 ## Requirements
@@ -263,15 +263,15 @@ the approved title text.
 
 # V5 original animation (opt-in)
 
-V5 plans a source-backed voiced Short, then exports Grok first-frame and six-second
-animation prompts. You generate the clips in Grok, copy the MP4s into the printed run
+V5 plans a source-backed voiced Short, then exports Gemini first-frame and Google Flow six-second
+animation prompts. You generate stills in Gemini and animate them in Google Flow, then copy the MP4s into the printed run
 directory, and resume to bind filenames to scenes. Voice, karaoke, music and the
 channel sign-off remain. V3 is still the default; `npm run generate` without
 `CONTENT_ENGINE_VERSION=v5` does not produce original animation.
 
 V5 does not need a Pexels key and never searches stock. Script and voice API keys for
-the selected providers are still required. Grok generation stays manual; this program
-does not call Imagine.
+the selected providers are still required. Gemini image and Google Flow video creation stay manual.
+The program does not call either service for visual generation.
 
 ```sh
 CONTENT_ENGINE_VERSION=v5 CONTENT_BRIEF_PATH=content/v5/pen-cap-hole.json \

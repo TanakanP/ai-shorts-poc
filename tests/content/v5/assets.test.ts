@@ -64,6 +64,11 @@ it('hashes real file bytes and rejects nonfinite, too-short, invalid trim/crop a
     }, {probe});
     expect(approved.sha256).toBe(await hashFile(join(dir, fileName)));
     expect(approved.trimStartSec).toBe(0);
+    const flowApproved = await inspectGeneratedAsset({
+      runDir: dir, fileName, scene, trimStartSec: 0, cropPosition: '25% 50%',
+      observedAction: 'Straw breaks at the waterline', provider: 'google-flow',
+    }, {probe});
+    expect(flowApproved.provider).toBe('google-flow');
     await expect(inspectGeneratedAsset({
       runDir: dir, fileName, scene, trimStartSec: 0, cropPosition: '50% 50%', observedAction: '  ',
     }, {probe})).rejects.toThrow(/Observed action/);

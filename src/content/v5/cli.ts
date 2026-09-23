@@ -16,7 +16,7 @@ import {
 } from './contracts';
 import {loadV5Brief} from './brief';
 import {planV5Package, planV5Story} from './plan';
-import {generateGrokPrompts, formatGrokPrompts} from './prompts';
+import {generateVisualPrompts, formatVisualPrompts, promptFileBase} from './prompts';
 import {reviewGeneratedAssets} from './asset-review';
 import {availableSourceFrames, hashFile, requiredImportFrames} from './assets';
 import {probeMedia} from '../v4/media';
@@ -107,7 +107,7 @@ export function createV5ProductionDeps(config: AppConfig, research: string,
       const reason = (await ask('Accept this timing exception for factual clarity? Enter a reason, or leave blank to hold: ')).trim();
       return reason || null;
     },
-    prompts: (brief, plan, timed) => generateGrokPrompts(brief, plan, timed,
+    prompts: (brief, plan, timed) => generateVisualPrompts(brief, plan, timed,
       providers.structured(promptPackGenerationSchema, 'v5_prompts')),
     approvePrompts: async pack => {
       log(JSON.stringify({
@@ -115,11 +115,12 @@ export function createV5ProductionDeps(config: AppConfig, research: string,
         scenes: pack.scenes.map(scene => ({sceneId: scene.sceneId, factIds: scene.factIds, visualIntent: scene.visualIntent,
           requiredFrames: scene.requiredFrames, imagePrompt: scene.imagePrompt, videoPrompt: scene.videoPrompt})),
       }, null, 2));
-      return yes('Do these Grok prompts match the reviewed story, style and used intervals?');
+      return yes('Do these image and video prompts match the reviewed story, style and used intervals?');
     },
     exportPrompts: async (runDir, pack, plan) => {
-      await persistJson(join(runDir, 'grok-prompts.json'), pack);
-      await writeFile(join(runDir, 'grok-prompts.md'), `${formatGrokPrompts(pack, plan)}\n`);
+      const base = promptFileBase(pack);
+      await persistJson(join(runDir, `${base}.json`), pack);
+      await writeFile(join(runDir, `${base}.md`), `${formatVisualPrompts(pack, plan)}\n`);
     },
     assets: (pack, timed, runDir, record, previous) => reviewGeneratedAssets(
       {runDir, prompts: pack, timedPlan: timed, previous: previous ?? []},
@@ -184,7 +185,7 @@ export async function runV5Cli(args: string[]): Promise<number> {
       resume: Boolean(runDir),
       prompts: async (brief, plan, timed) => {
         const attempts: unknown[] = [];
-        return generateGrokPrompts(brief, plan, timed, providers.structured(promptPackGenerationSchema, 'v5_prompts'),
+        return generateVisualPrompts(brief, plan, timed, providers.structured(promptPackGenerationSchema, 'v5_prompts'),
           async value => {
             attempts.push(value);
             await persistJson(join(run.runDir, 'prompt-attempts.json'), attempts);

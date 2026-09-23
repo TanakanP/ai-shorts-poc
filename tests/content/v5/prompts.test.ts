@@ -1,7 +1,7 @@
 import {expect, it, vi} from 'vitest';
 import {createHash} from 'node:crypto';
 import {promptPackGenerationSchema, VOICED_BEATS} from '../../../src/content/v5/contracts';
-import {formatGrokPrompts, generateGrokPrompts} from '../../../src/content/v5/prompts';
+import {formatGrokPrompts, generateGrokPrompts, formatVisualPrompts, promptFileBase} from '../../../src/content/v5/prompts';
 import {requiredSourceFrames} from '../../../src/content/v5/timing';
 import {brief, contentPlan, generatedPromptScenes, promptContinuity, voiced} from './fixtures';
 
@@ -19,6 +19,7 @@ it('fills five unique prompt pairs, hashes, facts and shared continuity from the
   expect(pack.visualStyle).toBe(brief.visualStyle);
   expect(pack.schemaVersion).toBe(1);
   expect(pack.engineVersion).toBe('v5');
+  expect(pack.workflow).toBe('gemini-flow');
   expect(pack.planHash).toBe(keyFor(plan));
   expect(pack.scenes[0].requiredFrames).toBe(requiredSourceFrames(3, 0));
   expect(pack.scenes[1].requiredFrames).toBe(requiredSourceFrames(5.2, 1));
@@ -31,6 +32,9 @@ it('fills five unique prompt pairs, hashes, facts and shared continuity from the
     durationSeconds: 6, aspectRatio: '9:16',
   }));
   expect(generate).toHaveBeenCalledWith(expect.objectContaining({system: expect.stringMatching(/first six frames/)}));
+  expect(generate).toHaveBeenCalledWith(expect.objectContaining({system: expect.stringMatching(/Google Flow Frames to Video/)}));
+  expect(promptFileBase(pack)).toBe('flow-prompts');
+  expect(formatVisualPrompts(pack, plan)).toContain('Gemini first-frame and Google Flow animation prompts');
 });
 
 it('retries a scene-order permutation once then holds, while the generation schema accepts it', async () => {
@@ -71,6 +75,7 @@ it('formats copyable image and video blocks without filenames or fabricated proo
     })),
   };
   const md = formatGrokPrompts(pack, plan);
+  expect(promptFileBase(pack)).toBe('grok-prompts');
   expect(md).toMatch(/Visual style: Clean 3D educational animation/);
   expect(md).toContain(promptContinuity());
   expect(md).toMatch(/Generate the still image/);

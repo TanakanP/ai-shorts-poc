@@ -134,10 +134,12 @@ export const promptPackGenerationSchema = z.object({
 });
 export const promptPackSchema = z.object({
   schemaVersion: z.literal(1), engineVersion: z.literal('v5'), planHash: text,
+  workflow: z.literal('gemini-flow').optional(),
   visualStyle: text, continuity: text, scenes: z.array(scenePromptSchema).length(5),
 }).superRefine((pack, ctx) => exactSceneIds(pack.scenes.map(s => s.sceneId), ctx, true));
 export type PromptPack = {
   schemaVersion: 1; engineVersion: 'v5'; planHash: string;
+  workflow?: 'gemini-flow';
   visualStyle: string; continuity: string; scenes: ScenePrompt[];
 };
 
@@ -147,13 +149,13 @@ export const mediaInfoSchema = z.object({
 export type MediaInfo = {durationSec: number; width: number; height: number; fps: number};
 
 export const generatedBindingSchema = z.object({
-  sceneId: v5SceneIdSchema, kind: z.literal('generated'), provider: z.literal('grok-imagine'),
+  sceneId: v5SceneIdSchema, kind: z.literal('generated'), provider: z.enum(['grok-imagine', 'google-flow']),
   fileName: text, localPath: text, sha256: text, promptHash: text,
   trimStartSec: z.number().finite().nonnegative(), cropPosition, media: mediaInfoSchema,
   observedAction: text, approved: z.literal(true),
 });
 export type GeneratedBinding = {
-  sceneId: SceneId; kind: 'generated'; provider: 'grok-imagine';
+  sceneId: SceneId; kind: 'generated'; provider: 'grok-imagine' | 'google-flow';
   fileName: string; localPath: string; sha256: string; promptHash: string;
   trimStartSec: number; cropPosition: string; media: MediaInfo;
   observedAction: string; approved: true;

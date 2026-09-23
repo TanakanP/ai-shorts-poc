@@ -1,17 +1,17 @@
 # V5 original animation (owner workflow)
 
-V5 is an **opt-in** engine. It plans a source-backed voiced Short, exports Grok
-first-frame and six-second animation prompts, then pauses so you can generate the
+V5 is an **opt-in** engine. It plans a source-backed voiced Short, exports Gemini
+first-frame and Google Flow six-second animation prompts, then pauses so you can generate the
 clips yourself. Copy the MP4s into the printed run directory, resume, and bind
 each filename to a scene. The program renders a local MP4. It does **not** call
-Grok Imagine, search Pexels, or upload anywhere.
+Gemini or Google Flow for visual generation, search Pexels, or upload anywhere.
 
 `npm run generate` without `CONTENT_ENGINE_VERSION=v5` still uses **V3**. Default
 generate does not produce original animation.
 
 V5 needs **no Pexels key**. Script and voice API keys for the selected providers
-are still required. Channel brand, sign-off and local BGM stay in `.env`. Grok
-generation stays manual.
+are still required. Channel brand, sign-off and local BGM stay in `.env`.
+Gemini and Flow creation stay manual.
 
 Generated illustrations support the reviewed story. They are **not** documentary
 proof of a real experiment.
@@ -50,11 +50,11 @@ The first run:
 2. Asks you to approve the contradiction package, then the narrated story.
 3. Synthesizes voice and checks measured timing (at most one story rewrite).
 4. Generates and asks you to approve five prompt pairs.
-5. Writes `grok-prompts.json` and `grok-prompts.md` in the run directory.
+5. Writes `flow-prompts.json` and `flow-prompts.md` in the run directory.
 
 It then **exits 0** without importing videos or rendering. You should see
 `Status: awaiting-assets`, the missing scene IDs, a prompts path
-(`runs/<runId>/grok-prompts.json`), and a resume command. It does **not** print
+(`runs/<runId>/flow-prompts.json`), and a resume command. It does **not** print
 `Done: output.mp4` while waiting. That wait is success, not a failure.
 
 Copy the printed resume command. The CLI quotes the run directory with
@@ -62,7 +62,7 @@ Copy the printed resume command. The CLI quotes the run directory with
 
 ## Two copyable prompts per scene
 
-Open `runs/<runId>/grok-prompts.md`. Each of the five scenes
+Open `runs/<runId>/flow-prompts.md`. Each of the five scenes
 (`contradiction`, `clue`, `mechanism`, `second_reveal`, `payoff`) has:
 
 - Narration, fact IDs, required visible action
@@ -74,14 +74,24 @@ Open `runs/<runId>/grok-prompts.md`. Each of the five scenes
 Do not put filenames inside those prompts. Scene-to-file assignments live in
 `scene-assets.json` after import.
 
-### Generate in Grok
+### Generate in Gemini and Google Flow
 
 For every scene:
 
-1. Copy the **Image prompt** block. Generate a still in Grok.
-2. Use **that still as the video's first frame** (frame zero) with the matching
-   **Video prompt**. Request a six-second 9:16 clip.
+1. Copy the **Image prompt** block. Generate a still in [Gemini](https://support.google.com/gemini/answer/14286560?hl=en).
+2. In [Google Flow Frames to Video](https://support.google.com/flow/answer/16353334?hl=en),
+   add **that still as the start frame** and paste its matching **Video prompt**.
+   Choose a model that supports 6s, set 9:16, and generate the clip.
 3. Download the MP4.
+
+If you use a recurring sketch host, create it once in Flow **Characters** with
+one or two clean reference images, give it a name, and reference it with `@Name`
+in each Flow prompt. Include the same character in Gemini's first-frame still so
+the start frame and character reference agree. Keep it small and clear of the
+object or mechanism. [Flow's character guide](https://support.google.com/flow/answer/16935308?hl=en)
+explains setup; [Flow's video guide](https://support.google.com/flow/answer/16353334?hl=en)
+explains start frames and character references. The model may vary by feature,
+so confirm the selected model supports the requested six-second length.
 
 The image is the opening frame of the motion clip, not a separate still the
 renderer will play. Keep identity, proportions and environment consistent across
@@ -96,7 +106,7 @@ the end of the six-second source. Later scenes reserve the first six frames
 ## Copy files into the printed run directory
 
 Copy each downloaded MP4 into the **printed** run directory (`runs/<runId>/`
-from the resume command). Filenames can stay arbitrary. Example: Grok names a
+from the resume command). Filenames can stay arbitrary. Example: Flow names a
 file `Ptko4.mp4`; leave it as `Ptko4.mp4`. Do not rename to scene IDs unless you
 want to.
 
@@ -174,7 +184,7 @@ both the opening used interval and the outro used interval. Payoff keeps its own
 clip.
 
 Imported videos are **muted**. Narration, karaoke and local BGM come from the
-existing voice/music path, not from Grok audio.
+existing voice/music path, not from Flow audio.
 
 Final target is 25–29 seconds including the configured sign-off, hard maximum 30,
 1080×1920 at 30fps, no dark wash.
@@ -188,6 +198,6 @@ Final target is 25–29 seconds including the configured sign-off, hard maximum 
 | V5 | `CONTENT_ENGINE_VERSION=v5` plus a reviewed brief path | **Not required** |
 
 Selected `SCRIPT_PROVIDER` / `VOICE_PROVIDER` credentials remain required for V5.
-A Grok subscription does not replace them. Set `CONTENT_ENGINE_VERSION=v5` in the
+Gemini or Flow access does not replace them. Set `CONTENT_ENGINE_VERSION=v5` in the
 shell (or temporarily in `.env`); leave the committed `.env.example` default at
 `v3`.

@@ -47,6 +47,8 @@ export function bindV5Scenes(
     const scene = pack.scenes.find(item => item.sceneId === id);
     if (!scene || binding.promptHash !== scene.promptHash)
       throw new ContentHold([`${id}: prompt hash does not match the approved prompt pack`]);
+    if (binding.provider !== (pack.workflow === 'gemini-flow' ? 'google-flow' : 'grok-imagine'))
+      throw new ContentHold([`${id}: generated media provider does not match the prompt workflow`]);
     if (hashes.has(binding.sha256))
       throw new ContentHold([`${id}: story clips must use distinct source files`]);
     hashes.add(binding.sha256);
@@ -67,7 +69,7 @@ export function bindV5Scenes(
       localVideoPath: binding.localPath, videoTrimStartSec: binding.trimStartSec, videoCropPosition: binding.cropPosition,
       disableVideoZoom: true,
       generatedAsset: {
-        provider: 'grok-imagine', sceneId: binding.sceneId, sha256: binding.sha256, promptHash: binding.promptHash,
+        provider: binding.provider, sceneId: binding.sceneId, sha256: binding.sha256, promptHash: binding.promptHash,
       },
       localAudioPath: voice.localAudioPath, audioDurationSeconds: voice.audioDurationSeconds, words: voice.words,
     };
