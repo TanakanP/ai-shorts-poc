@@ -2,7 +2,7 @@ import {mkdtemp, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {expect, it, vi} from 'vitest';
-import {keyFor, parseV5Resume, v5BriefIdentity, withV5Checkpoints, writeCheckpoint} from '../../../src/content/v5/checkpoints';
+import {keyFor, loadV5RewriteCount, parseV5Resume, v5BriefIdentity, withV5Checkpoints, writeCheckpoint} from '../../../src/content/v5/checkpoints';
 import {createShortV5, type V5Deps} from '../../../src/pipeline/create-short-v5';
 import {persistJson} from '../../../src/pipeline/persist-json';
 import {brief, contentPlan, pack, promptPack, voiced, writeBindings, writeVoice} from './fixtures';
@@ -60,6 +60,30 @@ it('rejects a changed brief identity saved on the run', async () => {
     } as unknown as V5Deps, {runId: 'test', runDir: dir});
     await expect(wrapped.loadBrief(brief.topic)).rejects.toThrow(/fresh run/);
     expect(v5BriefIdentity(brief)).not.toBe('stale');
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
+it('recovers a saved shared-opening draft rejected by the old validator without spending the rewrite', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-shared-opening-'));
+  try {
+    const plan = contentPlan();
+    plan.beats[0].targetEndSec = 3;
+    plan.beats[1].targetStartSec = 0;
+    const reasons = ['Target beat windows must be positive, contiguous and start at zero'];
+    const key = keyFor({brief, pack: plan.package, revision: undefined});
+    await writeCheckpoint(join(dir, `checkpoint-story-${key}.json`), {
+      engineVersion: 'v5', schemaVersion: 1, value: {plan, reasons},
+    });
+    await writeCheckpoint(join(dir, 'rejected-story.json'), {draft: plan, reasons});
+    const generate = vi.fn(async () => {throw new Error('Saved story should be reused');});
+    const wrapped = withV5Checkpoints({
+      story: generate, approveStory: async () => true,
+      channel: {brand: 'Tell Me Why', signoff: 'Look closer every day.'},
+    } as unknown as V5Deps, {runId: 'test', runDir: dir});
+    expect(await wrapped.story(brief, plan.package)).toEqual(plan);
+    expect(await wrapped.approveStory(plan)).toBe(true);
+    expect(await loadV5RewriteCount(dir)).toBe(0);
+    expect(generate).not.toHaveBeenCalled();
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 

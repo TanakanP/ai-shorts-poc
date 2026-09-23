@@ -57,3 +57,18 @@ it('returns a versioned plan that preserves selected hook and metadata', async (
   expect(plan.beats[0].sceneId).toBe('contradiction');
   expect(plan.beats.map(b => b.id)).toEqual(['paradox', 'contradiction', 'clue', 'mechanism', 'second_reveal', 'payoff']);
 });
+
+it('accepts shared opening windows and still rejects a gap before the voiced hook', async () => {
+  const shared = rawStory();
+  shared.beats[0].targetStartSec = 0;
+  shared.beats[0].targetEndSec = 3;
+  shared.beats[1].targetStartSec = 0;
+  shared.beats[1].targetEndSec = 3;
+  await expect(planV5Story(brief, pack(), async () => shared, outro)).resolves.toMatchObject({version: 'v5'});
+
+  const gap = rawStory();
+  gap.beats[0].targetEndSec = 1;
+  gap.beats[1].targetStartSec = 2;
+  await expect(planV5Story(brief, pack(), async () => gap, outro))
+    .rejects.toThrow(/Target beat windows/);
+});

@@ -57,7 +57,12 @@ export function validateV5Story(story: V5Story, brief: V5Brief, pack: V5Selected
     const shot = pack.shots.find(s => s.beatId === beat.sceneId);
     if (!shot) fail(`Missing planned scene for ${beat.id}`);
     else if (beat.factIds.some(id => !shot.factIds.includes(id))) fail(`Fact does not match planned scene for ${beat.id}`);
-    if (beat.targetEndSec <= beat.targetStartSec || (i === 0 ? beat.targetStartSec !== 0 : Math.abs(beat.targetStartSec - story.beats[i - 1].targetEndSec) > 0.001))
+    if (beat.targetEndSec <= beat.targetStartSec ||
+      (i === 0 && beat.targetStartSec !== 0) ||
+      (i === 1 && (beat.targetStartSec < 0 ||
+        beat.targetStartSec > story.beats[0].targetEndSec + 0.001 ||
+        beat.targetEndSec + 0.001 < story.beats[0].targetEndSec)) ||
+      (i > 1 && Math.abs(beat.targetStartSec - story.beats[i - 1].targetEndSec) > 0.001))
       fail('Target beat windows must be positive, contiguous and start at zero');
   }
   const mechanism = story.beats[3];
@@ -98,7 +103,7 @@ Exactly six functions ordered paradox, contradiction, clue, mechanism, second_re
 Paradox spokenText is empty; paradox sceneId is contradiction. Contradiction is the opening voiced scene and preserves the selected hook text/display verbatim.
 These first two functions share the opening generated clip and become ONE voiced scene. All other functions have nonempty narration and sceneId matching their beat id.
 Use only fact IDs supplied for each beat. Ground narration in those facts and the planned visualIntent. Do not describe an action the planned scene cannot show.
-Target windows contiguous from zero: opening 0-3, clue 3-8.2, mechanism 8.2-14, second_reveal 14-19.5, payoff 19.5-24, then the measured outro. These are planning targets; actual speech will be measured.
+The paradox and contradiction share ONE opening scene: both may use target window 0-3, or paradox may use 0-1 and contradiction 1-3. Contradiction must cover the end of the paradox. From clue onward, target windows are contiguous: clue 3-8.2, mechanism 8.2-14, second_reveal 14-19.5, payoff 19.5-24, then the measured outro. These are planning targets; actual speech will be measured.
 Keep each scene's spoken line short and natural so it fits a six-second generated source (opening up to 6.0s displayed, later scenes up to 5.8s including the incoming six-frame transition). Do not plan seven-second mechanism or second-reveal scenes.
 The full mechanism starts in the mechanism beat. The second reveal must add its distinct protected fact, not restate mechanism.
 Keep mechanism factIds separate from the second reveal's new fact. Every beat newInformation explains its contribution.

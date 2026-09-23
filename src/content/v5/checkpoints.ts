@@ -11,6 +11,7 @@ import {
   type V5Brief, type V5ContentPlan,
 } from './contracts';
 import {hashFile, revalidateGeneratedBinding} from './assets';
+import {validateV5Story} from './plan';
 
 export {readCheckpoint, writeCheckpoint};
 
@@ -56,6 +57,8 @@ const storyCacheSchema = z.object({
   reasons: z.array(z.string().trim().min(1)).min(1).optional(),
 });
 const rewriteCountSchema = z.object({rewriteCount: z.number().int().min(0).max(1)});
+const OLD_OPENING_WINDOW_REASON = 'Target beat windows must be positive, contiguous and start at zero';
+type RejectedStory = {draft?: unknown; reasons?: unknown};
 const voiceWordSchema = z.object({text: z.string(), startMs: z.number(), endMs: z.number()});
 const synthesizeCacheSchema = z.object({
   timedPlan: z.object({
@@ -89,6 +92,12 @@ function canonical(value: unknown): unknown {
 }
 export const keyFor = (value: unknown) =>
   createHash('sha256').update(JSON.stringify(canonical(JSON.parse(JSON.stringify(value))))).digest('hex');
+
+function recoveredOpening(rejected: RejectedStory | undefined, accepted: V5ContentPlan): boolean {
+  return Array.isArray(rejected?.reasons) && rejected.reasons.length === 1 &&
+    rejected.reasons[0] === OLD_OPENING_WINDOW_REASON && rejected.draft !== undefined &&
+    keyFor(rejected.draft) === keyFor(accepted);
+}
 
 export function v5BriefIdentity(brief: V5Brief): string {
   return keyFor({
@@ -166,10 +175,12 @@ export async function loadV5RewriteCount(runDir: string): Promise<number> {
   let files: string[] = [];
   try {files = await readdir(runDir);}
   catch {return fromFile ?? 0;}
-  const hasFinal = files.some(name => name.startsWith('checkpoint-story-final-'));
-  const rejected = hasFinal ? await readCheckpoint(join(runDir, 'rejected-story.json')) : undefined;
+  const finalName = files.find(name => name.startsWith('checkpoint-story-final-'));
+  const final = finalName ? await readEnvelope(join(runDir, finalName), v5ContentPlanSchema) : undefined;
+  const rejected = final ? await readCheckpoint<RejectedStory>(join(runDir, 'rejected-story.json')) : undefined;
+  const spentOnRejectedStory = rejected !== undefined && final !== undefined && !recoveredOpening(rejected, final);
   const approved = files.filter(name => name.startsWith('checkpoint-story-approved-')).length;
-  if ((rejected !== undefined && hasFinal) || approved >= 2) {
+  if (spentOnRejectedStory || approved >= 2) {
     await writeCheckpoint(path, {rewriteCount: 1});
     return 1;
   }
@@ -177,8 +188,9 @@ export async function loadV5RewriteCount(runDir: string): Promise<number> {
 }
 
 async function persistAcceptedRewrite(runDir: string, plan: V5ContentPlan, previousFinal?: V5ContentPlan) {
-  const rejected = await readCheckpoint(join(runDir, 'rejected-story.json'));
-  if (rejected === undefined && (!previousFinal || keyFor(previousFinal) === keyFor(plan))) return;
+  const rejected = await readCheckpoint<RejectedStory>(join(runDir, 'rejected-story.json'));
+  if ((rejected === undefined || recoveredOpening(rejected, plan)) &&
+    (!previousFinal || keyFor(previousFinal) === keyFor(plan))) return;
   await writeCheckpoint(join(runDir, 'rewrite-count.json'), {rewriteCount: 1});
 }
 
@@ -243,7 +255,20 @@ export function withV5Checkpoints(deps: V5Deps, run: {runId: string; runDir: str
           throw error;
         }
       }, storyCacheSchema);
-      if (result.reasons?.length) throw new V5StoryRevisionNeeded(result.reasons, result.plan);
+      if (result.reasons?.length) {
+        // A previous V5 validator rejected overlapping opening functions even though
+        // they deliberately share one scene. Recheck that saved draft on resume.
+        if (result.reasons.every(reason => reason === OLD_OPENING_WINDOW_REASON)) {
+          const parsed = v5ContentPlanSchema.safeParse(result.plan);
+          if (parsed.success) {
+            try {
+              validateV5Story(parsed.data, brief, pack, `${deps.channel.brand}. ${deps.channel.signoff}`);
+              return parsed.data;
+            } catch { /* Keep the original revision gate for a genuinely invalid draft. */ }
+          }
+        }
+        throw new V5StoryRevisionNeeded(result.reasons, result.plan);
+      }
       return result.plan;
     },
     approveStory: async plan => {
