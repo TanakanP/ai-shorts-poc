@@ -1,0 +1,34 @@
+{
+  "topicId": "maple-sap-ratio",
+  "topic": "Maple Syrup Needs Far More Sap Than You Think",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state country, model and time scope naturally. Channel angle: familiar things with an unexpected design or function. Generate five declarative, concrete subject-first hooks; prefer 6–10 words, max 12 only for a justified exception. Six story functions across five voiced scenes: visual paradox, contradiction, clue, mechanism, distinct second reveal, payoff. Target 25–29 seconds including the configured sign-off; hard max 30. Keep spoken/display copy, voice, karaoke, local BGM and channel outro. No generic CTA. For every voiced scene, make a distinct Gemini portrait still and Google Flow six-second animation using the same Tell character. Review visible action, 9:16 crop and continuity before binding local MP4s. Generated scenes explain sourced facts; they are not documentary proof. No added on-screen captions or labels, logos, dark wash, or photoreal footage; preserve factual numbers and markings on the object.\nPackaging claim: Maple Syrup Needs Far More Sap Than You Think\nCore fact: University of Minnesota Extension says sap is commonly about 2 percent sugar, while syrup is much more concentrated.\nSecond reveal: At roughly 2 percent sap sugar, about 43 gallons of sap may be needed for one gallon of syrup.\nFirst frame: show a tiny syrup bottle beside many sap buckets immediately, large and recognizable. Animate the physical change or causal chain without invented labels or unsupported details. Tell points or reacts without covering the object.\nFact boundaries: Ratio varies with initial sugar concentration and finished syrup density; do not present 43:1 as universal.",
+  "subjectAliases": [
+    "maple",
+    "syrup",
+    "needs",
+    "far",
+    "more"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "University of Minnesota Extension says sap is commonly about 2 percent sugar, while syrup is much more concentrated.",
+      "sourceUrls": [
+        "https://extension.umn.edu/natural-resources/forestry-and-wildlife/forestry/gathering-wild-grown-plants-and-fungi/homemade-maple-syrup"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "At roughly 2 percent sap sugar, about 43 gallons of sap may be needed for one gallon of syrup.",
+      "sourceUrls": [
+        "https://extension.umn.edu/natural-resources/forestry-and-wildlife/forestry/gathering-wild-grown-plants-and-fungi/homemade-maple-syrup"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Ratio varies with initial sugar concentration and finished syrup density; do not present 43:1 as universal."
+  ],
+  "titleSeed": "Maple Syrup Needs Far More Sap Than You Think",
+  "descriptionSeed": "University of Minnesota Extension says sap is commonly about 2 percent sugar, while syrup is much more concentrated. At roughly 2 percent sap sugar, about 43 gallons of sap may be needed for one gallon of syrup. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Hand-drawn 2D sketch cartoon on a warm off-white background. A recurring curious young guide with an oversized round head, small swept hair tuft, large expressive oval eyes, tiny smile, simple white long-sleeve tunic, slim black legs, white sneakers and flowing mustard-yellow scarf. Clean slightly irregular black ink outlines, open white shapes, minimal detail and generous negative space. Keep the guide’s proportions and outfit consistent across all five portrait 9:16 scenes. The scarf is the character’s only strong color; use accurate object colors sparingly when the fact depends on them, such as a red sign or blue marker. No 3D rendering, gradients, heavy shading, photorealism, added captions or logos. Preserve factual markings, numbers and symbols on objects when needed. In this brief, show a tiny syrup bottle beside many sap buckets. Keep factual shapes and parts legible; never add text or logos."
+}

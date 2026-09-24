@@ -1,0 +1,34 @@
+{
+  "topicId": "theater-concessions",
+  "topic": "Popcorn Is a Major Movie-Theater Revenue Line",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state country, model and time scope naturally. Channel angle: familiar things with an unexpected design or function. Generate five declarative, concrete subject-first hooks; prefer 6–10 words, max 12 only for a justified exception. Six story functions across five voiced scenes: visual paradox, contradiction, clue, mechanism, distinct second reveal, payoff. Target 25–29 seconds including the configured sign-off; hard max 30. Keep spoken/display copy, voice, karaoke, local BGM and channel outro. No generic CTA. For every voiced scene, make a distinct Gemini portrait still and Google Flow six-second animation using the same Tell character. Review visible action, 9:16 crop and continuity before binding local MP4s. Generated scenes explain sourced facts; they are not documentary proof. No added on-screen captions or labels, logos, dark wash, or photoreal footage; preserve factual numbers and markings on the object.\nPackaging claim: Popcorn Is a Major Movie-Theater Revenue Line\nCore fact: AMC reports food and beverage as a separate revenue category in its annual filing.\nSecond reveal: AMC’s food-and-beverage revenue is substantial alongside admissions, so concessions matter to the business model.\nFirst frame: show a cinema ticket beside a popcorn tub immediately, large and recognizable. Animate the physical change or causal chain without invented labels or unsupported details. Tell points or reacts without covering the object.\nFact boundaries: Use AMC example and report year; do not claim every theater needs popcorn to survive or infer profit margins from revenue.",
+  "subjectAliases": [
+    "popcorn",
+    "major",
+    "movie-theater",
+    "revenue",
+    "line"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "AMC reports food and beverage as a separate revenue category in its annual filing.",
+      "sourceUrls": [
+        "https://investor.amctheatres.com/sec-filings/all-sec-filings/content/0001411579-26-000016/amc-20251231x10k.htm"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "AMC’s food-and-beverage revenue is substantial alongside admissions, so concessions matter to the business model.",
+      "sourceUrls": [
+        "https://investor.amctheatres.com/sec-filings/all-sec-filings/content/0001411579-26-000016/amc-20251231x10k.htm"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Use AMC example and report year; do not claim every theater needs popcorn to survive or infer profit margins from revenue."
+  ],
+  "titleSeed": "Popcorn Is a Major Movie-Theater Revenue Line",
+  "descriptionSeed": "AMC reports food and beverage as a separate revenue category in its annual filing. AMC’s food-and-beverage revenue is substantial alongside admissions, so concessions matter to the business model. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Hand-drawn 2D sketch cartoon on a warm off-white background. A recurring curious young guide with an oversized round head, small swept hair tuft, large expressive oval eyes, tiny smile, simple white long-sleeve tunic, slim black legs, white sneakers and flowing mustard-yellow scarf. Clean slightly irregular black ink outlines, open white shapes, minimal detail and generous negative space. Keep the guide’s proportions and outfit consistent across all five portrait 9:16 scenes. The scarf is the character’s only strong color; use accurate object colors sparingly when the fact depends on them, such as a red sign or blue marker. No 3D rendering, gradients, heavy shading, photorealism, added captions or logos. Preserve factual markings, numbers and symbols on objects when needed. In this brief, show a cinema ticket beside a popcorn tub. Keep factual shapes and parts legible; never add text or logos."
+}

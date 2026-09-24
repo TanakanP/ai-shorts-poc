@@ -1,0 +1,33 @@
+{
+  "topicId": "costco-hot-dog",
+  "topic": "Costco Keeps Its Hot-Dog Combo at $1.50",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state country, model and time scope naturally. Channel angle: familiar things with an unexpected design or function. Generate five declarative, concrete subject-first hooks; prefer 6–10 words, max 12 only for a justified exception. Six story functions across five voiced scenes: visual paradox, contradiction, clue, mechanism, distinct second reveal, payoff. Target 25–29 seconds including the configured sign-off; hard max 30. Keep spoken/display copy, voice, karaoke, local BGM and channel outro. No generic CTA. For every voiced scene, make a distinct Gemini portrait still and Google Flow six-second animation using the same Tell character. Review visible action, 9:16 crop and continuity before binding local MP4s. Generated scenes explain sourced facts; they are not documentary proof. No added on-screen captions or labels, logos, dark wash, or photoreal footage; preserve factual numbers and markings on the object.\nPackaging claim: Costco Keeps Its Hot-Dog Combo at $1.50\nCore fact: Costco advertises a hot dog and soda combo for $1.50 at its food court.\nSecond reveal: The combo is one of Costco’s member-facing food-court offerings alongside the paid warehouse membership.\nFirst frame: show a hot dog and soda beside a $1.50 sign immediately, large and recognizable. Animate the physical change or causal chain without invented labels or unsupported details. Tell points or reacts without covering the object.\nFact boundaries: Do not call it a loss leader or claim a precise marketing ROI without company evidence; price and availability can change.",
+  "subjectAliases": [
+    "costco",
+    "keeps",
+    "hot-dog",
+    "combo"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Costco advertises a hot dog and soda combo for $1.50 at its food court.",
+      "sourceUrls": [
+        "https://www.costco.com/membership-information.html"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "The combo is one of Costco’s member-facing food-court offerings alongside the paid warehouse membership.",
+      "sourceUrls": [
+        "https://www.costco.com/membership-information.html"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not call it a loss leader or claim a precise marketing ROI without company evidence; price and availability can change."
+  ],
+  "titleSeed": "Costco Keeps Its Hot-Dog Combo at $1.50",
+  "descriptionSeed": "Costco advertises a hot dog and soda combo for $1.50 at its food court. The combo is one of Costco’s member-facing food-court offerings alongside the paid warehouse membership. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Hand-drawn 2D sketch cartoon on a warm off-white background. A recurring curious young guide with an oversized round head, small swept hair tuft, large expressive oval eyes, tiny smile, simple white long-sleeve tunic, slim black legs, white sneakers and flowing mustard-yellow scarf. Clean slightly irregular black ink outlines, open white shapes, minimal detail and generous negative space. Keep the guide’s proportions and outfit consistent across all five portrait 9:16 scenes. The scarf is the character’s only strong color; use accurate object colors sparingly when the fact depends on them, such as a red sign or blue marker. No 3D rendering, gradients, heavy shading, photorealism, added captions or logos. Preserve factual markings, numbers and symbols on objects when needed. In this brief, show a hot dog and soda beside a $1.50 sign. Keep factual shapes and parts legible; never add text or logos."
+}
