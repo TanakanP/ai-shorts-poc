@@ -20,13 +20,13 @@ proof of a real experiment.
 
 [`pen-cap-hole.json`](pen-cap-hole.json) copies the V4 sample's `topicId`, `topic`,
 `subjectAliases`, facts, source URLs, `factBoundaries`, `titleSeed` and
-`descriptionSeed` exactly. `localProof` is removed. `visualStyle` is
-`Clean 3D educational animation` (the V5 default if a brief omits it).
+`descriptionSeed` exactly. `localProof` is removed. Its `visualStyle` describes a
+recurring hand-drawn guide with black ink outlines and a mustard-yellow scarf;
+the generic V5 default still applies to briefs that omit `visualStyle`.
 
-The sample keeps the V4 `creativeBrief` prose, including stock-search and
-`localProof` instructions, so packaging language and claims stay identical. **V5
-ignores stock/proof instructions in that prose** and uses generated illustrations
-instead.
+The sample `creativeBrief` directs Gemini stills and Google Flow clips in that
+style. It keeps the sourced claims and fact boundaries while treating generated
+illustrations as explanations, not documentary proof.
 
 Source review is still required if you change claims, sources, fact boundaries or
 the topic. Do not expand claims or add sources without checking the linked pages.

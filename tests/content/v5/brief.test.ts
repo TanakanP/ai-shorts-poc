@@ -10,8 +10,10 @@ it('parses the reviewed V5 sample and preserves its metadata', async () => {
   const raw = JSON.parse(await readFile('content/v5/pen-cap-hole.json', 'utf8'));
   expect(v5BriefSchema.parse(raw)).toMatchObject({
     topicId: 'pen-cap-hole', titleSeed: raw.titleSeed, descriptionSeed: raw.descriptionSeed,
-    visualStyle: 'Clean 3D educational animation',
+    visualStyle: raw.visualStyle,
   });
+  expect(raw.visualStyle).toContain('mustard-yellow scarf');
+  expect(raw.visualStyle).toContain('black ink outlines');
   expect(raw).not.toHaveProperty('localProof');
 });
 
