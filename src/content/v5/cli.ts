@@ -131,8 +131,13 @@ export function createV5ProductionDeps(config: AppConfig, research: string,
   };
 }
 
-function resumeCommand(runDir: string): string {
-  return `CONTENT_ENGINE_VERSION=v5 npm run generate -- --resume ${JSON.stringify(runDir)}`;
+function shellQuote(value: string): string {
+  return `'${value.replaceAll("'", `'"'"'`)}'`;
+}
+
+export function resumeCommand(runDir: string, briefPath?: string): string {
+  const brief = briefPath ? ` CONTENT_BRIEF_PATH=${shellQuote(briefPath)}` : '';
+  return `CONTENT_ENGINE_VERSION=v5${brief} npm run generate -- --resume ${shellQuote(runDir)}`;
 }
 
 export async function runV5Cli(args: string[]): Promise<number> {
@@ -177,7 +182,7 @@ export async function runV5Cli(args: string[]): Promise<number> {
         schemaVersion: 1, engineVersion: 'v5', topic, research, settings, briefFileHash,
       });
     }
-    console.log(`Resume this run after interruption:\n${resumeCommand(run.runDir)}`);
+    console.log(`Resume this run after interruption:\n${resumeCommand(run.runDir, config.contentBriefPath)}`);
     const production = createV5ProductionDeps(config, research, question => terminal!.question(question), console.log);
     const providers = createProviders(config);
     const deps = withV5Checkpoints({
@@ -197,7 +202,7 @@ export async function runV5Cli(args: string[]): Promise<number> {
       console.log(`Status: awaiting-assets`);
       console.log(`Missing videos: ${result.missingSceneIds.join(', ')}`);
       console.log(`Prompts: ${result.promptsPath}`);
-      console.log(`Resume this run:\n${resumeCommand(result.runDir)}`);
+      console.log(`Resume this run:\n${resumeCommand(result.runDir, config.contentBriefPath)}`);
       return 0;
     }
     console.log(`Done: ${result.outputPath}\nManifest: ${result.manifestPath}`);

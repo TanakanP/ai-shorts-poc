@@ -3,7 +3,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {expect, it, vi} from 'vitest';
 import type {AppConfig} from '../../../src/config';
-import {createV5ProductionDeps, runV5Cli} from '../../../src/content/v5/cli';
+import {createV5ProductionDeps, resumeCommand, runV5Cli} from '../../../src/content/v5/cli';
 
 const settings = {
   scriptProvider: 'openai', scriptModel: 'gpt-5.6', voiceProvider: 'xai', voiceId: 'eve',
@@ -55,7 +55,10 @@ it('does not construct a stock or Pexels client in V5 production setup', async (
   expect(JSON.stringify(settings)).toContain('promptContractVersion');
 });
 
-it('shell-quotes resume directories that contain spaces', async () => {
-  const src = await readFile('src/content/v5/cli.ts', 'utf8');
-  expect(src).toContain('JSON.stringify(runDir)');
+it('includes the reviewed brief and shell-quotes resume paths', () => {
+  expect(resumeCommand('runs/my run', 'content/v5/pen cap.json')).toBe(
+    "CONTENT_ENGINE_VERSION=v5 CONTENT_BRIEF_PATH='content/v5/pen cap.json' npm run generate -- --resume 'runs/my run'");
+  expect(resumeCommand("runs/it's $(unsafe)", "brief's file.json")).toBe(
+    `CONTENT_ENGINE_VERSION=v5 CONTENT_BRIEF_PATH='brief'"'"'s file.json' npm run generate -- --resume 'runs/it'"'"'s $(unsafe)'`);
+  expect(resumeCommand('runs/one')).toBe("CONTENT_ENGINE_VERSION=v5 npm run generate -- --resume 'runs/one'");
 });

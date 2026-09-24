@@ -57,8 +57,8 @@ It then **exits 0** without importing videos or rendering. You should see
 (`runs/<runId>/flow-prompts.json`), and a resume command. It does **not** print
 `Done: output.mp4` while waiting. That wait is success, not a failure.
 
-Copy the printed resume command. The CLI quotes the run directory with
-`JSON.stringify`, so paths with spaces stay valid.
+Copy the printed resume command. It includes the reviewed brief path when one
+was used and safely quotes paths containing spaces or shell metacharacters.
 
 ## Two copyable prompts per scene
 
@@ -119,10 +119,11 @@ outro reuses the opening clip; do not generate a sixth video.
 ## Resume and import
 
 ```sh
-CONTENT_ENGINE_VERSION=v5 npm run generate -- --resume runs/<runId>
+CONTENT_ENGINE_VERSION=v5 CONTENT_BRIEF_PATH=content/v5/pen-cap-hole.json \
+  npm run generate -- --resume runs/<runId>
 ```
 
-Use the exact quoted command the first run printed if the path has spaces.
+Use the exact command the first run printed, including `CONTENT_BRIEF_PATH`.
 
 Resume reuses the approved brief, package, story, voice, timing and prompts. It
 does not reread an edited topic JSON; a changed brief file requires a fresh run.
