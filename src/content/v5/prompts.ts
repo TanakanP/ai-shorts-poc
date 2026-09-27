@@ -10,6 +10,13 @@ import {requiredSourceFrames} from './timing';
 const SOURCE_DURATION_SECONDS = 6 as const;
 const SOURCE_ASPECT_RATIO = '9:16' as const;
 const SOURCE_FRAMES = 180;
+const CAMERA_ROLES: Record<SceneId, string> = {
+  contradiction: 'Immediate visual hook: a legible real-world view of the surprising result, with the cause still concealed.',
+  clue: 'New context: change scale or angle and show a hand, environment, or neighboring object that points toward the cause.',
+  mechanism: 'Physical explanation: a practical close view of the real component or observable action; avoid diagram graphics.',
+  second_reveal: 'Different consequence: use a distinct setting or viewpoint that makes the second sourced fact visible.',
+  payoff: 'Visual echo: return to the familiar subject from a complementary framing with the explanation now apparent.',
+};
 const keyFor = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 
 type SceneSpec = {
@@ -88,6 +95,12 @@ function assemblePromptPack(brief: V5Brief, plan: V5ContentPlan, planHash: strin
   if (generated.scenes.map(scene => scene.sceneId).join(',') !== VOICED_BEATS.join(',')) {
     throw new ContentHold(['Exactly the five voiced scene IDs are required in order'], 'hold', {raw, generation: generated});
   }
+  for (const field of ['imagePrompt', 'videoPrompt'] as const) {
+    const unique = new Set(generated.scenes.map(scene => scene[field].trim().toLowerCase()));
+    if (unique.size !== generated.scenes.length) {
+      throw new ContentHold([`Each scene needs a distinct ${field}`], 'hold', {raw, generation: generated});
+    }
+  }
   const scenes: ScenePrompt[] = specs.map((spec, index) => {
     const generatedScene = generated.scenes[index];
     if (!generatedScene || generatedScene.sceneId !== spec.sceneId) {
@@ -125,13 +138,15 @@ Return one shared continuity description and exactly five scenes in this order: 
 Do not emit a sixth prompt. The channel outro reuses the opening six-second source; do not extend the opening action deadline to the outro length.
 You supply only continuity, imagePrompt and videoPrompt. The application fills timing, version and hashes.
 
-Continuity is one run-level description of subject appearance, proportions, materials, palette, environment and camera language. Every scene must keep that geometry.
+Produce photoreal 9:16 live-action footage with the believable look of carefully shot stock video: real materials, practical light, plausible motion and restrained camera work. No mascot, cartoon, sketch, illustration, glossy 3D, surreal morphing or fabricated brand marks. Generated scenes illustrate facts; never imply they document an actual event.
+Continuity is one run-level description of the real subject's appearance, scale, materials, and camera language. Keep subject identity consistent, but allow locations and lighting to change when that makes the visual story clearer.
+Give every scene a different visual job. Vary at least two of shot scale, angle, location, lighting or physical action between neighboring scenes. Avoid five macro shots or five slow zooms. Follow each supplied cameraRole while preserving visualIntent.
 
 Each imagePrompt is ONE still composition, not a sequence: subject, starting physical state, environment, framing, lighting, camera, continuity details and 9:16 framing.
 The contradiction still must already show the visible contradiction. Do not reveal the mechanism in contradiction or clue images. Do not paint narration, captions or labels into the still.
 
 Each videoPrompt is for Google Flow Frames to Video, with the Gemini still uploaded as the start frame. Preserve identity and geometry, and request a six-second continuous shot. Describe the motion, camera and settled end state.
-If the owner adds a reusable Flow Character, keep its appearance consistent with the still and place it clear of the mechanism; do not let it replace the required object or action.
+Ordinary people or hands may appear when the scene calls for them, but do not add a recurring host or avatar.
 Required visible action (visualIntent) must finish inside that scene's used interval, not only near the end of the six-second source.
 Opening used interval is its displayed duration from frame 0 of the source. Later clips reserve the first six frames (0.2s) for transition; important action starts after that and still finishes inside the used interval. Remaining source time may hold a naturally settled pose.
 No on-screen text, captions, logos, watermarks, music or dialogue. Final video audio is muted.
@@ -147,7 +162,8 @@ export async function generateVisualPrompts(brief: V5Brief, plan: V5ContentPlan,
     sceneId: spec.sceneId, sceneNumber: spec.sceneNumber, narration: spec.narration, displayText: spec.displayText,
     factIds: spec.factIds,
     facts: spec.factIds.map(id => plan.facts.find(fact => fact.id === id)?.statement).filter(Boolean),
-    visualIntent: spec.visualIntent, usedDurationSeconds: spec.usedDurationSeconds, requiredFrames: spec.requiredFrames,
+    visualIntent: spec.visualIntent, cameraRole: CAMERA_ROLES[spec.sceneId],
+    usedDurationSeconds: spec.usedDurationSeconds, requiredFrames: spec.requiredFrames,
     transitionFrames: spec.transitionFrames,
     actionMustFinishBySeconds: spec.requiredFrames / 30,
     openingShowsContradictionWithoutMechanism: spec.sceneId === 'contradiction',

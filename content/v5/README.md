@@ -1,32 +1,31 @@
-# V5 original animation (owner workflow)
+# V5 realistic video (owner workflow)
 
 V5 is an **opt-in** engine. It plans a source-backed voiced Short, exports Gemini
-first-frame and Google Flow six-second animation prompts, then pauses so you can generate the
+first-frame and Google Flow six-second video prompts, then pauses so you can generate the
 clips yourself. Copy the MP4s into the printed run directory, resume, and bind
 each filename to a scene. The program renders a local MP4. It does **not** call
 Gemini or Google Flow for visual generation, search Pexels, or upload anywhere.
 
 `npm run generate` without `CONTENT_ENGINE_VERSION=v5` still uses **V3**. Default
-generate does not produce original animation.
+generate does not produce generated video.
 
 V5 needs **no Pexels key**. Script and voice API keys for the selected providers
 are still required. Channel brand, sign-off and local BGM stay in `.env`.
 Gemini and Flow creation stay manual.
 
-Generated illustrations support the reviewed story. They are **not** documentary
-proof of a real experiment.
+Generated photoreal clips support the reviewed story. They are **not** documentary
+proof of a real experiment or event.
 
 ## Sample brief
 
-[`pen-cap-hole.json`](pen-cap-hole.json) copies the V4 sample's `topicId`, `topic`,
-`subjectAliases`, facts, source URLs, `factBoundaries`, `titleSeed` and
-`descriptionSeed` exactly. `localProof` is removed. Its `visualStyle` describes a
-recurring hand-drawn guide with black ink outlines and a mustard-yellow scarf;
-the generic V5 default still applies to briefs that omit `visualStyle`.
+[`pen-cap-hole.json`](pen-cap-hole.json) is a reviewed example of the realistic
+style. Its sources and boundaries describe a specific certified cap and ISO
+standard; do not generalize its claim to every pen cap. The default V5 style
+for briefs without `visualStyle` is also photoreal live action.
 
-The sample `creativeBrief` directs Gemini stills and Google Flow clips in that
-style. It keeps the sourced claims and fact boundaries while treating generated
-illustrations as explanations, not documentary proof.
+The sample `creativeBrief` directs five varied Gemini stills and Google Flow clips
+that resemble carefully shot real footage. Review their factual details and treat
+the clips as explanations, not documentary proof.
 
 Source review is still required if you change claims, sources, fact boundaries or
 the topic. Do not expand claims or add sources without checking the linked pages.
@@ -84,18 +83,14 @@ For every scene:
    Choose a model that supports 6s, set 9:16, and generate the clip.
 3. Download the MP4.
 
-If you use a recurring sketch host, create it once in Flow **Characters** with
-one or two clean reference images, give it a name, and reference it with `@Name`
-in each Flow prompt. Include the same character in Gemini's first-frame still so
-the start frame and character reference agree. Keep it small and clear of the
-object or mechanism. [Flow's character guide](https://support.google.com/flow/answer/16935308?hl=en)
-explains setup; [Flow's video guide](https://support.google.com/flow/answer/16353334?hl=en)
-explains start frames and character references. The model may vary by feature,
-so confirm the selected model supports the requested six-second length.
+Use a real object and plausible camera action for each scene. Change shot scale,
+angle, context and movement across the five clips; do not repeat the same macro
+shot or slow zoom. [Flow's video guide](https://support.google.com/flow/answer/16353334?hl=en)
+explains start frames. Confirm the selected model supports six-second output.
 
 The image is the opening frame of the motion clip, not a separate still the
 renderer will play. Keep identity, proportions and environment consistent across
-scenes (see the run-level visual style and continuity in the markdown). Do not
+scenes where the subject repeats (see the run-level visual style and continuity in the markdown). Do not
 bake captions, labels, logos, music or dialogue into the media; the Short mutes
 clip audio and adds karaoke later.
 
@@ -180,7 +175,7 @@ MP4 that covers the reviewed interval from your trim start. A clip a little
 off of exactly six seconds is fine if it still covers that interval. The program
 does not loop, freeze, slow, speed, or truncate speech to fit a short file.
 
-The channel **outro reuses the opening** animation. The opening file must cover
+The channel **outro reuses the opening** clip. The opening file must cover
 both the opening used interval and the outro used interval. Payoff keeps its own
 clip.
 

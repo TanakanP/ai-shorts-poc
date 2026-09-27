@@ -10,7 +10,7 @@ const keyFor = (value: unknown) => createHash('sha256').update(JSON.stringify(va
 it('fills five unique prompt pairs, hashes, facts and shared continuity from the finalized story', async () => {
   const plan = contentPlan();
   const voice = voiced(undefined, plan);
-  const generate = vi.fn(async () => ({continuity: promptContinuity(), scenes: generatedPromptScenes()}));
+  const generate = vi.fn(async (_request: {system: string; input: string}) => ({continuity: promptContinuity(), scenes: generatedPromptScenes()}));
   const pack = await generateGrokPrompts(brief, plan, voice.timedPlan, generate);
   expect(pack.scenes.map(s => s.sceneId)).toEqual([...VOICED_BEATS]);
   expect(new Set(pack.scenes.map(s => s.imagePrompt)).size).toBe(5);
@@ -33,8 +33,20 @@ it('fills five unique prompt pairs, hashes, facts and shared continuity from the
   }));
   expect(generate).toHaveBeenCalledWith(expect.objectContaining({system: expect.stringMatching(/first six frames/)}));
   expect(generate).toHaveBeenCalledWith(expect.objectContaining({system: expect.stringMatching(/Google Flow Frames to Video/)}));
+  expect(generate).toHaveBeenCalledWith(expect.objectContaining({system: expect.stringMatching(/photoreal 9:16 live-action/)}));
+  const input = JSON.parse(generate.mock.calls[0][0].input);
+  expect(input.scenes.map((scene: {cameraRole: string}) => scene.cameraRole)).toHaveLength(5);
+  expect(new Set(input.scenes.map((scene: {cameraRole: string}) => scene.cameraRole)).size).toBe(5);
   expect(promptFileBase(pack)).toBe('flow-prompts');
   expect(formatVisualPrompts(pack, plan)).toContain('Gemini first-frame and Google Flow animation prompts');
+});
+
+it('retries identical scene prompts and holds if variation is still missing', async () => {
+  const scenes = generatedPromptScenes().map(scene => ({...scene, imagePrompt: 'One repeated real-world still'}));
+  const generate = vi.fn(async () => ({continuity: promptContinuity(), scenes}));
+  await expect(generateGrokPrompts(brief, contentPlan(), voiced().timedPlan, generate))
+    .rejects.toThrow(/distinct imagePrompt/);
+  expect(generate).toHaveBeenCalledTimes(2);
 });
 
 it('retries a scene-order permutation once then holds, while the generation schema accepts it', async () => {

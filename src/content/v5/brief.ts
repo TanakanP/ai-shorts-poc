@@ -3,7 +3,7 @@ import {randomUUID} from 'node:crypto';
 import {ContentHold, interpretedBriefSchema, v5BriefSchema, type V5Brief} from './contracts';
 import type {StructuredPlanGenerator} from '../../generation/generate-video-plan';
 
-export const DEFAULT_V5_VISUAL_STYLE = 'Clean 3D educational animation';
+export const DEFAULT_V5_VISUAL_STYLE = 'Photorealistic vertical live-action footage: real objects and settings, natural light, physically plausible motion, varied camera setups, no mascot, illustration, rendered graphics, captions or fake logos.';
 
 function reviewedVisualStyle(value: unknown): string {
   return typeof value === 'string' && value.trim() ? value : DEFAULT_V5_VISUAL_STYLE;

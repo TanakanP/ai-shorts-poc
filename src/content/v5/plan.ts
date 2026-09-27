@@ -16,9 +16,9 @@ Never ask questions or use generic introductions. Keep mechanism unexplained in 
 Rate each hook score/clarity 0-5 and give candid semantic judgments/reasons; false confidence is unhelpful.
 Rate the seven preflight factors 0-5 with specific evidence. Scores are editorial judgments, never virality forecasts.
 Choose a distinct source-backed second reveal. Plan exactly one shot per contradiction, clue, mechanism, second_reveal, payoff.
-Each shot is {beatId, visualIntent, factIds} for an original generated illustration of that scene. Do not invent stock search queries, Pexels URLs, or footage claims.
+Each shot is {beatId, visualIntent, factIds} for a distinct photoreal live-action scene generated from a still. Vary scale, angle, location and physical action while keeping the subject recognizable. Do not invent stock search queries, Pexels URLs, or footage claims.
 First frame already shows the result/contradiction. Five unique story clips; the outro may echo the opening.
-Title and description are declarative and concise. Preserve explicit metadata seeds. No generic CTA.
+Keep spoken hooks declarative. Make the YouTube title and description concise and curiosity-driven; a title may be a question or tease the reveal. Deliver the promised fact, avoid exaggerated risk or unsupported motives, and preserve explicit metadata seeds. No generic CTA.
 wordCountException must be null for normal hooks; outside 5-10 words explain the editorial reason.`,
       input: JSON.stringify({brief, feedback}),
     });

@@ -12,8 +12,8 @@ it('parses the reviewed V5 sample and preserves its metadata', async () => {
     topicId: 'pen-cap-hole', titleSeed: raw.titleSeed, descriptionSeed: raw.descriptionSeed,
     visualStyle: raw.visualStyle,
   });
-  expect(raw.visualStyle).toContain('mustard-yellow scarf');
-  expect(raw.visualStyle).toContain('black ink outlines');
+  expect(raw.visualStyle).toContain('Photorealistic 9:16 live-action');
+  expect(raw.visualStyle).toContain('Vary shot scale');
   expect(raw).not.toHaveProperty('localProof');
 });
 
