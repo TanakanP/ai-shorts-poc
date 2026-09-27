@@ -1,0 +1,34 @@
+{
+  "topicId": "microwave-door-screen",
+  "topic": "A Microwave Door Can Have Holes and Still Contain Microwaves",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state region, product and model scope naturally. Channel angle: familiar objects or observable natural events with a surprising true mechanism. Generate five declarative, concrete subject-first hooks; prefer 9–12 words without revealing the mechanism. Six story functions across five voiced scenes: visual paradox, contradiction, clue, mechanism, distinct second reveal, payoff. Target 25–29 seconds including the configured sign-off; hard max 30. Keep voice, karaoke, local BGM and channel outro. Aim for roughly 65–72 spoken words including the sign-off, without filler. Make mechanism begin at or after 7s and second reveal between 14s and 21s; each non-opening voiced clip must fit inside 5.8s of a six-second source after the incoming transition. Keep every spoken line easy to pronounce. No generic spoken CTA. Visual direction: photoreal Gemini still plus Google Flow six-second clip for each scene. Give each scene a distinct camera role; vary at least two of scale, angle, context, lighting and physical action between neighboring scenes. Start with the visible contradiction but save its cause for mechanism. Use a real object, ordinary hands or authentic setting; never invent a hazardous test or present generated media as a record of an actual event. Review stills, motion, 9:16 crop and factual visual details before importing MP4s. Packaging: use a curiosity-driven, slightly provocative YouTube title and a specific description with one topic-related question. The video must deliver what the title promises; do not exaggerate risk, savings or universal applicability.\nCore fact: A microwave viewing screen reflects microwaves because its holes are much smaller than the microwaves’ wavelength, while allowing a view into the oven.\nSecond reveal: FDA rules require two independent interlocks to stop microwave production when the door opens.\nOpening shot: an intact microwave door with its perforated viewing screen visible. Show it as a believable real-world shot, immediately legible in the first frame. Keep the cause for later scenes.\nFact boundaries: Describe an intact, working microwave. Do not demonstrate a damaged seal or claim that every perforated metal sheet is safe.",
+  "subjectAliases": [
+    "microwave",
+    "door",
+    "screen"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "A microwave viewing screen reflects microwaves because its holes are much smaller than the microwaves’ wavelength, while allowing a view into the oven.",
+      "sourceUrls": [
+        "https://www.fda.gov/downloads/Radiation-EmittingProducts/RadiationEmittingProductsandProcedures/HomeBusinessandEntertainment/UCM119038.pdf",
+        "https://www.fda.gov/radiation-emitting-products/resources-you-radiation-emitting-products/microwave-ovens"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "FDA rules require two independent interlocks to stop microwave production when the door opens.",
+      "sourceUrls": [
+        "https://www.fda.gov/downloads/Radiation-EmittingProducts/RadiationEmittingProductsandProcedures/HomeBusinessandEntertainment/UCM119038.pdf",
+        "https://www.fda.gov/radiation-emitting-products/resources-you-radiation-emitting-products/microwave-ovens"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Describe an intact, working microwave. Do not demonstrate a damaged seal or claim that every perforated metal sheet is safe."
+  ],
+  "titleSeed": "Your Microwave Door Is Full of Holes. Why Is That Safe?",
+  "descriptionSeed": "The screen has openings you can see through, yet the oven is designed to keep microwaves inside. Had you noticed the mesh? #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects and locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Vary shot scale, angle, setting, light and movement across five scenes; do not repeat one macro view or one slow zoom. No mascot, cartoon, sketch, animation graphics, floating labels, fabricated text or logos, surreal morphing, glossy 3D render, dark wash, or disaster spectacle. Show accurate scale, colors and geometry when they carry the fact. Generated footage illustrates the explanation, not documentary proof. Subject anchor: an intact microwave door with its perforated viewing screen visible."
+}
