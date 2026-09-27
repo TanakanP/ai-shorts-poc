@@ -2,7 +2,7 @@
   "schedule": [
     {
       "sequence": 1,
-      "post_iso": "2026-09-28T03:45",
+      "post_iso": "2026-09-28T02:15",
       "type": "New research (added)",
       "topic": "A Microwave Door Can Have Holes and Still Contain Microwaves",
       "original_title": "",
@@ -18,7 +18,7 @@
     },
     {
       "sequence": 2,
-      "post_iso": "2026-09-29T02:40",
+      "post_iso": "2026-09-28T04:20",
       "type": "New research (existing)",
       "topic": "A Pen-Cap Hole Is an Airway Safety Feature",
       "original_title": "",
@@ -34,7 +34,7 @@
     },
     {
       "sequence": 3,
-      "post_iso": "2026-09-30T04:40",
+      "post_iso": "2026-09-29T02:25",
       "type": "New research (added)",
       "topic": "Three QR-Code Squares Help a Scanner Find Its Direction",
       "original_title": "",
@@ -50,7 +50,7 @@
     },
     {
       "sequence": 4,
-      "post_iso": "2026-10-01T02:35",
+      "post_iso": "2026-09-29T03:50",
       "type": "New research (existing)",
       "topic": "A Fire Sprinkler Waits for Heat, Not Smoke",
       "original_title": "",
@@ -66,7 +66,7 @@
     },
     {
       "sequence": 5,
-      "post_iso": "2026-10-02T04:15",
+      "post_iso": "2026-09-30T02:05",
       "type": "New research (added)",
       "topic": "Bumpy Curb Tiles Mark Where the Sidewalk Ends",
       "original_title": "",
@@ -82,7 +82,7 @@
     },
     {
       "sequence": 6,
-      "post_iso": "2026-10-03T05:00",
+      "post_iso": "2026-09-30T03:50",
       "type": "New research (existing)",
       "topic": "Four Runway Lights Tell Pilots If They Are Too High",
       "original_title": "",
@@ -98,7 +98,7 @@
     },
     {
       "sequence": 7,
-      "post_iso": "2026-10-04T03:15",
+      "post_iso": "2026-10-01T02:35",
       "type": "New research (added)",
       "topic": "A Tire Sidewall Hides Its Manufacture Date",
       "original_title": "",
@@ -114,7 +114,7 @@
     },
     {
       "sequence": 8,
-      "post_iso": "2026-10-05T05:00",
+      "post_iso": "2026-10-01T04:15",
       "type": "New research (existing)",
       "topic": "Runway Centerline Lights Turn Red Near the End",
       "original_title": "",
@@ -130,7 +130,7 @@
     },
     {
       "sequence": 9,
-      "post_iso": "2026-10-06T04:35",
+      "post_iso": "2026-10-02T02:25",
       "type": "New research (added)",
       "topic": "An Induction Stove Heats the Pan Directly",
       "original_title": "",
@@ -146,7 +146,7 @@
     },
     {
       "sequence": 10,
-      "post_iso": "2026-10-07T04:05",
+      "post_iso": "2026-10-02T04:35",
       "type": "New research (existing)",
       "topic": "Blue and Green Airport Lights Do Different Jobs",
       "original_title": "",
@@ -162,7 +162,7 @@
     },
     {
       "sequence": 11,
-      "post_iso": "2026-10-08T02:25",
+      "post_iso": "2026-10-03T02:05",
       "type": "New research (added)",
       "topic": "A Plane Trail Is Mostly Ice Crystals",
       "original_title": "",
@@ -178,7 +178,7 @@
     },
     {
       "sequence": 12,
-      "post_iso": "2026-10-09T04:45",
+      "post_iso": "2026-10-03T04:05",
       "type": "New research (existing)",
       "topic": "Tiny Bars in a Tire Tread Signal Replacement",
       "original_title": "",
@@ -194,7 +194,7 @@
     },
     {
       "sequence": 13,
-      "post_iso": "2026-10-10T03:20",
+      "post_iso": "2026-10-04T02:05",
       "type": "New research (added)",
       "topic": "The Two Buttons on a GFCI Outlet Guard Against Shock",
       "original_title": "",
@@ -210,7 +210,7 @@
     },
     {
       "sequence": 14,
-      "post_iso": "2026-10-11T02:00",
+      "post_iso": "2026-10-04T03:55",
       "type": "New research (existing)",
       "topic": "The Gap in a Bridge Lets It Move",
       "original_title": "",
@@ -226,7 +226,7 @@
     },
     {
       "sequence": 15,
-      "post_iso": "2026-10-12T03:30",
+      "post_iso": "2026-10-05T03:00",
       "type": "New research (added)",
       "topic": "A Smoke Alarm Needs Replacement Even If It Still Beeps",
       "original_title": "",
@@ -242,7 +242,7 @@
     },
     {
       "sequence": 16,
-      "post_iso": "2026-10-13T02:00",
+      "post_iso": "2026-10-05T04:35",
       "type": "New research (existing)",
       "topic": "A Guardrail End Can Flatten Its Own Rail",
       "original_title": "",
@@ -258,7 +258,7 @@
     },
     {
       "sequence": 17,
-      "post_iso": "2026-10-14T03:45",
+      "post_iso": "2026-10-06T02:35",
       "type": "New research (added)",
       "topic": "Tiny Glass Beads Make Road Paint Shine at Night",
       "original_title": "",
@@ -274,7 +274,7 @@
     },
     {
       "sequence": 18,
-      "post_iso": "2026-10-15T03:15",
+      "post_iso": "2026-10-06T04:05",
       "type": "New research (existing)",
       "topic": "Those Straight Road Cuts Tell Concrete Where to Crack",
       "original_title": "",
@@ -290,7 +290,7 @@
     },
     {
       "sequence": 19,
-      "post_iso": "2026-10-16T03:10",
+      "post_iso": "2026-10-07T02:20",
       "type": "New research (added)",
       "topic": "Red and Green Wing Lights Show an Airplane’s Direction",
       "original_title": "",
@@ -306,7 +306,7 @@
     },
     {
       "sequence": 20,
-      "post_iso": "2026-10-17T04:25",
+      "post_iso": "2026-10-07T03:45",
       "type": "New research (existing)",
       "topic": "A Water Tower Uses Height to Push Water",
       "original_title": "",
@@ -322,7 +322,7 @@
     },
     {
       "sequence": 21,
-      "post_iso": "2026-10-18T02:00",
+      "post_iso": "2026-10-08T02:10",
       "type": "New research (added)",
       "topic": "The Stones Under Train Tracks Hold the Geometry",
       "original_title": "",
@@ -338,7 +338,7 @@
     },
     {
       "sequence": 22,
-      "post_iso": "2026-10-19T02:35",
+      "post_iso": "2026-10-08T04:10",
       "type": "New research (existing)",
       "topic": "A Storm Drain May Lead Straight to a River",
       "original_title": "",
@@ -354,7 +354,7 @@
     },
     {
       "sequence": 23,
-      "post_iso": "2026-10-20T03:00",
+      "post_iso": "2026-10-09T02:40",
       "type": "New research (added)",
       "topic": "A Popcorn Kernel Turns Itself Inside Out",
       "original_title": "",
@@ -370,7 +370,7 @@
     },
     {
       "sequence": 24,
-      "post_iso": "2026-10-21T04:40",
+      "post_iso": "2026-10-09T04:45",
       "type": "New research (existing)",
       "topic": "The Last Barcode Digit Checks the Others",
       "original_title": "",
@@ -386,7 +386,7 @@
     },
     {
       "sequence": 25,
-      "post_iso": "2026-10-22T03:20",
+      "post_iso": "2026-10-10T02:50",
       "type": "New research (added)",
       "topic": "The Horizon Moon Looks Bigger Without Growing",
       "original_title": "",
@@ -402,7 +402,7 @@
     },
     {
       "sequence": 26,
-      "post_iso": "2026-10-23T05:00",
+      "post_iso": "2026-10-10T04:30",
       "type": "New research (existing)",
       "topic": "A Mail Barcode Can Track One Envelope",
       "original_title": "",
@@ -418,7 +418,7 @@
     },
     {
       "sequence": 27,
-      "post_iso": "2026-10-24T04:10",
+      "post_iso": "2026-10-11T02:15",
       "type": "New research (added)",
       "topic": "Water Can Boil Below 100°C in the Mountains",
       "original_title": "",
@@ -434,7 +434,7 @@
     },
     {
       "sequence": 28,
-      "post_iso": "2026-10-25T03:40",
+      "post_iso": "2026-10-11T04:35",
       "type": "New research (existing)",
       "topic": "The Blue Ribbon on a $100 Bill Is Woven In",
       "original_title": "",
@@ -450,7 +450,7 @@
     },
     {
       "sequence": 29,
-      "post_iso": "2026-10-26T03:00",
+      "post_iso": "2026-10-12T02:00",
       "type": "New research (added)",
       "topic": "A Fire Extinguisher Gauge Can Reveal a Problem",
       "original_title": "",
@@ -466,7 +466,7 @@
     },
     {
       "sequence": 30,
-      "post_iso": "2026-10-27T03:10",
+      "post_iso": "2026-10-12T04:55",
       "type": "New research (existing)",
       "topic": "The Raised Rim Protects a Coin’s Design",
       "original_title": "",
@@ -482,7 +482,7 @@
     },
     {
       "sequence": 31,
-      "post_iso": "2026-10-28T03:10",
+      "post_iso": "2026-10-13T02:40",
       "type": "New research (added)",
       "topic": "USB-C Works Upside Down for a Reason",
       "original_title": "",
@@ -498,7 +498,7 @@
     },
     {
       "sequence": 32,
-      "post_iso": "2026-10-29T04:15",
+      "post_iso": "2026-10-13T03:55",
       "type": "New research (existing)",
       "topic": "Ordinary Foil Works on Either Side",
       "original_title": "",
@@ -514,7 +514,7 @@
     },
     {
       "sequence": 33,
-      "post_iso": "2026-10-30T04:35",
+      "post_iso": "2026-10-14T02:40",
       "type": "New research (added)",
       "topic": "A Second Rainbow Reverses the Color Order",
       "original_title": "",
@@ -530,7 +530,7 @@
     },
     {
       "sequence": 34,
-      "post_iso": "2026-10-31T04:20",
+      "post_iso": "2026-10-14T04:55",
       "type": "New research (existing)",
       "topic": "Dishwasher Rinse Aid Helps Water Slide Away",
       "original_title": "",
@@ -546,7 +546,7 @@
     },
     {
       "sequence": 35,
-      "post_iso": "2026-11-01T02:05",
+      "post_iso": "2026-10-15T02:05",
       "type": "New research (added)",
       "topic": "Sunset Light Travels Through More Air and Loses Blue",
       "original_title": "",
@@ -562,7 +562,7 @@
     },
     {
       "sequence": 36,
-      "post_iso": "2026-11-02T02:20",
+      "post_iso": "2026-10-15T04:05",
       "type": "New research (existing)",
       "topic": "Small Wingtip Fins Reduce a Bigger Drag",
       "original_title": "",
@@ -578,7 +578,7 @@
     },
     {
       "sequence": 37,
-      "post_iso": "2026-11-03T02:25",
+      "post_iso": "2026-10-16T02:15",
       "type": "New research (added)",
       "topic": "Yellow Leaves Were Hiding Their Color All Summer",
       "original_title": "",
@@ -594,7 +594,7 @@
     },
     {
       "sequence": 38,
-      "post_iso": "2026-11-04T03:30",
+      "post_iso": "2026-10-16T04:30",
       "type": "New research (existing)",
       "topic": "Invisible Window Coating Can Block Heat",
       "original_title": "",
@@ -610,7 +610,7 @@
     },
     {
       "sequence": 39,
-      "post_iso": "2026-11-05T04:25",
+      "post_iso": "2026-10-17T03:00",
       "type": "New research (added)",
       "topic": "A Geyser Erupts After Pressure Suddenly Drops",
       "original_title": "",
@@ -626,7 +626,7 @@
     },
     {
       "sequence": 40,
-      "post_iso": "2026-11-06T02:45",
+      "post_iso": "2026-10-17T04:15",
       "type": "New research (existing)",
       "topic": "One Ripening Fruit Can Change Its Neighbors",
       "original_title": "",
@@ -642,7 +642,7 @@
     },
     {
       "sequence": 41,
-      "post_iso": "2026-11-07T03:30",
+      "post_iso": "2026-10-18T02:05",
       "type": "New research (added)",
       "topic": "Ocean Waves Can Grow Far From the Beach",
       "original_title": "",
@@ -658,7 +658,7 @@
     },
     {
       "sequence": 42,
-      "post_iso": "2026-11-08T02:55",
+      "post_iso": "2026-10-18T04:15",
       "type": "New research (existing)",
       "topic": "Ice Floats Because Freezing Spreads Water Apart",
       "original_title": "",
@@ -674,7 +674,7 @@
     },
     {
       "sequence": 43,
-      "post_iso": "2026-11-09T04:25",
+      "post_iso": "2026-10-19T02:05",
       "type": "New research (added)",
       "topic": "Ocean Water Acts Like a Color Filter",
       "original_title": "",
@@ -690,7 +690,7 @@
     },
     {
       "sequence": 44,
-      "post_iso": "2026-11-10T04:15",
+      "post_iso": "2026-10-19T03:45",
       "type": "New research (existing)",
       "topic": "Lightning and Thunder Start Together",
       "original_title": "",
@@ -706,7 +706,7 @@
     },
     {
       "sequence": 45,
-      "post_iso": "2026-11-11T03:55",
+      "post_iso": "2026-10-20T02:45",
       "type": "New research (added)",
       "topic": "A Paler Pavement Can Stay Cooler in the Sun",
       "original_title": "",
@@ -722,7 +722,7 @@
     },
     {
       "sequence": 46,
-      "post_iso": "2026-11-12T02:40",
+      "post_iso": "2026-10-20T03:45",
       "type": "New research (existing)",
       "topic": "Road Salt Makes Ice Melt Below Freezing",
       "original_title": "",
@@ -738,7 +738,7 @@
     },
     {
       "sequence": 47,
-      "post_iso": "2026-11-13T04:15",
+      "post_iso": "2026-10-21T02:55",
       "type": "New research (added)",
       "topic": "Sleet Bounces but Freezing Rain Glazes the Ground",
       "original_title": "",
