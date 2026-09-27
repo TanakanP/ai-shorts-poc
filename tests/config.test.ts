@@ -15,6 +15,13 @@ describe('loadConfig', () => {
       .toMatchObject({contentEngineVersion: 'v5', contentBriefPath: 'content/v5/pen-cap-hole.json'});
     expect(() => loadConfig({...env, CONTENT_ENGINE_VERSION: 'v6'})).toThrow(/CONTENT_ENGINE_VERSION/);
   });
+  it('defaults FAST_MODE off and accepts only an explicit true or false value', () => {
+    const env = {...base, OPENAI_API_KEY: 'oa', XAI_API_KEY: 'xa', CONTENT_ENGINE_VERSION: 'v5'};
+    expect(loadConfig(env).fastMode).toBe(false);
+    expect(loadConfig({...env, FAST_MODE: 'true'}).fastMode).toBe(true);
+    expect(loadConfig({...env, FAST_MODE: 'false'}).fastMode).toBe(false);
+    expect(() => loadConfig({...env, FAST_MODE: 'yes'})).toThrow(/FAST_MODE/);
+  });
   it('accepts V5 without Pexels while V3/V4 still require it, and keeps selected credentials required', () => {
     const creds = {OPENAI_API_KEY: 'oa', XAI_API_KEY: 'xa', CHANNEL_BRAND: 'Test Brand', CHANNEL_SIGNOFF: 'Follow along.'};
     expect(loadConfig({...creds, CONTENT_ENGINE_VERSION: 'v5'})).toMatchObject({

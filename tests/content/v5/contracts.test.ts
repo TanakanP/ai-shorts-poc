@@ -74,6 +74,18 @@ it('rejects nonfinite media and requires an approved generated binding', () => {
   })).toThrow();
 });
 
+it('allows an empty action only for a fast-reviewed contradiction binding', () => {
+  const base = {
+    sceneId: 'contradiction', kind: 'generated', provider: 'google-flow', fileName: 'opening.mp4',
+    localPath: '/tmp/opening.mp4', sha256: 'abc', promptHash: 'def', trimStartSec: 0,
+    cropPosition: '50% 50%', media: {durationSec: 6, width: 1080, height: 1920, fps: 30},
+    observedAction: '', approved: true,
+  };
+  expect(() => generatedBindingSchema.parse({...base, reviewMode: 'fast'})).not.toThrow();
+  expect(() => generatedBindingSchema.parse(base)).toThrow(/Observed action/);
+  expect(() => generatedBindingSchema.parse({...base, sceneId: 'clue', reviewMode: 'fast'})).toThrow(/Fast review|Observed action/);
+});
+
 it('exports strict provider schemas with explicit emphasis words', async () => {
   const {zodTextFormat} = await import('openai/helpers/zod');
   expect(() => zodTextFormat(v5PackageGenerationSchema, 'v5_package')).not.toThrow();

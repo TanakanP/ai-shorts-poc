@@ -13,7 +13,7 @@ import {
 import {requiredSourceFrames} from './timing';
 
 export type ReviewGeneratedAssetsInput = {
-  runDir: string; prompts: PromptPack; timedPlan: VideoPlan; previous: GeneratedBinding[];
+  runDir: string; prompts: PromptPack; timedPlan: VideoPlan; previous: GeneratedBinding[]; fastMode?: boolean;
 };
 export type ReviewGeneratedAssetsDeps = {
   ask: (question: string) => Promise<string>;
@@ -93,6 +93,7 @@ async function revalidatePrevious(
 
 async function reviewOneScene(input: {
   runDir: string; scene: ScenePrompt; timedPlan: VideoPlan; approved: GeneratedBinding[];
+  fastMode?: boolean;
   provider: GeneratedBinding['provider'];
   ask: ReviewGeneratedAssetsDeps['ask']; log: (value: string) => void;
   probe: (path: string) => Promise<MediaInfo>; preview: PreviewFn;
@@ -111,6 +112,21 @@ async function reviewOneScene(input: {
     let localPath: string;
     try {localPath = await resolveGeneratedFile(runDir, fileAnswer.value);}
     catch (error) {log(holdMessage(error)); continue;}
+
+    if (input.fastMode && scene.sceneId === 'contradiction') {
+      try {
+        const binding = await inspectGeneratedAsset({
+          runDir, fileName: fileAnswer.value, scene: {...scene, requiredFrames},
+          trimStartSec: 0, cropPosition: '50% 50%', observedAction: '', fastMode: true,
+          provider: input.provider,
+        }, {probe});
+        const duplicate = duplicateStoryScene(input.approved, binding);
+        if (duplicate) throw new ContentHold([
+          `${scene.sceneId}: story clips must use distinct source files (same bytes as ${duplicate})`]);
+        log('FAST_MODE: contradiction accepted at 50% 50% without a visual review');
+        return {kind: 'binding', binding};
+      } catch (error) {log(holdMessage(error)); continue;}
+    }
 
     let trimStartSec = 0;
     let cropPosition = '50% 50%';
@@ -201,7 +217,7 @@ export async function reviewGeneratedAssets(
   for (const scene of prompts.scenes) {
     if (approved.some(item => item.sceneId === scene.sceneId)) continue;
     const result = await reviewOneScene({
-      runDir: input.runDir, scene, timedPlan: input.timedPlan, approved, provider,
+      runDir: input.runDir, scene, timedPlan: input.timedPlan, approved, provider, fastMode: input.fastMode,
       ask: deps.ask, log: deps.log, probe, preview,
     });
     if (result.kind === 'quit') return {status: 'awaiting-assets', bindings: approved};
@@ -223,7 +239,7 @@ export async function reviewGeneratedAssets(
     if (!scene) {deps.log(`Unknown scene ${replace.value}`); continue;}
     const others = approved.filter(item => item.sceneId !== sceneId);
     const result = await reviewOneScene({
-      runDir: input.runDir, scene, timedPlan: input.timedPlan, approved: others, provider,
+      runDir: input.runDir, scene, timedPlan: input.timedPlan, approved: others, provider, fastMode: input.fastMode,
       ask: deps.ask, log: deps.log, probe, preview,
     });
     if (result.kind === 'quit') return {status: 'awaiting-assets', bindings: approved};

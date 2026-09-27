@@ -61,6 +61,37 @@ it('assigns shuffled filenames by scene ID, including Ptko4.mp4 for mechanism', 
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 
+it('FAST_MODE auto-accepts only the centered contradiction clip and revalidates it on resume', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-fast-review-'));
+  try {
+    await prepare(dir);
+    const prompts = {...promptPack(), workflow: 'gemini-flow' as const};
+    const {ask, questions} = scriptedAsk([
+      files.contradiction, ...approve(files.clue), ...approve(files.mechanism),
+      ...approve(files.second_reveal), ...approve(files.payoff), '',
+    ]);
+    const preview = vi.fn(async (_p, _s, _c, outputBase) => ({stillPath: `${outputBase}.jpg`, previewPath: `${outputBase}.mp4`}));
+    const input = {runDir: dir, prompts, timedPlan: voiced().timedPlan, previous: [], fastMode: true};
+    const result = await reviewGeneratedAssets(input, {
+      ask, log: () => {}, probe: async () => okMedia, preview, record: async () => {},
+    });
+    expect(result.status).toBe('ready');
+    expect(result.bindings[0]).toMatchObject({
+      sceneId: 'contradiction', trimStartSec: 0, cropPosition: '50% 50%',
+      observedAction: '', reviewMode: 'fast', approved: true,
+    });
+    expect(result.bindings.slice(1).every(b => b.observedAction && !b.reviewMode)).toBe(true);
+    expect(questions.filter(q => /Crop position/.test(q))).toHaveLength(4);
+    expect(preview.mock.calls.some(call => String(call[3]).includes('contradiction'))).toBe(false);
+    const resumeAsk = scriptedAsk(['']);
+    const resumed = await reviewGeneratedAssets({...input, previous: result.bindings}, {
+      ask: resumeAsk.ask, log: () => {}, probe: async () => okMedia, preview, record: async () => {},
+    });
+    expect(resumed.bindings[0]).toMatchObject({observedAction: '', reviewMode: 'fast'});
+    expect(resumeAsk.questions).toHaveLength(1);
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
 it('holds an invalid prompt pack instead of throwing a schema dump', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'v5-review-pack-'));
   try {

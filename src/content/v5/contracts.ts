@@ -152,11 +152,16 @@ export const generatedBindingSchema = z.object({
   sceneId: v5SceneIdSchema, kind: z.literal('generated'), provider: z.enum(['grok-imagine', 'google-flow']),
   fileName: text, localPath: text, sha256: text, promptHash: text,
   trimStartSec: z.number().finite().nonnegative(), cropPosition, media: mediaInfoSchema,
-  observedAction: text, approved: z.literal(true),
+  observedAction: z.string().trim(), reviewMode: z.literal('fast').optional(), approved: z.literal(true),
+}).superRefine((binding, ctx) => {
+  if (!binding.observedAction && (binding.sceneId !== 'contradiction' || binding.reviewMode !== 'fast'))
+    ctx.addIssue({code: 'custom', message: 'Observed action is required unless contradiction uses fast review'});
+  if (binding.reviewMode === 'fast' && binding.sceneId !== 'contradiction')
+    ctx.addIssue({code: 'custom', message: 'Fast review is only available for contradiction'});
 });
 export type GeneratedBinding = {
   sceneId: SceneId; kind: 'generated'; provider: 'grok-imagine' | 'google-flow';
   fileName: string; localPath: string; sha256: string; promptHash: string;
   trimStartSec: number; cropPosition: string; media: MediaInfo;
-  observedAction: string; approved: true;
+  observedAction: string; reviewMode?: 'fast'; approved: true;
 };

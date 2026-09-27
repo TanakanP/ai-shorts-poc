@@ -16,6 +16,7 @@ export const GENERATED_PREVIEW_DIR = 'asset-previews';
 export type InspectGeneratedAssetInput = {
   runDir: string; fileName: string; scene: ScenePrompt;
   trimStartSec: number; cropPosition: string; observedAction: string;
+  fastMode?: boolean;
   provider?: GeneratedBinding['provider'];
 };
 export type InspectGeneratedAssetDeps = {probe: (path: string) => Promise<MediaInfo>};
@@ -105,7 +106,10 @@ export async function inspectGeneratedAsset(
   input: InspectGeneratedAssetInput, deps: InspectGeneratedAssetDeps,
 ): Promise<GeneratedBinding> {
   const observedAction = input.observedAction.trim();
-  if (!observedAction) throw new ContentHold(['Observed action is required']);
+  if (input.fastMode && input.scene.sceneId !== 'contradiction')
+    throw new ContentHold(['FAST_MODE applies only to the contradiction clip']);
+  if (!observedAction && !(input.fastMode && input.scene.sceneId === 'contradiction'))
+    throw new ContentHold(['Observed action is required']);
   if (!Number.isInteger(input.scene.requiredFrames) || input.scene.requiredFrames < 1)
     throw new ContentHold([`${input.scene.sceneId}: required frames must be positive`]);
   if (!Number.isFinite(input.trimStartSec) || input.trimStartSec < 0)
@@ -131,7 +135,7 @@ export async function inspectGeneratedAsset(
     sceneId: input.scene.sceneId, kind: 'generated', provider: input.provider ?? 'grok-imagine',
     fileName: input.fileName.trim(), localPath, sha256: await hashFile(localPath),
     promptHash: input.scene.promptHash, trimStartSec, cropPosition: input.cropPosition,
-    media, observedAction, approved: true,
+    media, observedAction, ...(input.fastMode ? {reviewMode: 'fast' as const} : {}), approved: true,
   }, `${input.scene.sceneId}: generated binding is invalid`);
 }
 
@@ -149,6 +153,7 @@ export async function revalidateGeneratedBinding(
       runDir: input.runDir, fileName: parsed.fileName,
       scene: {...scene, requiredFrames: requiredImportFrames(scene, input.timedPlan)},
       trimStartSec: parsed.trimStartSec, cropPosition: parsed.cropPosition, observedAction: parsed.observedAction,
+      fastMode: parsed.reviewMode === 'fast',
       provider: parsed.provider,
     }, deps);
     if (inspected.sha256 !== parsed.sha256) return undefined;

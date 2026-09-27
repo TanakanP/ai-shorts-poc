@@ -111,6 +111,22 @@ Use a single `.mp4` basename only. No paths, URLs, subfolders or
 Five story scenes need **five distinct files** (different bytes). The channel
 outro reuses the opening clip; do not generate a sixth video.
 
+### Optional fast import for the opening clip
+
+Add `FAST_MODE=true` to a V5 command when you want to skip the crop, preview,
+confirmation and observed-action questions **for the contradiction clip only**.
+After you enter its filename, V5 uses trim start `0`, centered crop `50% 50%`,
+an automatic yes, and an empty observed-action description. It still checks
+that the file is a readable MP4 inside the run directory, probes its length and
+format, checks that it covers both the opening and reused outro intervals,
+hashes its bytes, and rejects a duplicate story clip. The other four scenes
+keep the normal review flow. The printed resume command retains `FAST_MODE=true`.
+
+```sh
+CONTENT_ENGINE_VERSION=v5 CONTENT_BRIEF_PATH=content/v5/pen-cap-hole.json FAST_MODE=true \
+  npm run generate -- --resume runs/<runId>
+```
+
 ## Resume and import
 
 ```sh

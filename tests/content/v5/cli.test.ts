@@ -44,7 +44,7 @@ it('does not construct a stock or Pexels client in V5 production setup', async (
   const pipeline = await readFile('src/pipeline/create-short-v5.ts', 'utf8');
   expect(pipeline).not.toMatch(/PexelsClient|pexels|stock\//);
   const config: AppConfig = {
-    contentEngineVersion: 'v5', scriptProvider: 'openai', voiceProvider: 'xai',
+    contentEngineVersion: 'v5', fastMode: false, scriptProvider: 'openai', voiceProvider: 'xai',
     xaiScriptModel: 'grok-4.3', elevenLabsApiKey: '', elevenLabsVoiceId: '', elevenLabsModel: 'eleven_multilingual_v2',
     openAiApiKey: 'oa-test', pexelsApiKey: '', xaiApiKey: 'xa-test', xaiVoiceId: 'eve',
     channelBrand: 'Tell Me Why', channelSignoff: 'Look closer every day.',
@@ -61,4 +61,6 @@ it('includes the reviewed brief and shell-quotes resume paths', () => {
   expect(resumeCommand("runs/it's $(unsafe)", "brief's file.json")).toBe(
     `CONTENT_ENGINE_VERSION=v5 CONTENT_BRIEF_PATH='brief'"'"'s file.json' npm run generate -- --resume 'runs/it'"'"'s $(unsafe)'`);
   expect(resumeCommand('runs/one')).toBe("CONTENT_ENGINE_VERSION=v5 npm run generate -- --resume 'runs/one'");
+  expect(resumeCommand('runs/one', 'content/v5/pen-cap-hole.json', true)).toBe(
+    "CONTENT_ENGINE_VERSION=v5 CONTENT_BRIEF_PATH='content/v5/pen-cap-hole.json' FAST_MODE=true npm run generate -- --resume 'runs/one'");
 });

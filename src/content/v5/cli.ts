@@ -123,7 +123,7 @@ export function createV5ProductionDeps(config: AppConfig, research: string,
       await writeFile(join(runDir, `${base}.md`), `${formatVisualPrompts(pack, plan)}\n`);
     },
     assets: (pack, timed, runDir, record, previous) => reviewGeneratedAssets(
-      {runDir, prompts: pack, timedPlan: timed, previous: previous ?? []},
+      {runDir, prompts: pack, timedPlan: timed, previous: previous ?? [], fastMode: config.fastMode},
       {ask, log, probe: probeMedia, record},
     ),
     validateAssets: validateGeneratedAssets,
@@ -135,9 +135,9 @@ function shellQuote(value: string): string {
   return `'${value.replaceAll("'", `'"'"'`)}'`;
 }
 
-export function resumeCommand(runDir: string, briefPath?: string): string {
+export function resumeCommand(runDir: string, briefPath?: string, fastMode = false): string {
   const brief = briefPath ? ` CONTENT_BRIEF_PATH=${shellQuote(briefPath)}` : '';
-  return `CONTENT_ENGINE_VERSION=v5${brief} npm run generate -- --resume ${shellQuote(runDir)}`;
+  return `CONTENT_ENGINE_VERSION=v5${brief}${fastMode ? ' FAST_MODE=true' : ''} npm run generate -- --resume ${shellQuote(runDir)}`;
 }
 
 export async function runV5Cli(args: string[]): Promise<number> {
@@ -182,7 +182,7 @@ export async function runV5Cli(args: string[]): Promise<number> {
         schemaVersion: 1, engineVersion: 'v5', topic, research, settings, briefFileHash,
       });
     }
-    console.log(`Resume this run after interruption:\n${resumeCommand(run.runDir, config.contentBriefPath)}`);
+    console.log(`Resume this run after interruption:\n${resumeCommand(run.runDir, config.contentBriefPath, config.fastMode)}`);
     const production = createV5ProductionDeps(config, research, question => terminal!.question(question), console.log);
     const providers = createProviders(config);
     const deps = withV5Checkpoints({
@@ -202,7 +202,7 @@ export async function runV5Cli(args: string[]): Promise<number> {
       console.log(`Status: awaiting-assets`);
       console.log(`Missing videos: ${result.missingSceneIds.join(', ')}`);
       console.log(`Prompts: ${result.promptsPath}`);
-      console.log(`Resume this run:\n${resumeCommand(result.runDir, config.contentBriefPath)}`);
+      console.log(`Resume this run:\n${resumeCommand(result.runDir, config.contentBriefPath, config.fastMode)}`);
       return 0;
     }
     console.log(`Done: ${result.outputPath}\nManifest: ${result.manifestPath}`);
