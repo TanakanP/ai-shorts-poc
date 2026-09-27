@@ -4,7 +4,7 @@
 
 The plan now contains **47 researched topics**: 24 newly researched replacements for the former “Prior >800” slots, alternating with the 23 researched topics already in the plan. All 24 prior-video rerun briefs have been removed from this batch. The first added topic is the microwave-door screen; the first existing topic is the pen-cap hole. Each row has its own V5 JSON brief, source link, YouTube title and description, and local generation command.
 
-The schedule runs **28 September through 21 October 2026**, with **two clips per day** at staggered times between **02:00 and 05:00 Asia/Bangkok**. The final day has one clip because the batch contains 47. Posting is manual; the dates do not schedule uploads. Every run command includes `FAST_MODE=true`, which gives the contradiction scene a centered `50% 50%` crop, an empty visual description and automatic approval after the imported video passes validation. Other scenes retain their normal review. Omit the flag to use the full contradiction review.
+The schedule runs **28 September through 21 October 2026**, with **two clips per day** at staggered times between **02:00 and 05:00 Asia/Bangkok**. The final day has one clip because the batch contains 47. Posting is manual; the dates do not schedule uploads. Every run command includes `FAST_MODE=true`: after the clip-start answer, each scene uses a centered `50% 50%` crop, an empty visual description and automatic approval after the imported video passes validation. Omit the flag to use the full visual review.
 
 ## Editorial research
 

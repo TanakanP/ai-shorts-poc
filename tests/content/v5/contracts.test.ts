@@ -74,7 +74,7 @@ it('rejects nonfinite media and requires an approved generated binding', () => {
   })).toThrow();
 });
 
-it('allows an empty action only for a fast-reviewed contradiction binding', () => {
+it('allows an empty action for fast-reviewed bindings in every scene', () => {
   const base = {
     sceneId: 'contradiction', kind: 'generated', provider: 'google-flow', fileName: 'opening.mp4',
     localPath: '/tmp/opening.mp4', sha256: 'abc', promptHash: 'def', trimStartSec: 0,
@@ -83,7 +83,8 @@ it('allows an empty action only for a fast-reviewed contradiction binding', () =
   };
   expect(() => generatedBindingSchema.parse({...base, reviewMode: 'fast'})).not.toThrow();
   expect(() => generatedBindingSchema.parse(base)).toThrow(/Observed action/);
-  expect(() => generatedBindingSchema.parse({...base, sceneId: 'clue', reviewMode: 'fast'})).toThrow(/Fast review|Observed action/);
+  expect(() => generatedBindingSchema.parse({...base, sceneId: 'clue', reviewMode: 'fast'})).not.toThrow();
+  expect(() => generatedBindingSchema.parse({...base, sceneId: 'clue'})).toThrow(/Observed action/);
 });
 
 it('exports strict provider schemas with explicit emphasis words', async () => {

@@ -154,10 +154,8 @@ export const generatedBindingSchema = z.object({
   trimStartSec: z.number().finite().nonnegative(), cropPosition, media: mediaInfoSchema,
   observedAction: z.string().trim(), reviewMode: z.literal('fast').optional(), approved: z.literal(true),
 }).superRefine((binding, ctx) => {
-  if (!binding.observedAction && (binding.sceneId !== 'contradiction' || binding.reviewMode !== 'fast'))
-    ctx.addIssue({code: 'custom', message: 'Observed action is required unless contradiction uses fast review'});
-  if (binding.reviewMode === 'fast' && binding.sceneId !== 'contradiction')
-    ctx.addIssue({code: 'custom', message: 'Fast review is only available for contradiction'});
+  if (!binding.observedAction && binding.reviewMode !== 'fast')
+    ctx.addIssue({code: 'custom', message: 'Observed action is required unless fast review is used'});
 });
 export type GeneratedBinding = {
   sceneId: SceneId; kind: 'generated'; provider: 'grok-imagine' | 'google-flow';

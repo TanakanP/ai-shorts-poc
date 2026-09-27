@@ -113,35 +113,22 @@ async function reviewOneScene(input: {
     try {localPath = await resolveGeneratedFile(runDir, fileAnswer.value);}
     catch (error) {log(holdMessage(error)); continue;}
 
-    if (input.fastMode && scene.sceneId === 'contradiction') {
-      try {
-        const binding = await inspectGeneratedAsset({
-          runDir, fileName: fileAnswer.value, scene: {...scene, requiredFrames},
-          trimStartSec: 0, cropPosition: '50% 50%', observedAction: '', fastMode: true,
-          provider: input.provider,
-        }, {probe});
-        const duplicate = duplicateStoryScene(input.approved, binding);
-        if (duplicate) throw new ContentHold([
-          `${scene.sceneId}: story clips must use distinct source files (same bytes as ${duplicate})`]);
-        log('FAST_MODE: contradiction accepted at 50% 50% without a visual review');
-        return {kind: 'binding', binding};
-      } catch (error) {log(holdMessage(error)); continue;}
-    }
-
     let trimStartSec = 0;
     let cropPosition = '50% 50%';
     for (;;) {
       const startAnswer = await askLine(ask, 'Clip start in seconds [0]: ');
       if (startAnswer.kind === 'quit') return {kind: 'quit'};
-      const cropAnswer = await askLine(ask, 'Crop position x% y% [50% 50%]: ');
-      if (cropAnswer.kind === 'quit') return {kind: 'quit'};
       const start = startAnswer.value ? Number(startAnswer.value) : 0;
-      cropPosition = cropAnswer.value || '50% 50%';
       if (!Number.isFinite(start) || start < 0) {
         log(`${scene.sceneId}: trim start must be a finite non-negative number`);
         continue;
       }
       trimStartSec = Math.round(start * 30) / 30;
+      if (!input.fastMode) {
+        const cropAnswer = await askLine(ask, 'Crop position x% y% [50% 50%]: ');
+        if (cropAnswer.kind === 'quit') return {kind: 'quit'};
+        cropPosition = cropAnswer.value || '50% 50%';
+      }
       try {cropFractions(cropPosition);}
       catch (error) {log(holdMessage(error)); continue;}
       try {
@@ -156,6 +143,20 @@ async function reviewOneScene(input: {
         }
       } catch (error) {log(holdMessage(error)); continue filenameLoop;}
       break;
+    }
+
+    if (input.fastMode) {
+      try {
+        const binding = await inspectGeneratedAsset({
+          runDir, fileName: fileAnswer.value, scene: {...scene, requiredFrames},
+          trimStartSec, cropPosition, observedAction: '', fastMode: true, provider: input.provider,
+        }, {probe});
+        const duplicate = duplicateStoryScene(input.approved, binding);
+        if (duplicate) throw new ContentHold([
+          `${scene.sceneId}: story clips must use distinct source files (same bytes as ${duplicate})`]);
+        log(`FAST_MODE: ${scene.sceneId} accepted at ${cropPosition} after trim ${trimStartSec}s without visual review`);
+        return {kind: 'binding', binding};
+      } catch (error) {log(holdMessage(error)); continue;}
     }
 
     try {
@@ -224,6 +225,8 @@ export async function reviewGeneratedAssets(
     approved = upsertBinding(approved, result.binding);
     await deps.record(approved);
   }
+
+  if (input.fastMode) return {status: 'ready', bindings: approved};
 
   for (;;) {
     deps.log(`Approved generated clips:\n${approved.map(item => `${item.sceneId}: ${item.fileName}`).join('\n')}`);

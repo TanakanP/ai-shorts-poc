@@ -106,9 +106,7 @@ export async function inspectGeneratedAsset(
   input: InspectGeneratedAssetInput, deps: InspectGeneratedAssetDeps,
 ): Promise<GeneratedBinding> {
   const observedAction = input.observedAction.trim();
-  if (input.fastMode && input.scene.sceneId !== 'contradiction')
-    throw new ContentHold(['FAST_MODE applies only to the contradiction clip']);
-  if (!observedAction && !(input.fastMode && input.scene.sceneId === 'contradiction'))
+  if (!observedAction && !input.fastMode)
     throw new ContentHold(['Observed action is required']);
   if (!Number.isInteger(input.scene.requiredFrames) || input.scene.requiredFrames < 1)
     throw new ContentHold([`${input.scene.sceneId}: required frames must be positive`]);

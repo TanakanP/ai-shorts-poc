@@ -100,6 +100,24 @@ it('rejects a nondecodable file when probing real bytes', async () => {
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 
+it('revalidates a fast-reviewed non-opening scene with its chosen trim', async () => {
+  const dir = await runDir();
+  try {
+    const fileName = 'clue.mp4';
+    await copyFile('tests/fixtures/tiny-video.mp4', join(dir, fileName));
+    const scene = promptPack().scenes[1];
+    const fast = await inspectGeneratedAsset({
+      runDir: dir, fileName, scene, trimStartSec: 0.5, cropPosition: '50% 50%',
+      observedAction: '', fastMode: true,
+    }, {probe: async () => ({...okMedia, durationSec: 7})});
+    expect(fast).toMatchObject({sceneId: 'clue', trimStartSec: 0.5, observedAction: '', reviewMode: 'fast'});
+    await expect(inspectGeneratedAsset({
+      runDir: dir, fileName, scene, trimStartSec: 2, cropPosition: '50% 50%',
+      observedAction: '', fastMode: true,
+    }, {probe: async () => okMedia})).rejects.toThrow(/cover the reviewed scene interval/);
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
+
 it('treats identical bytes under two filenames as a duplicate story clip', async () => {
   const dir = await runDir();
   try {

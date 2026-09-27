@@ -61,34 +61,43 @@ it('assigns shuffled filenames by scene ID, including Ptko4.mp4 for mechanism', 
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 
-it('FAST_MODE auto-accepts only the centered contradiction clip and revalidates it on resume', async () => {
+it('FAST_MODE keeps trim but skips crop and review for every scene, including after resume', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'v5-fast-review-'));
   try {
     await prepare(dir);
     const prompts = {...promptPack(), workflow: 'gemini-flow' as const};
     const {ask, questions} = scriptedAsk([
-      files.contradiction, ...approve(files.clue), ...approve(files.mechanism),
-      ...approve(files.second_reveal), ...approve(files.payoff), '',
+      files.contradiction, '0.5', files.clue, '0.25', files.mechanism, '0.5',
+      files.second_reveal, '0', files.payoff, '1',
     ]);
     const preview = vi.fn(async (_p, _s, _c, outputBase) => ({stillPath: `${outputBase}.jpg`, previewPath: `${outputBase}.mp4`}));
     const input = {runDir: dir, prompts, timedPlan: voiced().timedPlan, previous: [], fastMode: true};
     const result = await reviewGeneratedAssets(input, {
-      ask, log: () => {}, probe: async () => okMedia, preview, record: async () => {},
+      ask, log: () => {}, probe: async () => ({...okMedia, durationSec: 7}), preview, record: async () => {},
     });
     expect(result.status).toBe('ready');
     expect(result.bindings[0]).toMatchObject({
-      sceneId: 'contradiction', trimStartSec: 0, cropPosition: '50% 50%',
+      sceneId: 'contradiction', trimStartSec: 0.5, cropPosition: '50% 50%',
       observedAction: '', reviewMode: 'fast', approved: true,
     });
-    expect(result.bindings.slice(1).every(b => b.observedAction && !b.reviewMode)).toBe(true);
-    expect(questions.filter(q => /Crop position/.test(q))).toHaveLength(4);
-    expect(preview.mock.calls.some(call => String(call[3]).includes('contradiction'))).toBe(false);
-    const resumeAsk = scriptedAsk(['']);
-    const resumed = await reviewGeneratedAssets({...input, previous: result.bindings}, {
-      ask: resumeAsk.ask, log: () => {}, probe: async () => okMedia, preview, record: async () => {},
+    expect(result.bindings.find(b => b.sceneId === 'mechanism')?.trimStartSec).toBe(0.5);
+    expect(result.bindings.every(b => b.cropPosition === '50% 50%' && b.observedAction === '' && b.reviewMode === 'fast')).toBe(true);
+    expect(questions.filter(q => /Clip start in seconds/.test(q))).toHaveLength(5);
+    expect(questions).toHaveLength(10);
+    expect(questions.some(q => /Crop position|Does this exact crop|observed action/.test(q))).toBe(false);
+    expect(preview).not.toHaveBeenCalled();
+    const resumeAsk = scriptedAsk([
+      files.mechanism, '0.5', files.second_reveal, '0', files.payoff, '1',
+    ]);
+    const resumed = await reviewGeneratedAssets({...input, previous: result.bindings.slice(0, 2)}, {
+      ask: resumeAsk.ask, log: () => {}, probe: async () => ({...okMedia, durationSec: 7}), preview, record: async () => {},
     });
-    expect(resumed.bindings[0]).toMatchObject({observedAction: '', reviewMode: 'fast'});
-    expect(resumeAsk.questions).toHaveLength(1);
+    expect(resumed.status).toBe('ready');
+    expect(resumed.bindings).toHaveLength(5);
+    expect(resumed.bindings[0]).toMatchObject({trimStartSec: 0.5, observedAction: '', reviewMode: 'fast'});
+    expect(resumeAsk.questions.filter(q => /Clip start in seconds/.test(q))).toHaveLength(3);
+    expect(resumeAsk.questions).toHaveLength(6);
+    expect(resumeAsk.questions.some(q => /Crop position|Does this exact crop|observed action/.test(q))).toBe(false);
   } finally {await rm(dir, {recursive: true, force: true});}
 });
 

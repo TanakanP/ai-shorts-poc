@@ -111,16 +111,19 @@ Use a single `.mp4` basename only. No paths, URLs, subfolders or
 Five story scenes need **five distinct files** (different bytes). The channel
 outro reuses the opening clip; do not generate a sixth video.
 
-### Optional fast import for the opening clip
+### Optional fast import for every scene
 
-Add `FAST_MODE=true` to a V5 command when you want to skip the crop, preview,
-confirmation and observed-action questions **for the contradiction clip only**.
-After you enter its filename, V5 uses trim start `0`, centered crop `50% 50%`,
-an automatic yes, and an empty observed-action description. It still checks
+Add `FAST_MODE=true` to a V5 command when you want to enter a filename and
+`Clip start in seconds [0]:` for each scene, then skip its crop, preview,
+confirmation and observed-action questions. V5 uses the entered trim start,
+centered crop `50% 50%`, an automatic yes, and an empty observed-action
+description. It still checks
 that the file is a readable MP4 inside the run directory, probes its length and
 format, checks that it covers both the opening and reused outro intervals,
-hashes its bytes, and rejects a duplicate story clip. The other four scenes
-keep the normal review flow. The printed resume command retains `FAST_MODE=true`.
+hashes its bytes, and rejects a duplicate story clip. The printed resume
+command retains `FAST_MODE=true`. Fast mode also skips the final replacement
+question once all five scenes are assigned. Omit it for the full visual review
+or to replace an already assigned scene.
 
 ```sh
 CONTENT_ENGINE_VERSION=v5 CONTENT_BRIEF_PATH=content/v5/pen-cap-hole.json FAST_MODE=true \
@@ -155,7 +158,7 @@ Ptko4.mp4
 `mechanism` binds to `Ptko4.mp4` by the name you enter, not by copy order or
 directory sort.
 
-Then:
+Without `FAST_MODE`, then:
 
 - `Clip start in seconds [0]:` — Enter for `0`
 - `Crop position x% y% [50% 50%]:` — Enter for `50% 50%`
