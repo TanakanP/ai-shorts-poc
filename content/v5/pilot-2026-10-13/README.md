@@ -1,6 +1,6 @@
 # V5 pilot: four briefs, one post per day
 
-Prepared 13 October 2026. These are source-checked V5 inputs for the first block of the editorial pilot. Target audience: global English-speaking viewers. Use the current V5 engine and manual Gemini/Google Flow import. Package, narration, prompt and actual asset review still happen during generation.
+Prepared 13 October 2026. These are source-checked V5 inputs for the first block of the editorial pilot. Target audience: global English-speaking viewers. Use the current V5 engine and manual Gemini/Google Flow import with fast mode enabled. Package, narration and prompt review still happen during generation; imported files use the existing fast-mode validation.
 
 Post **one Short per day** in the order below, starting when the first video is ready. No start date or posting hour has been assumed. Use a comparable posting slot across the four days and record actual publication timestamps in Asia/Bangkok. These entries are a manual run order, not an upload schedule or scheduler.
 
@@ -28,12 +28,12 @@ Keep voice, karaoke, local music, sign-off, five story assets and local MP4 rend
 
 ## Run commands
 
-Run these from the repository root in an interactive terminal. Each topic argument exactly matches its JSON. `FAST_MODE=false` enables the existing crop and motion review even if fast mode is enabled elsewhere.
+Run these from the repository root in an interactive terminal. Each topic argument exactly matches its JSON. `FAST_MODE=true` asks for each video filename and clip start, then uses a centered crop and automatic approval, skipping crop, preview and observed-action questions. File, duration and duplicate checks still apply.
 
 ### Day 1: That Round Street Cover Has a Job You Missed
 
 ```sh
-CONTENT_ENGINE_VERSION=v5 FAST_MODE=false \
+CONTENT_ENGINE_VERSION=v5 FAST_MODE=true \
   CONTENT_BRIEF_PATH=content/v5/pilot-2026-10-13/01-round-street-cover.json \
   npm run generate -- 'A Round Street Cover Cannot Pass Through Its Matching Opening' 'Use the reviewed pilot brief'
 ```
@@ -41,7 +41,7 @@ CONTENT_ENGINE_VERSION=v5 FAST_MODE=false \
 ### Day 2: Salt Can Melt Road Ice Below 0°C
 
 ```sh
-CONTENT_ENGINE_VERSION=v5 FAST_MODE=false \
+CONTENT_ENGINE_VERSION=v5 FAST_MODE=true \
   CONTENT_BRIEF_PATH=content/v5/pilot-2026-10-13/02-road-salt-subzero.json \
   npm run generate -- 'Dissolved Road Salt Can Melt Ice Below Zero Degrees Celsius' 'Use the reviewed pilot brief'
 ```
@@ -49,7 +49,7 @@ CONTENT_ENGINE_VERSION=v5 FAST_MODE=false \
 ### Day 3: That Road Sign Has a Safety Feature You Missed
 
 ```sh
-CONTENT_ENGINE_VERSION=v5 FAST_MODE=false \
+CONTENT_ENGINE_VERSION=v5 FAST_MODE=true \
   CONTENT_BRIEF_PATH=content/v5/pilot-2026-10-13/03-breakaway-sign-support.json \
   npm run generate -- 'A Breakaway Road Sign Support Is Designed to Release at Its Base' 'Use the reviewed pilot brief'
 ```
@@ -57,22 +57,22 @@ CONTENT_ENGINE_VERSION=v5 FAST_MODE=false \
 ### Day 4: Why This Dam Has Concrete Teeth
 
 ```sh
-CONTENT_ENGINE_VERSION=v5 FAST_MODE=false \
+CONTENT_ENGINE_VERSION=v5 FAST_MODE=true \
   CONTENT_BRIEF_PATH=content/v5/pilot-2026-10-13/04-spillway-baffle-blocks.json \
   npm run generate -- 'Concrete Baffle Blocks Dissipate Spillway Energy Before It Reaches the Riverbed' 'Use the reviewed pilot brief'
 ```
 
 Each first run stops at `awaiting-assets` after planning, voice/timing and prompt review. Generate the five Gemini stills and matching Flow clips using the saved prompt pack, then copy the MP4s into that run directory.
 
-For resume, use the exact command printed for that run and explicitly keep `FAST_MODE=false` if your environment normally enables it. For example, replacing the placeholder with the actual printed directory:
+For resume, use the exact command printed for that run, retaining `FAST_MODE=true`. For example, replacing the placeholder with the actual printed directory:
 
 ```sh
-CONTENT_ENGINE_VERSION=v5 FAST_MODE=false \
+CONTENT_ENGINE_VERSION=v5 FAST_MODE=true \
   CONTENT_BRIEF_PATH=content/v5/pilot-2026-10-13/01-round-street-cover.json \
   npm run generate -- --resume runs/ACTUAL_RUN_DIRECTORY
 ```
 
-Use the corresponding brief path for Days 2–4. Resume imports and reviews the files before rendering; it does not publish. Existing V5 owner instructions are in [the V5 workflow guide](../README.md).
+Use the corresponding brief path for Days 2–4. Resume validates and imports the files using fast mode before rendering; it does not publish. Existing V5 owner instructions are in [the V5 workflow guide](../README.md).
 
 ## Visual review priorities
 
@@ -81,7 +81,7 @@ Use the corresponding brief path for Days 2–4. Resume imports and reviews the 
 - **C:** one accurate rectangular slip-base support design across shots. Inspect the cited base/hinge references before approving imagery. Model motion must not look like documentary crash footage; give no bolt-adjustment instructions.
 - **D:** blocks belong in the downstream stilling basin, with consistent flow direction and a visible outgoing channel. No generated disaster or claim of an actual release at Gross Dam.
 
-Check the first frame on mute and the mechanism at the actual 9:16 crop and used interval. Readable files and sufficient duration do not establish factual visual accuracy.
+Use these points when selecting the generated clips before fast import. Fast mode does not open the crop or motion preview. Readable files and sufficient duration do not establish factual visual accuracy.
 
 ## Source review
 
