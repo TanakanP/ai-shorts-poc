@@ -1,0 +1,45 @@
+{
+  "topicId": "pilot-round-street-cover",
+  "topic": "A Round Street Cover Cannot Pass Through Its Matching Opening",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers. Channel promise: surprising engineering hidden in recognizable objects. Generate five diverse declarative subject-first hooks, 5–10 spoken words preferred, 12 absolute maximum; opening display copy 2–5 words. The suggested hook is a candidate, not a pre-approved package. State only the supported result in the hook; save the physical explanation for mechanism. Keep the explicit titleSeed and descriptionSeed. The title is metadata, not a line to repeat in the story. Use six functions across five voiced scenes: visual paradox shares contradiction, then clue, mechanism, second_reveal, payoff. Protect fact consequence for the distinct second_reveal; do not disclose it in contradiction or clue. The clue adds a concrete observation rather than restating the hook. Target 25–29 seconds including the configured sign-off, hard maximum 30. Aim for 65–72 total spoken words including sign-off without padding. Mechanism begins at or after 7 seconds; second_reveal starts between 14 and 21 seconds. Each later scene must fit its measured used interval within a six-second source, including the incoming 0.2-second transition. Keep voice, distinct spoken/display copy, karaoke, local BGM and channel outro. No generic spoken CTA or dark wash. Generate five distinct Gemini first frames and matching Google Flow clips. The opening still already shows the recognizable subject and puzzling result. Use a different camera role per scene, varying at least two of scale, angle, setting and physical action between adjacent shots. Important action must finish inside the used interval, not just the six-second source. Generated media is explanatory illustration, never documentary evidence. Do not invent a crash, disaster, rescue, measurement or demonstration outcome. Use only facts below and respect all factBoundaries. Review the actual portrait crop and motion before binding local videos.\n\nEditorial pilot condition: A: familiar question, current packaging. Preserve the agreed title style; current-style controls should remain clear and accurate, not deliberately weak. Familiarity is an editorial hypothesis, not a measured popularity claim.\n\nYouTube title seed: That Round Street Cover Has a Job You Missed\nYouTube description seed: A correctly sized round cover stays wider than its opening whichever way it turns. Its shape also helps move it. Have you noticed a round cover inside a square frame? #TellMeWhyyyyyy #Shorts\n\nSuggested opening hook: This round street cover refuses to fall through.\nSuggested opening display: Cover Won’t Fall\nSelect one meaningful emphasis token from the final opening display copy.\n\nScene development:\ncontradiction: close oblique view of the recognizable round cover tilted above its matching frame on a clearly identifiable workshop demonstration prop; it remains supported above the opening. Show the non-passing result without explaining dimensions or showing a square comparison.\nclue: higher-angle view as the same prop cover changes orientation but remains outside the opening. A circle and its matching frame stay rigid; do not roll the cover yet.\nmechanism: practical top and low side views reveal the seating lip and the cover extending beyond the smaller clear opening. Explain constant width in ordinary words; do not draw a diagram or shrink the disk to manufacture the result.\nsecond_reveal: fact consequence; a gloved hand rolls the same small round prop cover a short distance on its edge along a workbench. Keep it visibly a small prop, not a person casually handling a heavy municipal casting.\npayoff: return to a seated round street cover in ordinary pavement; connect the protection against passing through and the ability to roll without introducing new claims.\n\nSource-backed facts:\nmechanism: A correctly sized round cover remains wider than its smaller circular clear opening because its width is constant across rotations, so it cannot pass through that opening.\norientation: An ordinary unkeyed circular cover does not need its corners aligned with the frame when it is seated.\nconsequence: A round cast-iron cover can be moved by rolling it on its edge rather than lifting it for the entire move.\n\nFactual boundaries:\nThe non-passing claim requires a correctly sized circular cover, an intact matching seat and a clear opening smaller than the cover; it is not a guarantee about damaged frames or mismatched covers.\nNot all covers are round. A square outer frame may contain a circular cover; do not confuse the outer frame with the clear opening.\nDo not generalize rotation freedom to keyed, hinged, locking or other special covers.\nDo not claim that circles are the only possible non-passing shape, and do not claim every square cover falls through its opening.\nDo not invent weight, load rating, manufacturer certification or the sole historical reason for using round covers.\nUse a visibly small workshop prop for handling and rolling. Do not depict an unprotected person lifting a full-size cover or working over an open live-road hole.",
+  "subjectAliases": [
+    "street cover",
+    "cover",
+    "round cover",
+    "manhole cover"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "A correctly sized round cover remains wider than its smaller circular clear opening because its width is constant across rotations, so it cannot pass through that opening.",
+      "sourceUrls": [
+        "https://www.domcastmetals.com/why-are-manhole-covers-round"
+      ]
+    },
+    {
+      "id": "orientation",
+      "statement": "An ordinary unkeyed circular cover does not need its corners aligned with the frame when it is seated.",
+      "sourceUrls": [
+        "https://www.domcastmetals.com/why-are-manhole-covers-round"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "A round cast-iron cover can be moved by rolling it on its edge rather than lifting it for the entire move.",
+      "sourceUrls": [
+        "https://www.domcastmetals.com/why-are-manhole-covers-round"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "The non-passing claim requires a correctly sized circular cover, an intact matching seat and a clear opening smaller than the cover; it is not a guarantee about damaged frames or mismatched covers.",
+    "Not all covers are round. A square outer frame may contain a circular cover; do not confuse the outer frame with the clear opening.",
+    "Do not generalize rotation freedom to keyed, hinged, locking or other special covers.",
+    "Do not claim that circles are the only possible non-passing shape, and do not claim every square cover falls through its opening.",
+    "Do not invent weight, load rating, manufacturer certification or the sole historical reason for using round covers.",
+    "Use a visibly small workshop prop for handling and rolling. Do not depict an unprotected person lifting a full-size cover or working over an open live-road hole."
+  ],
+  "titleSeed": "That Round Street Cover Has a Job You Missed",
+  "descriptionSeed": "A correctly sized round cover stays wider than its opening whichever way it turns. Its shape also helps move it. Have you noticed a round cover inside a square frame? #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage: recognizable real-world objects, natural materials, practical lighting, restrained camera motion and physically plausible actions. Vary shot scale, angle, setting and movement across five scenes. Preserve the geometry, proportions, materials and component identity wherever the subject repeats. A tabletop model is a physical explanatory prop and must remain clearly a model, not an apparent record of a real event. No mascot, cartoon, sketch, floating arrows, diagram graphics, glossy 3D render, generated captions, labels, logos or invented numbers. Do not rely on generated lettering or numerical readings to establish a fact. No dark wash or disaster spectacle. Generated footage illustrates the sourced explanation, not documentary proof. Subject anchor: One unkeyed round dark cast-iron cover and its intact circular seating frame, with the clear opening smaller than the cover diameter. Use the same proportions in street context and a clearly identifiable workshop scale model; the model is not full-size street footage."
+}

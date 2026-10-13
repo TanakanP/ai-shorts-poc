@@ -1,0 +1,45 @@
+{
+  "topicId": "pilot-road-salt-subzero",
+  "topic": "Dissolved Road Salt Can Melt Ice Below Zero Degrees Celsius",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers. Channel promise: surprising engineering hidden in recognizable objects. Generate five diverse declarative subject-first hooks, 5–10 spoken words preferred, 12 absolute maximum; opening display copy 2–5 words. The suggested hook is a candidate, not a pre-approved package. State only the supported result in the hook; save the physical explanation for mechanism. Keep the explicit titleSeed and descriptionSeed. The title is metadata, not a line to repeat in the story. Use six functions across five voiced scenes: visual paradox shares contradiction, then clue, mechanism, second_reveal, payoff. Protect fact consequence for the distinct second_reveal; do not disclose it in contradiction or clue. The clue adds a concrete observation rather than restating the hook. Target 25–29 seconds including the configured sign-off, hard maximum 30. Aim for 65–72 total spoken words including sign-off without padding. Mechanism begins at or after 7 seconds; second_reveal starts between 14 and 21 seconds. Each later scene must fit its measured used interval within a six-second source, including the incoming 0.2-second transition. Keep voice, distinct spoken/display copy, karaoke, local BGM and channel outro. No generic spoken CTA or dark wash. Generate five distinct Gemini first frames and matching Google Flow clips. The opening still already shows the recognizable subject and puzzling result. Use a different camera role per scene, varying at least two of scale, angle, setting and physical action between adjacent shots. Important action must finish inside the used interval, not just the six-second source. Generated media is explanatory illustration, never documentary evidence. Do not invent a crash, disaster, rescue, measurement or demonstration outcome. Use only facts below and respect all factBoundaries. Review the actual portrait crop and motion before binding local videos.\n\nEditorial pilot condition: B: familiar question, stronger concrete packaging. Preserve the agreed title style; current-style controls should remain clear and accurate, not deliberately weak. Familiarity is an editorial hypothesis, not a measured popularity claim.\n\nYouTube title seed: Salt Can Melt Road Ice Below 0°C\nYouTube description seed: Dissolved road salt lowers water’s freezing point. Road crews can also wet the salt before spreading it so more stays on the pavement. Have you seen a truck spraying liquid as it spreads salt? #TellMeWhyyyyyy #Shorts\n\nSuggested opening hook: Salt can melt ice below zero degrees Celsius.\nSuggested opening display: Ice Melts Below Zero\nSelect one meaningful emphasis token from the final opening display copy.\n\nScene development:\ncontradiction: close low view of recognizable salt grains resting on icy asphalt with a small existing liquid patch. Treat it as an illustrative result, not a timed experiment or temperature measurement; no instant full-road melt.\nclue: wider view establishes that frozen patches and a small liquid patch coexist. Do not show a heater or reveal pre-wetting equipment before the second reveal.\nmechanism: practical close view of grains dissolving in a thin wet patch on the same asphalt. Explain the lower freezing point of salt water; avoid invented molecular diagrams, heat glow or a fake thermometer.\nsecond_reveal: fact consequence; close rear view of maintenance equipment shows a liquid spray contacting the salt at the spinner before spreading. Clearly distinguish this pre-wetting from spraying a bare road ahead of a storm.\npayoff: contextual winter-road view shows patchy clearing and maintenance activity; connect the chemistry and getting more salt to stay on the pavement without claiming the road is now universally safe.\n\nSource-backed facts:\nmechanism: Dissolved road salt lowers the freezing point of water, allowing ice to melt at some pavement temperatures below zero degrees Celsius.\nconsequence: MnDOT pre-wets salt with brine or other liquid deicers at the spreader spinner to reduce bounce and scatter, help salt adhere to pavement and start melting more quickly.\ntemperature: Road salt becomes less effective as pavement temperature falls; pavement temperature and air temperature can differ.\n\nFactual boundaries:\nSay zero degrees Celsius in narration; the title’s 0°C does not mean zero degrees Fahrenheit.\nThe salt must dissolve. Do not imply that it warms the road, instantly melts all ice or works effectively at every subzero temperature.\nDo not use air temperature as proof of pavement temperature or invent a recorded temperature, concentration, melting time or fixed performance threshold.\nScope the pre-wetting example to MnDOT’s described equipment and practice. Pre-wetting salt at a spinner is distinct from applying brine directly to the road for anti-icing.\nThe second reveal is getting more salt to stay on the pavement, not a repetition of lowering the freezing point.\nDo not depict driving on a supposedly guaranteed safe treated road or provide household chemical recipes.",
+  "subjectAliases": [
+    "salt",
+    "road salt",
+    "ice",
+    "road ice"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Dissolved road salt lowers the freezing point of water, allowing ice to melt at some pavement temperatures below zero degrees Celsius.",
+      "sourceUrls": [
+        "https://www.dot.state.mn.us/maintenance/faq.html"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "MnDOT pre-wets salt with brine or other liquid deicers at the spreader spinner to reduce bounce and scatter, help salt adhere to pavement and start melting more quickly.",
+      "sourceUrls": [
+        "https://www.dot.state.mn.us/maintenance/faq.html"
+      ]
+    },
+    {
+      "id": "temperature",
+      "statement": "Road salt becomes less effective as pavement temperature falls; pavement temperature and air temperature can differ.",
+      "sourceUrls": [
+        "https://www.dot.state.mn.us/maintenance/faq.html"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Say zero degrees Celsius in narration; the title’s 0°C does not mean zero degrees Fahrenheit.",
+    "The salt must dissolve. Do not imply that it warms the road, instantly melts all ice or works effectively at every subzero temperature.",
+    "Do not use air temperature as proof of pavement temperature or invent a recorded temperature, concentration, melting time or fixed performance threshold.",
+    "Scope the pre-wetting example to MnDOT’s described equipment and practice. Pre-wetting salt at a spinner is distinct from applying brine directly to the road for anti-icing.",
+    "The second reveal is getting more salt to stay on the pavement, not a repetition of lowering the freezing point.",
+    "Do not depict driving on a supposedly guaranteed safe treated road or provide household chemical recipes."
+  ],
+  "titleSeed": "Salt Can Melt Road Ice Below 0°C",
+  "descriptionSeed": "Dissolved road salt lowers water’s freezing point. Road crews can also wet the salt before spreading it so more stays on the pavement. Have you seen a truck spraying liquid as it spreads salt? #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage: recognizable real-world objects, natural materials, practical lighting, restrained camera motion and physically plausible actions. Vary shot scale, angle, setting and movement across five scenes. Preserve the geometry, proportions, materials and component identity wherever the subject repeats. A tabletop model is a physical explanatory prop and must remain clearly a model, not an apparent record of a real event. No mascot, cartoon, sketch, floating arrows, diagram graphics, glossy 3D render, generated captions, labels, logos or invented numbers. Do not rely on generated lettering or numerical readings to establish a fact. No dark wash or disaster spectacle. Generated footage illustrates the sourced explanation, not documentary proof. Subject anchor: An icy dark asphalt surface and coarse sodium-chloride road-salt grains, with small liquid patches under plausible subzero conditions. Later show a Minnesota-style maintenance spreader whose liquid spray contacts salt at the rear spinner; keep it visibly road equipment, not a kitchen salt shaker."
+}
