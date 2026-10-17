@@ -204,6 +204,23 @@ existing voice/music path, not from Flow audio.
 Final target is 25–29 seconds including the configured sign-off, hard maximum 30,
 1080×1920 at 30fps, no dark wash.
 
+## Diagnosing xAI script transport failures
+
+If package, story or prompt generation fails, the terminal and the run's
+`generation-manifest.json` / `run.json` include the xAI diagnostic. Script failures
+identify the operation, endpoint, model, schema, elapsed milliseconds and configured
+timeout. Recognized underlying causes distinguish DNS, connection reset, TLS,
+connection timeout, response-header timeout and response-body timeout failures.
+HTTP failures retain their status. Raw request/response bodies, headers, prompts,
+error messages and stacks are not copied into transport diagnostics.
+
+For example, a simulated connection reset produces `code: econnreset`, a fixed
+description and a `causes` list containing `Error (ECONNRESET)`. This is an example,
+not a diagnosis of earlier runs: their discarded network causes cannot be recovered.
+Rerun using the saved resume command to capture the new diagnostic, then share its
+JSON output when investigating a recurring failure. This adds diagnostics; it does
+not automatically retry requests or change the script timeout.
+
 ## Keys and engines
 
 | Engine | How | Pexels |

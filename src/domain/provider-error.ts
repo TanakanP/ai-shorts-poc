@@ -4,6 +4,13 @@ export type ProviderDiagnostic = {
   status?: number;
   code?: string;
   detail?: string;
+  operation?: 'plan-generation';
+  endpoint?: string;
+  model?: string;
+  schema?: string;
+  elapsedMs?: number;
+  timeoutMs?: number;
+  causes?: string[];
 };
 
 export class ProviderError extends Error {

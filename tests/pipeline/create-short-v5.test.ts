@@ -8,6 +8,7 @@ import {withV5Checkpoints} from '../../src/content/v5/checkpoints';
 import {planV5Story} from '../../src/content/v5/plan';
 import {createShortV5, type V5Deps} from '../../src/pipeline/create-short-v5';
 import {persistJson} from '../../src/pipeline/persist-json';
+import {ProviderError} from '../../src/domain/provider-error';
 import {CHANNEL, brief, contentPlan, promptPack, voiced, writeBindings, writeVoice} from '../content/v5/fixtures';
 
 async function setup(dir: string, resume = false) {
@@ -48,6 +49,29 @@ async function setup(dir: string, resume = false) {
 async function manifest(dir: string) {
   return JSON.parse(await readFile(join(dir, 'generation-manifest.json'), 'utf8'));
 }
+
+it('persists actionable xAI package diagnostics without serializing the raw cause', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'v5-xai-diagnostic-'));
+  try {
+    const {deps} = await setup(dir);
+    const diagnostic = {
+      provider: 'xai' as const, kind: 'transport' as const, code: 'econnreset',
+      detail: 'The connection was reset before the request completed.',
+      operation: 'plan-generation' as const, endpoint: 'https://api.x.ai/v1/responses',
+      model: 'grok-4.3', schema: 'v5_package', elapsedMs: 250, timeoutMs: 900000,
+      causes: ['TypeError', 'Error (ECONNRESET)'],
+    };
+    const failure = new ProviderError('xAI plan generation failed', diagnostic,
+      {cause: new Error('Bearer private-api-key and prompt')});
+    deps.package = async () => {throw failure;};
+    await expect(createShortV5(brief.topic, deps)).rejects.toBe(failure);
+    const saved = await manifest(dir);
+    expect(saved).toMatchObject({status: 'failed', stage: 'package', error: {diagnostic}});
+    expect(JSON.parse(await readFile(join(dir, 'run.json'), 'utf8'))).toEqual(saved);
+    expect(JSON.stringify(saved)).not.toMatch(/Bearer|private-api-key|and prompt/);
+    expect(deps.synthesize).not.toHaveBeenCalled();
+  } finally {await rm(dir, {recursive: true, force: true});}
+});
 
 it('exports prompts and waits on the first run without importing or rendering', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'v5-wait-'));

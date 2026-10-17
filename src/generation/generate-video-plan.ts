@@ -12,6 +12,7 @@ import {
   type VideoPlanV3,
 } from '../domain/video-plan';
 import {ProviderError} from '../domain/provider-error';
+import {transportFailureDiagnostic} from '../domain/transport-diagnostic';
 import {generateHooks} from './generate-hooks';
 import {generateStory, type GenerateStoryInput} from './generate-story';
 import {selectHook} from './select-hook';
@@ -152,11 +153,23 @@ export function createXaiStructuredPlanGenerator(
 function createStructuredPlanGenerator(
   apiKey: string, schema: ZodType, schemaName: string, provider: 'openai' | 'xai', model: string,
 ): StructuredPlanGenerator {
-  const client = new OpenAI(provider === 'xai' ? xaiPlanClientOptions(apiKey) : {apiKey});
+  const xaiOptions = provider === 'xai' ? xaiPlanClientOptions(apiKey) : undefined;
+  const client = new OpenAI(xaiOptions ?? {apiKey});
 
   return async ({system, input}) => {
+    const started = Date.now();
+    let transportCause: unknown;
+    // Capture fetch failures per request: the SDK discards their cause when it
+    // converts them into APIConnectionTimeoutError. Do not share mutable state
+    // between concurrent calls using the same generator.
+    const requestClient = xaiOptions ? client.withOptions({
+      fetch: async (url, init) => {
+        try {return await xaiOptions.fetch(url, init);}
+        catch (error) {transportCause = error; throw error;}
+      },
+    }) : client;
     try {
-      const response = await client.responses.parse({
+      const response = await requestClient.responses.parse({
         model,
         instructions: system,
         input,
@@ -175,6 +188,8 @@ function createStructuredPlanGenerator(
       const message = cause instanceof Error ? cause.message : '';
       const isSchemaError = name === 'ZodError' || message.includes('not supported by the API');
       const isTimeout = name === 'APIConnectionTimeoutError' || /timed? ?out/i.test(message);
+      const transport = status === undefined && !isSchemaError
+        ? transportFailureDiagnostic(cause, transportCause) : undefined;
       const kind = status === 401 || status === 403
         ? 'auth'
         : status === 429
@@ -188,8 +203,15 @@ function createStructuredPlanGenerator(
           provider,
           kind,
           ...(status ? {status} : {}),
-          ...(isTimeout ? {code: 'timeout'} : code ? {code} : {}),
-          ...((isSchemaError || isTimeout) && message ? {detail: message} : {}),
+          ...(transport ?? {}),
+          ...(isTimeout ? {code: 'timeout'} : transport?.code ? {} : code ? {code} : {}),
+          ...(isSchemaError && message ? {detail: message}
+            : isTimeout && !transport?.code ? {detail: 'Request timed out.'}
+              : status ? {detail: `Provider returned HTTP ${status}.`} : {}),
+          ...(provider === 'xai' ? {
+            operation: 'plan-generation', endpoint: 'https://api.x.ai/v1/responses',
+            model, schema: schemaName, elapsedMs: Date.now() - started, timeoutMs: XAI_PLAN_TIMEOUT_MS,
+          } : {}),
         },
         {cause},
       );
