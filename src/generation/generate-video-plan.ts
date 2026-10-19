@@ -16,6 +16,7 @@ import {transportFailureDiagnostic} from '../domain/transport-diagnostic';
 import {generateHooks} from './generate-hooks';
 import {generateStory, type GenerateStoryInput} from './generate-story';
 import {selectHook} from './select-hook';
+import {DEFAULT_OPENAI_SCRIPT_MODEL} from '../config';
 
 export type StructuredPlanGenerator = (args: {
   system: string;
@@ -106,8 +107,9 @@ export function createOpenAIStructuredPlanGenerator(
   apiKey: string,
   schema: ZodType = videoPlanSchema,
   schemaName = 'video_plan',
+  model = DEFAULT_OPENAI_SCRIPT_MODEL,
 ): StructuredPlanGenerator {
-  return createStructuredPlanGenerator(apiKey, schema, schemaName, 'openai', 'gpt-5.6');
+  return createStructuredPlanGenerator(apiKey, schema, schemaName, 'openai', model);
 }
 
 export const XAI_PLAN_TIMEOUT_MS = 15 * 60 * 1000;

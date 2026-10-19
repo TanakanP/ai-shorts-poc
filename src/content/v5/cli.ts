@@ -26,10 +26,8 @@ import {
 } from './checkpoints';
 import type {VideoPlan} from '../../domain/video-plan';
 
-const OPENAI_SCRIPT_MODEL = 'gpt-5.6';
-
 function scriptModel(config: AppConfig): string {
-  return config.scriptProvider === 'xai' ? config.xaiScriptModel : OPENAI_SCRIPT_MODEL;
+  return config.scriptProvider === 'xai' ? config.xaiScriptModel : config.openAiScriptModel;
 }
 
 function voiceId(config: AppConfig): string {
@@ -173,7 +171,7 @@ export async function runV5Cli(args: string[]): Promise<number> {
       channelSignoff: settings.channelSignoff, musicContentHash: settings.musicContentHash,
       promptContractVersion: settings.promptContractVersion,
     }))
-      throw new Error('Voice, channel, music or prompt-contract settings changed. Start a fresh run.');
+      throw new Error('Script provider/model, voice, channel, music or prompt-contract settings changed. Start a fresh run.');
     if (saved?.briefFileHash !== undefined && saved.briefFileHash !== briefFileHash)
       throw new Error('Brief file changed. Start a fresh run.');
     const run = runDir ? {runDir, runId: basename(runDir)} : await createRunDirectory(topic);

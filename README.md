@@ -33,15 +33,18 @@ Set these independently in `.env`; existing installations keep OpenAI scripts an
 
 ```dotenv
 SCRIPT_PROVIDER=openai
+OPENAI_SCRIPT_MODEL=gpt-6.1-sol
 VOICE_PROVIDER=xai
 ```
 
 | Setting | Choices | Required settings |
 | --- | --- | --- |
-| `SCRIPT_PROVIDER` | `openai` (default) | `OPENAI_API_KEY` |
+| `SCRIPT_PROVIDER` | `openai` (default) | `OPENAI_API_KEY`; optional `OPENAI_SCRIPT_MODEL` (default `gpt-6.1-sol`) |
 | | `xai` | `XAI_API_KEY`; optional `XAI_SCRIPT_MODEL` (default `grok-4.3`) |
 | `VOICE_PROVIDER` | `xai` (default) | `XAI_API_KEY`; optional `XAI_VOICE_ID` (default `eve`; keep your existing `helix` setting if preferred) |
 | | `elevenlabs` | `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`; optional `ELEVENLABS_MODEL` (default `eleven_multilingual_v2`) |
+
+V5 checkpoints record the selected script model. After changing it, start a fresh run; existing runs keep their original model identity and cannot resume under a different model.
 
 For Grok scripts with ElevenLabs narration:
 

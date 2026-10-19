@@ -2,6 +2,8 @@ import {existsSync} from 'node:fs';
 import {dirname, join, resolve} from 'node:path';
 import {z} from 'zod';
 
+export const DEFAULT_OPENAI_SCRIPT_MODEL = 'gpt-6.1-sol';
+
 export type AppConfig = {
   contentEngineVersion: 'v3' | 'v4' | 'v5';
   contentBriefPath?: string;
@@ -9,6 +11,7 @@ export type AppConfig = {
   scriptProvider: 'openai' | 'xai';
   voiceProvider: 'xai' | 'elevenlabs';
   xaiScriptModel: string;
+  openAiScriptModel: string;
   elevenLabsApiKey: string;
   elevenLabsVoiceId: string;
   elevenLabsModel: string;
@@ -28,6 +31,7 @@ const configSchema = z.object({
   SCRIPT_PROVIDER: z.enum(['openai', 'xai']).default('openai'),
   VOICE_PROVIDER: z.enum(['xai', 'elevenlabs']).default('xai'),
   XAI_SCRIPT_MODEL: z.string().trim().min(1).default('grok-4.3'),
+  OPENAI_SCRIPT_MODEL: z.string().trim().min(1).default(DEFAULT_OPENAI_SCRIPT_MODEL),
   ELEVENLABS_MODEL: z.string().trim().min(1).default('eleven_multilingual_v2'),
   ELEVENLABS_API_KEY: z.string().trim().default(''),
   ELEVENLABS_VOICE_ID: z.string().trim().default(''),
@@ -71,6 +75,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     scriptProvider: parsed.data.SCRIPT_PROVIDER,
     voiceProvider: parsed.data.VOICE_PROVIDER,
     xaiScriptModel: parsed.data.XAI_SCRIPT_MODEL,
+    openAiScriptModel: parsed.data.OPENAI_SCRIPT_MODEL,
     elevenLabsApiKey: parsed.data.ELEVENLABS_API_KEY,
     elevenLabsVoiceId: parsed.data.ELEVENLABS_VOICE_ID,
     elevenLabsModel: parsed.data.ELEVENLABS_MODEL,

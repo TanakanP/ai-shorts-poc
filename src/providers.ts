@@ -9,7 +9,7 @@ export function createProviders(config: AppConfig) {
   const script = (schema: ZodType, name: string) =>
     config.scriptProvider === 'xai'
       ? createXaiStructuredPlanGenerator(config.xaiApiKey, schema, name, config.xaiScriptModel)
-      : createOpenAIStructuredPlanGenerator(config.openAiApiKey, schema, name);
+      : createOpenAIStructuredPlanGenerator(config.openAiApiKey, schema, name, config.openAiScriptModel);
   return {
     structured: script,
     generateHookStructured: script(hookCandidatesEnvelopeSchema, 'hook_candidates'),

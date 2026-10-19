@@ -6,6 +6,12 @@ import {findEnvFile, loadConfig} from '../src/config';
 
 describe('loadConfig', () => {
   const base = {PEXELS_API_KEY: 'px', CHANNEL_BRAND: 'Test Brand', CHANNEL_SIGNOFF: 'Follow along.'};
+  it('defaults the OpenAI model and validates a trimmed override', () => {
+    const env = {...base, OPENAI_API_KEY: 'oa', XAI_API_KEY: 'xa'};
+    expect(loadConfig(env).openAiScriptModel).toBe('gpt-6.1-sol');
+    expect(loadConfig({...env, OPENAI_SCRIPT_MODEL: ' gpt-6-luna '}).openAiScriptModel).toBe('gpt-6-luna');
+    expect(() => loadConfig({...env, OPENAI_SCRIPT_MODEL: ' '})).toThrow(/OPENAI_SCRIPT_MODEL/);
+  });
   it('keeps V3 as default, supports V4/V5 brief paths and rejects unknown engines', () => {
     const env = {...base, OPENAI_API_KEY: 'oa', XAI_API_KEY: 'xa'};
     expect(loadConfig(env).contentEngineVersion).toBe('v3');

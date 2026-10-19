@@ -1,6 +1,8 @@
 import {readFileSync} from 'node:fs';
 import {afterEach, describe, expect, it, vi} from 'vitest';
 import {zodTextFormat} from 'openai/helpers/zod';
+import {loadConfig} from '../../src/config';
+import {createProviders} from '../../src/providers';
 import {
   hookCandidatesEnvelopeSchema,
   isGenericQuestionHook,
@@ -610,7 +612,11 @@ describe('OpenAI structured envelopes', () => {
 describe('createOpenAIStructuredPlanGenerator', () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it('uses Responses structured output and returns the parsed plan', async () => {
+  it.each([
+    {configuredModel: undefined, expectedModel: 'gpt-6.1-sol'},
+    {configuredModel: 'gpt-6.1-sol', expectedModel: 'gpt-6.1-sol'},
+    {configuredModel: 'gpt-6-luna', expectedModel: 'gpt-6-luna'},
+  ])('sends $expectedModel with configured model $configuredModel and parses structured output', async ({configuredModel, expectedModel}) => {
     const fetch = vi.fn().mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -640,13 +646,20 @@ describe('createOpenAIStructuredPlanGenerator', () => {
     );
     vi.stubGlobal('fetch', fetch);
 
-    const generateStructured = createOpenAIStructuredPlanGenerator('test-key');
+    const generateStructured = configuredModel === undefined
+      ? createOpenAIStructuredPlanGenerator('test-key')
+      : createProviders(loadConfig({
+        SCRIPT_PROVIDER: 'openai', OPENAI_SCRIPT_MODEL: configuredModel,
+        OPENAI_API_KEY: 'test-key', XAI_API_KEY: 'xa', PEXELS_API_KEY: 'px',
+        CHANNEL_BRAND: 'Test Brand', CHANNEL_SIGNOFF: 'Follow along.',
+      })).structured(videoPlanSchema, 'video_plan');
     await expect(
       generateStructured({system: 'system instructions', input: fixture.topic}),
     ).resolves.toEqual(fixture);
 
     const request = JSON.parse(String(fetch.mock.calls[0][1]?.body));
     expect(request).toMatchObject({
+      model: expectedModel,
       instructions: 'system instructions',
       input: fixture.topic,
       text: {format: {type: 'json_schema', name: 'video_plan', strict: true}},
