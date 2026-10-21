@@ -1,0 +1,45 @@
+{
+  "topicId": "railroad-gate-failsafe",
+  "topic": "Railroad Crossing Gates Fall Down When They Lose Power",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state country and scope naturally (these are US standards). Channel angle: familiar objects with a surprising but true job. Generate five declarative, concrete subject-first hooks; prefer 6-10 words and do not give away the mechanism at once. Six story functions across five voiced scenes of 6 seconds each: visual paradox, contradiction, clue, mechanism, distinct second reveal, payoff. Target 25-29 seconds including the configured sign-off; hard max 30. Keep voice, karaoke, local BGM and channel outro. No spoken CTA and no subscribe or follow line. Narration states facts plainly and never names an agency or describes camera work. Retention: viewers drop most between seconds 3 and 12, so something visibly changes inside every clip about every 2-3 seconds (motion or framing), listed per scene below. The opening frame shows the object already moving. Start the mechanism about 5 seconds in, at the clue scene. Loop: scene 5 (payoff) must end on the same object and the same framing as the first frame of scene 1 so the Short loops seamlessly. Visual direction: use the photoreal live-action style in visualStyle. Generate a distinct Gemini still and Google Flow six-second clip per voiced scene; review action, 9:16 crop and continuity before binding local MP4s. Generated shots explain sourced facts and are not documentary proof. Packaging: the title holds the answer back but delivers exactly the claim the video explains; do not exaggerate. The description invites one topic-specific viewer guess.\nYouTube title seed: What Happens to a Railroad Gate When the Power Goes Out?\nYouTube description seed: Power cut at a railroad crossing: does the gate stay up or come down? Guess before you watch. Sources: US FHWA Highway-Rail Crossing Handbook; FRA Grade Crossing Toolkit. #TellMeWhyyyyyy #Shorts\nThe central fact: Crossing gates are built so that power holds them up, and losing power lets gravity bring them down.\nThe later surprise: Exit gates on some crossings do the opposite and fail up so no car is trapped.\nThe very first frame shows a red-and-white railroad crossing arm standing raised beside a road, its red lights just starting to flash, the arm visibly twitching as power cuts; the arm does not drop in the first second. Already moving in the first frame; do not reveal the mechanism in the opening.\nWhat changes inside each 6s clip:\nScene 1 (contradiction, 0-6s): Opening: the arm is raised and the red lights start flashing in the first second. About 2s in, the lights flicker and cut out as power fails. About 4s in, the raised arm starts dropping by itself.\nScene 2 (clue, 6-12s): Mechanism starts about 5s in. A real gate mechanism with its housing open, shown as an exposed component (no animation or cutaway); about 2s in, framing moves to the real steel counterweights on the field side; about 4s in, a physical tabletop balance prop with the arm side slightly heavier tips down under a hand.\nScene 3 (mechanism, 12-18s): The raised arm with the power indicator going off; about 2s in, the arm starts lowering smoothly by its own weight; about 4s in, a low angle as it reaches level.\nScene 4 (second_reveal, 18-24s): A four-gate crossing from above; about 2s in, the entry arms are down; about 4s in, the exit arms rise so the lane out stays open.\nScene 5 (payoff, 24-30s): Side view of the lowered gate; about 3s in, return to the exact opening: the same raised arm beside the same road with its lights just starting to flash, same framing as scene 1's first frame, so it loops.\nFact boundaries: US standards only. Exit gates fail up, not down; do not say every gate drops. Mechanism details vary by design; do not claim every gate uses the same motor or brake. No staged incidents or filming at an active crossing; no fake accident.",
+  "subjectAliases": [
+    "gate",
+    "crossing gate",
+    "railroad gate",
+    "arm"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "In the US, the entry gates at railroad crossings are built to fail safe in the down position: power holds them up, and if the power fails they lower by gravity.",
+      "sourceUrls": [
+        "https://highways.dot.gov/safety/hsip/xings/highway-rail-crossing-handbook-third-edition/chapter-2-engineered-treatments-1",
+        "https://gradecrossingtoolkit.fra.dot.gov/eLib/Details/L00064"
+      ]
+    },
+    {
+      "id": "counterweight",
+      "statement": "Heavy counterweights balance the gate arm, and when the power is lost the mechanism lowers the arm smoothly all the way from straight up to level.",
+      "sourceUrls": [
+        "https://assets.new.siemens.com/siemens/assets/api/uuid:c4b5df04-086a-4542-994b-d59476be1c6f/074044-rev-e-2-s-40-railroad-highway-crossing.pdf",
+        "https://patents.google.com/patent/US5834914A/en"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "At crossings with exit gates, those exit gates fail safe in the up position so cars are not trapped on the tracks.",
+      "sourceUrls": [
+        "https://highways.dot.gov/safety/hsip/xings/highway-rail-crossing-handbook-third-edition/chapter-2-engineered-treatments-1"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "US standards only.",
+    "Exit gates fail up, not down; do not say every gate drops.",
+    "Mechanism details vary by design; do not claim every gate uses the same motor or brake.",
+    "No staged incidents or filming at an active crossing; no fake accident."
+  ],
+  "titleSeed": "What Happens to a Railroad Gate When the Power Goes Out?",
+  "descriptionSeed": "Power cut at a railroad crossing: does the gate stay up or come down? Guess before you watch. Sources: US FHWA Highway-Rail Crossing Handbook; FRA Grade Crossing Toolkit. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects, real locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Use accurate colors, markings, geometry and scale when they carry the fact. Vary shot scale, camera angle, setting, light and movement across the five scenes; never repeat one macro view or one slow zoom five times. The subject stays recognizable, while each scene has a different visual job. No mascot, cartoon, sketch, animation graphics, floating labels, fake brand marks, surreal morphing, glossy 3D render, dark wash, or cinematic disaster spectacle. Existing words and numbers printed on real objects may be visible; do not add captions or generated text. Generated realistic footage illustrates the source-backed explanation and must not be presented as documentary evidence of an event. Subject anchor: a red-and-white railroad crossing arm standing raised beside a road, its red lights just starting to flash, the arm visibly twitching as power cuts; the arm does not drop in the first second."
+}

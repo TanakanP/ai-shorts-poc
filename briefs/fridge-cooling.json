@@ -1,0 +1,45 @@
+{
+  "topicId": "fridge-cooling",
+  "topic": "A Fridge Doesn't Make Cold, It Moves Heat Out",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Audience: global English-speaking viewers; state country and scope naturally. Channel angle: familiar objects with a surprising but true job. Generate five declarative, concrete subject-first hooks; prefer 6-10 words and do not give away the mechanism at once. Six story functions across five voiced scenes of 6 seconds each: visual paradox, contradiction, clue, mechanism, distinct second reveal, payoff. Target 25-29 seconds including the configured sign-off; hard max 30. Keep voice, karaoke, local BGM and channel outro. No spoken CTA and no subscribe or follow line. Narration states facts plainly and never names an agency or describes camera work. Retention: viewers drop most between seconds 3 and 12, so something visibly changes inside every clip about every 2-3 seconds (motion or framing), listed per scene below. The opening frame shows the object already moving. Start the mechanism about 5 seconds in, at the clue scene. Loop: scene 5 (payoff) must end on the same object and the same framing as the first frame of scene 1 so the Short loops seamlessly. Visual direction: use the photoreal live-action style in visualStyle. Generate a distinct Gemini still and Google Flow six-second clip per voiced scene; review action, 9:16 crop and continuity before binding local MP4s. Generated shots explain sourced facts and are not documentary proof. Packaging: the title holds the answer back but delivers exactly the claim the video explains; do not exaggerate. The description invites one topic-specific viewer guess.\nYouTube title seed: Why Is the Back of Your Fridge Warm?\nYouTube description seed: Put your hand near the back or sides of your fridge. Warm? Guess where that heat came from. #TellMeWhyyyyyy #Shorts\nThe central fact: A fridge pulls heat out of the food and dumps it into your kitchen through the coils.\nThe later surprise: The heat out the back is more than the heat taken from inside, because the compressor adds its own.\nThe very first frame shows a hand moving slowly along the back of a fridge in a bright home kitchen, hovering near the black condenser coils as warm air shimmers above them. It is already moving in the first frame, and nothing in the first second gives the answer away.\nWhat changes inside each 6s clip:\nScene 1 (contradiction, 0-6s): Opening: the hand already moving along the warm coils. About 2s in, the hand pulls back slightly from the heat; about 4s in, the fridge door on the other side opens to cold air.\nScene 2 (clue, 6-12s): Mechanism starts about 5s in. Inside the fridge, frost on the real evaporator panel at the back wall; about 2-3s later, a thermometer inside reads cold; then a matching thermometer near the back coils reads warm.\nScene 3 (mechanism, 12-18s): A real refrigerant circuit on a service-training bench (real parts or physical props only, no animation or cutaway graphics) with evaporator, compressor and condenser in view; about 2s in, a finger traces the pipe from the cold coil to the compressor; about 4s in, it traces on to the condenser.\nScene 4 (second_reveal, 18-24s): The compressor at the bottom rear humming; about 2s in, a hand hovers near its housing; about 4s in, warm air rises from the condenser coils.\nScene 5 (payoff, 24-30s): Narration states that the coils release both the heat pumped out of the food and the heat from the compressor's own work. Cold drinks come out of the fridge; about 2s in, the hand moves back toward the warm coils; about 4s in, return to the exact opening: the same hand moving along the same warm coils at the back of the same fridge, same framing as scene 1's first frame, so it loops.\nFact boundaries: Condenser location varies by model; do not say every fridge has coils on the back. Do not suggest touching hot or moving parts, unplugging, or opening the sealed system. Do not claim specific energy savings.",
+  "subjectAliases": [
+    "fridge",
+    "refrigerator",
+    "coils"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Inside the fridge, a very cold liquid called refrigerant flows through the evaporator coil, soaks up heat from the food and air, and evaporates into a gas.",
+      "sourceUrls": [
+        "https://askdruniverse.wsu.edu/2017/12/11/how-does-our-refrigerator-work/",
+        "https://assets.danfoss.com/documents/latest/49699/AX000086437108en-000202.pdf",
+        "https://www.epa.gov/sites/default/files/documents/Refrigeration_101.pdf"
+      ]
+    },
+    {
+      "id": "compressor",
+      "statement": "The compressor squeezes that gas into a hot, high-pressure gas and pushes it into the condenser coil outside the cold compartment.",
+      "sourceUrls": [
+        "https://askdruniverse.wsu.edu/2017/12/11/how-does-our-refrigerator-work/",
+        "https://assets.danfoss.com/documents/latest/49699/AX000086437108en-000202.pdf"
+      ]
+    },
+    {
+      "id": "consequence",
+      "statement": "In the condenser coil the gas gives its heat to the kitchen air and turns back into a liquid; the heat let out there is the heat taken from inside plus the heat from the compressor's work.",
+      "sourceUrls": [
+        "https://askdruniverse.wsu.edu/2017/12/11/how-does-our-refrigerator-work/",
+        "https://assets.danfoss.com/documents/latest/49699/AX000086437108en-000202.pdf"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Condenser location varies by model; do not say every fridge has coils on the back.",
+    "Do not suggest touching hot or moving parts, unplugging, or opening the sealed system.",
+    "Do not claim specific energy savings."
+  ],
+  "titleSeed": "Why Is the Back of Your Fridge Warm?",
+  "descriptionSeed": "Put your hand near the back or sides of your fridge. Warm? Guess where that heat came from. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects, real locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Use accurate colors, markings, geometry and scale when they carry the fact. Vary shot scale, camera angle, setting, light and movement across the five scenes; never repeat one macro view or one slow zoom five times. The subject stays recognizable, while each scene has a different visual job. No mascot, cartoon, sketch, animation graphics, floating labels, fake brand marks, surreal morphing, glossy 3D render, dark wash, or cinematic disaster spectacle. Existing words and numbers printed on real objects may be visible; do not add captions or generated text. Generated realistic footage illustrates the source-backed explanation and must not be presented as documentary evidence of an event. Subject anchor: a hand moving slowly along the back of a fridge in a bright home kitchen, hovering near the black condenser coils as warm air shimmers above them."
+}
