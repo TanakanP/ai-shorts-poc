@@ -48,15 +48,18 @@
   "titleSeed": "How Does a Key Actually Open a Lock?",
   "descriptionSeed": "Your key has a pattern of cuts. Guess what each one is pushing on inside the lock. #TellMeWhyyyyyy #Shorts",
   "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects, real locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Use accurate colors, markings, geometry and scale when they carry the fact. Vary shot scale, camera angle, setting, light and movement across the five scenes; never repeat one macro view or one slow zoom five times. The subject stays recognizable, while each scene has a different visual job. No mascot, cartoon, sketch, animation graphics, floating labels, fake brand marks, surreal morphing, glossy 3D render, dark wash, or cinematic disaster spectacle. Existing words and numbers printed on real objects may be visible; do not add captions or generated text. Generated realistic footage illustrates the source-backed explanation and must not be presented as documentary evidence of an event. Subject anchor: a brass key sliding into a front-door lock with a light metallic scrape, viewed from the side.",
+  "lockedVoiceover": [
+    "This key looks almost the same as that one. Only one turns.",
+    "Inside the lock, every bump on your key is pushing on something.",
+    "Each cut lifts a tiny split pin. When every split lines up, the lock turns.",
+    "A wrong key leaves pins crossing the line, so the plug stays stuck.",
+    "Get every one right, and the plug turns, just like when the key slides in..."
+  ],
   "answerWords": [
+    "pin",
     "split",
-    "shear line",
     "line up",
-    "lines up",
-    "align",
-    "aligned",
-    "height",
-    "lift",
-    "lifts"
+    "shear",
+    "cut"
   ]
 }

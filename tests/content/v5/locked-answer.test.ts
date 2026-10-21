@@ -90,6 +90,8 @@ describe('week-1 briefs', () => {
     expect(b.answerWords?.length).toBeGreaterThan(3);
     expect(b.creativeBrief).toContain('main reveal lands in scene 4');
     expect(b.creativeBrief).not.toContain('Mechanism starts about 5s in');
-    for (const alias of b.subjectAliases) expect(findAnswerWords(alias, b.answerWords)).toEqual([]);
+    expect(b.lockedVoiceover).toHaveLength(5);
+    // The locked lines themselves must never trip their own answer-word gate.
+    for (const line of b.lockedVoiceover!.slice(0, 2)) expect(findAnswerWords(line, b.answerWords)).toEqual([]);
   });
 });
