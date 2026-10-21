@@ -33,6 +33,17 @@ const clamped = {
   extrapolateRight: 'clamp',
 } as const;
 
+const CUT_SCALES = [1, 1.14] as const;
+const FIRST_CUT_SEC = 1.5;
+
+/** Alternating punch-in so one generated clip reads as a new shot every cut interval (first cut by 1.5s). */
+export function punchInScale(frame: number, fps: number, intervalSec: number): number {
+  if (!(intervalSec > 0)) return 1;
+  const t = frame / fps;
+  const segment = t < FIRST_CUT_SEC ? 0 : 1 + Math.floor((t - FIRST_CUT_SEC) / intervalSec);
+  return CUT_SCALES[segment % CUT_SCALES.length];
+}
+
 export const sceneOpacity = (
   frame: number,
   durationInFrames: number,
@@ -117,7 +128,9 @@ export const Scene = ({
           height: '100%',
           objectFit: 'cover',
           objectPosition: scene.videoCropPosition ?? 'center center',
-          transform: `scale(${scene.proofAssetId || scene.disableVideoZoom ? 1 : videoScale})`,
+          transform: `scale(${scene.cutIntervalSec
+            ? punchInScale(frame, fps, scene.cutIntervalSec)
+            : scene.proofAssetId || scene.disableVideoZoom ? 1 : videoScale})`,
         }}
       />
 

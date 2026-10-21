@@ -10,6 +10,9 @@ import {
 } from './contracts';
 import {requiredSourceFrames} from './timing';
 
+/** Visual cut cadence for V5: each 6s generated clip is shown as 2-3s punch-in segments. */
+export const V5_CUT_INTERVAL_SEC = 2.5;
+
 const roles: Record<typeof VOICED_BEATS[number], BeatRole> = {
   contradiction: 'hook', clue: 'context', mechanism: 'mechanism', second_reveal: 'curiosity-reset', payoff: 'payoff',
 };
@@ -67,7 +70,7 @@ export function bindV5Scenes(
     return {
       ...scene, selectedSearchQuery: '', sourcePageUrl: '', creatorName: 'Owner-generated animation', creatorUrl: '',
       localVideoPath: binding.localPath, videoTrimStartSec: binding.trimStartSec, videoCropPosition: binding.cropPosition,
-      disableVideoZoom: true,
+      disableVideoZoom: true, cutIntervalSec: V5_CUT_INTERVAL_SEC,
       generatedAsset: {
         provider: binding.provider, sceneId: binding.sceneId, sha256: binding.sha256, promptHash: binding.promptHash,
       },

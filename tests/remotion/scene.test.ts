@@ -41,3 +41,13 @@ describe('V5 clip presentation', () => {
     expect(SCENE_WASH_OPACITY).toBe(0);
   });
 });
+
+describe('punchInScale', () => {
+  it('cuts by 1.5s, then alternates every interval', async () => {
+    const {punchInScale} = await import('../../src/remotion/Scene');
+    expect(punchInScale(0, 30, 2.5)).toBe(1);
+    expect(punchInScale(45, 30, 2.5)).toBeGreaterThan(1);
+    expect(punchInScale(120, 30, 2.5)).toBe(1);
+    expect(punchInScale(60, 30, 0)).toBe(1);
+  });
+});
