@@ -33,15 +33,31 @@ const clamped = {
   extrapolateRight: 'clamp',
 } as const;
 
-const CUT_SCALES = [1, 1.14] as const;
+/** Reframes cycled inside one clip: scale plus a pan offset (% of frame) so each cut reads as a new shot. */
+export const CUT_FRAMINGS = [
+  {scale: 1, x: 0, y: 0},
+  {scale: 1.16, x: -4, y: -3},
+  {scale: 1.08, x: 3, y: 2},
+  {scale: 1.2, x: 4, y: -4},
+] as const;
 const FIRST_CUT_SEC = 1.5;
+export type CutFraming = {scale: number; x: number; y: number};
 
-/** Alternating punch-in so one generated clip reads as a new shot every cut interval (first cut by 1.5s). */
-export function punchInScale(frame: number, fps: number, intervalSec: number): number {
-  if (!(intervalSec > 0)) return 1;
+/** Framing for a frame: first cut by 1.5s, then a new framing every interval, so a 6s clip never holds one shot. */
+export function cutFraming(frame: number, fps: number, intervalSec: number): CutFraming {
+  if (!(intervalSec > 0)) return CUT_FRAMINGS[0];
   const t = frame / fps;
   const segment = t < FIRST_CUT_SEC ? 0 : 1 + Math.floor((t - FIRST_CUT_SEC) / intervalSec);
-  return CUT_SCALES[segment % CUT_SCALES.length];
+  return CUT_FRAMINGS[segment % CUT_FRAMINGS.length];
+}
+
+export function punchInScale(frame: number, fps: number, intervalSec: number): number {
+  return cutFraming(frame, fps, intervalSec).scale;
+}
+
+export function cutTransform(frame: number, fps: number, intervalSec: number): string {
+  const f = cutFraming(frame, fps, intervalSec);
+  return `scale(${f.scale}) translate(${f.x}%, ${f.y}%)`;
 }
 
 export const sceneOpacity = (
@@ -128,9 +144,9 @@ export const Scene = ({
           height: '100%',
           objectFit: 'cover',
           objectPosition: scene.videoCropPosition ?? 'center center',
-          transform: `scale(${scene.cutIntervalSec
-            ? punchInScale(frame, fps, scene.cutIntervalSec)
-            : scene.proofAssetId || scene.disableVideoZoom ? 1 : videoScale})`,
+          transform: scene.cutIntervalSec
+            ? cutTransform(frame, fps, scene.cutIntervalSec)
+            : `scale(${scene.proofAssetId || scene.disableVideoZoom ? 1 : videoScale})`,
         }}
       />
 

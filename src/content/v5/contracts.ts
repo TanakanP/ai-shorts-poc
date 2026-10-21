@@ -29,8 +29,14 @@ export const v5BriefSchema = z.object({
   subjectAliases: z.array(text).min(1), facts: z.array(factSchema).min(2),
   factBoundaries: z.array(text).min(1), titleSeed: text.nullable(), descriptionSeed: text.nullable(),
   visualStyle: text,
+  // Optional reviewed narration, one line per voiced scene (contradiction, clue, mechanism, second_reveal, payoff).
+  lockedVoiceover: z.array(text).length(5).optional(),
+  // Optional terms that give the reveal away; banned from the hook, opening display text and first two voiced lines.
+  answerWords: z.array(text).optional(),
 }).superRefine((brief, ctx) => uniqueIds(brief.facts.map(f => f.id), ctx, 'Fact IDs must be unique'));
-export type V5Brief = Omit<TopicBrief, 'localProof'> & {visualStyle: string};
+export type V5Brief = Omit<TopicBrief, 'localProof'> & {
+  visualStyle: string; lockedVoiceover?: string[]; answerWords?: string[];
+};
 
 export const v5ShotSchema = z.object({
   beatId: v5SceneIdSchema, visualIntent: text, factIds: z.array(text).min(1),

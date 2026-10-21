@@ -5,6 +5,29 @@ import {ContentHold, V4_BEATS, V5StoryRevisionNeeded, v5PackageGenerationSchema,
 import {comparable, countSpokenWords} from '../v4/rules';
 import {evaluateV5Package} from './rules';
 import {lintVoiceover} from './vo-lint';
+import {answerWordIssues} from './answer-words';
+
+/** Overwrite generated narration with the brief's locked lines, word for word. Paradox stays silent. */
+export function applyLockedVoiceover<T>(raw: T, brief: Pick<V5Brief, 'lockedVoiceover'>): T {
+  const locked = brief.lockedVoiceover;
+  if (!locked || !raw || typeof raw !== 'object') return raw;
+  const beats = (raw as {beats?: unknown}).beats;
+  if (!Array.isArray(beats) || beats.length !== 6) return raw;
+  return {...raw, beats: beats.map((beat, i) => i === 0 || !beat || typeof beat !== 'object'
+    ? beat : {...beat, spokenText: locked[i - 1]})};
+}
+
+/** Cheap text-step gate: the hook, opening display text and first two voiced lines must not name the answer. */
+export function earlyAnswerIssues(story: Pick<V5Story, 'beats'>, brief: Pick<V5Brief, 'answerWords'>): string[] {
+  const words = brief.answerWords ?? [];
+  if (!words.length) return [];
+  const voiced = story.beats.slice(1).filter(b => b.spokenText.trim());
+  return [
+    ...answerWordIssues('Opening display text', story.beats[1]?.displayText ?? '', words),
+    ...answerWordIssues('Paradox display text', story.beats[0]?.displayText ?? '', words),
+    ...voiced.slice(0, 2).flatMap((b, i) => answerWordIssues(`Voiced line ${i + 1} (${b.id})`, b.spokenText, words)),
+  ];
+}
 
 export async function planV5Package(brief: V5Brief, generate: StructuredPlanGenerator,
   record: (value: unknown) => Promise<void> = async () => {}): Promise<V5SelectedPackage> {
@@ -20,7 +43,9 @@ Choose a distinct source-backed second reveal. Plan exactly one shot per contrad
 Each shot is {beatId, visualIntent, factIds} for a distinct photoreal live-action scene generated from a still. Vary scale, angle, location and physical action while keeping the subject recognizable. Do not invent stock search queries, Pexels URLs, or footage claims.
 First frame already shows the result/contradiction. Five unique story clips; the outro may echo the opening.
 Make the YouTube title and description concise and curiosity-driven. The title names the object and the oddity, never the cause: 7 words max, may be a question, must not use words from the mechanism fact or say "because"/"that's why". Deliver the promised fact, avoid exaggerated risk or unsupported motives, and preserve explicit metadata seeds. No generic CTA.
-wordCountException must be null for normal hooks; outside 5-10 words explain the editorial reason.`,
+wordCountException must be null for normal hooks; outside 5-10 words explain the editorial reason.
+If brief.answerWords is present, no hook text or displayText may contain any of those words (or their plurals).
+If brief.lockedVoiceover is present, the FIRST hook's text must be exactly lockedVoiceover[0]; only write its displayText and judgments.`,
       input: JSON.stringify({brief, feedback}),
     });
     await record({attempt, raw});
@@ -49,6 +74,10 @@ export function validateV5Story(story: V5Story, brief: V5Brief, pack: V5Selected
   if (!selected || story.beats[1].spokenText.trim() !== selected.text.trim()) fail('Opening narration must preserve selected hook');
   if (story.beats[1].displayText.trim() !== selected?.displayText.trim()) fail('Opening display copy must preserve selected hook');
   if (story.beats[1].sceneId !== 'contradiction') fail('Opening voiced scene must be contradiction');
+  if (brief.lockedVoiceover && story.beats.slice(1).some((b, i) => b.spokenText !== brief.lockedVoiceover![i]))
+    fail('Narration must use the brief lockedVoiceover word for word');
+  const leaks = earlyAnswerIssues(story, brief);
+  if (leaks.length) throw new ContentHold(leaks, 'revise');
   const factIds = new Set(brief.facts.map(f => f.id));
   for (const [i, beat] of story.beats.entries()) {
     const expectedScene = beat.id === 'paradox' ? 'contradiction' : beat.id;
@@ -116,11 +145,15 @@ Loop ending: the payoff's last line must flow back into the hook sentence (end o
 For each beat supply emphasisWords: 0–2 individual tokens copied exactly from displayText; the contradiction title needs exactly ONE meaningful yellow keyword, never a phrase.
 Spoken/display copies remain distinct; avoid speech tags and use natural connected sentences. Provide candid editorial checks.
 When revising, preserve selected hook, supported mechanism, second reveal and payoff; compress other wording without speeding speech.
-If timing needs expansion before mechanism/reset, add a meaningful clue or observation, never filler.`,
+If timing needs expansion before mechanism/reset, add a meaningful clue or observation, never filler.
+Reveal placement: the main "aha" answer lands in second_reveal (scene 4, about 70% through). Contradiction and clue only deepen the mystery and may not name the cause; mechanism sets up how it works without stating the punchline.
+If brief.answerWords is present, none of those words (or plurals) may appear in any displayText of paradox/contradiction or in the first two voiced lines (contradiction, clue).
+If brief.lockedVoiceover is present, it is the reviewed narration for contradiction, clue, mechanism, second_reveal, payoff in that order: copy each line into spokenText exactly, character for character, and write only the other fields around it.`,
     input: JSON.stringify({brief, package: pack, outro, revision}),
   });
-  const draftParse = v5StoryObjectSchema.safeParse(raw);
-  const storyParse = v5StorySchema.safeParse(raw);
+  const locked = applyLockedVoiceover(raw, brief);
+  const draftParse = v5StoryObjectSchema.safeParse(locked);
+  const storyParse = v5StorySchema.safeParse(locked);
   if (storyParse.success) {
     const plan = toV5Plan(storyParse.data, brief, pack);
     try {
