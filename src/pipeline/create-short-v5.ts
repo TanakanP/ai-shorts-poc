@@ -8,6 +8,7 @@ import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices
 import {attachChannelOutro} from './attach-channel-outro';
 import {readCheckpoint, writeCheckpoint} from '../content/v4/checkpoints';
 import {countSpokenWords} from '../content/v4/rules';
+import {lintVoiceover} from '../content/v5/vo-lint';
 import {loadV5RewriteCount} from '../content/v5/checkpoints';
 import {
   ContentHold, V5StoryRevisionNeeded, VOICED_BEATS, mediaInfoSchema, type GeneratedBinding, type PromptPack,
@@ -143,7 +144,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     requiredFramesByScene: timing?.requiredFramesByScene,
     title: plan?.title, description: plan?.description,
     metadataSeeds: brief ? {title: brief.titleSeed, description: brief.descriptionSeed} : undefined,
-    spokenWordCount: plan ? countSpokenWords(`${plan.beats.map(b => b.spokenText).join(' ')} ${deps.channel.brand} ${deps.channel.signoff}`) : undefined,
+    spokenWordCount: plan ? countSpokenWords(`${plan.beats.map(b => b.spokenText).join(' ')} ${deps.channel.brand}`) : undefined,
     targetBeats: plan?.beats.map(({id, targetStartSec, targetEndSec}) => ({id, targetStartSec, targetEndSec})),
   });
   const saveTimedPlan = async (voiced: SynthesizeSceneVoicesResult) => {
@@ -186,9 +187,15 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     if (storyRewritten) rewriteCount = 1;
     if (!await deps.approveStory(plan)) throw new ContentHold(['Story or factual review declined']);
     if (storyRewritten) await persistRewriteCount(1);
-    const voicedPlan = () => attachChannelOutro(videoPlanFromV5(plan!), deps.channel.brand, deps.channel.signoff,
+    // V5 drops the spoken like/subscribe sign-off so the payoff loops straight back into the hook.
+    const voicedPlan = () => attachChannelOutro(videoPlanFromV5(plan!), deps.channel.brand, '',
       {slowWhy: deps.voiceProvider !== 'elevenlabs'});
+    const assertCleanVoiceover = () => {
+      const issues = lintVoiceover(plan!.beats, deps.channel.brand);
+      if (issues.length) throw new ContentHold(issues, 'revise');
+    };
     setStage('voice');
+    assertCleanVoiceover();
     let voiced = await deps.synthesize(voicedPlan(), runDir);
     timing = evaluateV5Timing(voiced.timedPlan, voiced.manifest);
     await save('voice.json', voiced.manifest);
@@ -201,6 +208,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
       rewriteCount = 1;
       if (!await deps.approveStory(plan)) throw new ContentHold(['Revised story not approved']);
       await persistRewriteCount(1);
+      assertCleanVoiceover();
       voiced = await deps.synthesize(voicedPlan(), runDir, voiced);
       timing = evaluateV5Timing(voiced.timedPlan, voiced.manifest);
       await save('voice.json', voiced.manifest);

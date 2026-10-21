@@ -262,7 +262,7 @@ export function withV5Checkpoints(deps: V5Deps, run: {runId: string; runDir: str
           const parsed = v5ContentPlanSchema.safeParse(result.plan);
           if (parsed.success) {
             try {
-              validateV5Story(parsed.data, brief, pack, `${deps.channel.brand}. ${deps.channel.signoff}`);
+              validateV5Story(parsed.data, brief, pack, `${deps.channel.brand}.`);
               return parsed.data;
             } catch { /* Keep the original revision gate for a genuinely invalid draft. */ }
           }
