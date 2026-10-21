@@ -6,7 +6,11 @@
     "balls",
     "marker balls",
     "power line",
-    "wire"
+    "wire",
+    "ballses",
+    "marker ballses",
+    "power lines",
+    "wires"
   ],
   "facts": [
     {

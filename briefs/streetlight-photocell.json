@@ -6,7 +6,11 @@
     "light",
     "streetlight",
     "sensor",
-    "dome"
+    "dome",
+    "lights",
+    "streetlights",
+    "sensors",
+    "domes"
   ],
   "facts": [
     {

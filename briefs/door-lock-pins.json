@@ -6,7 +6,11 @@
     "lock",
     "key",
     "pins",
-    "door lock"
+    "door lock",
+    "locks",
+    "keys",
+    "pinses",
+    "door locks"
   ],
   "facts": [
     {

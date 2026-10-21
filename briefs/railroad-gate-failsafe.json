@@ -6,7 +6,11 @@
     "gate",
     "crossing gate",
     "railroad gate",
-    "arm"
+    "arm",
+    "gates",
+    "crossing gates",
+    "railroad gates",
+    "arms"
   ],
   "facts": [
     {
