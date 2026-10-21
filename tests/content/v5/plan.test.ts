@@ -52,7 +52,7 @@ it('raises V5StoryRevisionNeeded with a draft when paradox does not map to contr
 
 it('returns a versioned plan that preserves selected hook and metadata', async () => {
   const plan = await planV5Story(brief, pack(), async () => rawStory(), outro);
-  expect(plan).toMatchObject({version: 'v5', topicId: brief.topicId, title: brief.titleSeed});
+  expect(plan).toMatchObject({version: 'v5', topicId: brief.topicId, title: pack().title}); // answer-first seed is replaced by the generated title
   expect(plan.beats[1].spokenText).toBe(pack().hooks[0].text);
   expect(plan.beats[0].sceneId).toBe('contradiction');
   expect(plan.beats.map(b => b.id)).toEqual(['paradox', 'contradiction', 'clue', 'mechanism', 'second_reveal', 'payoff']);
