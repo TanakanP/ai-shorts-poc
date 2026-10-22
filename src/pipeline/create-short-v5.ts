@@ -47,6 +47,8 @@ export type V5Deps = {
   render: V4Deps['render']; probe: V4Deps['probe'];
   channel: V4Deps['channel']; voiceProvider: V4Deps['voiceProvider'];
   backgroundMusicPath: string; stage?: (name: string) => void;
+  /** Opt back into the spoken channel sting at the end (V5_CHANNEL_OUTRO=1). Off by default so the Short loops. */
+  keepChannelOutro?: boolean;
   resume: boolean;
 };
 
@@ -86,7 +88,16 @@ async function captureInputState(bindings: GeneratedBinding[], voiced: Synthesiz
   return {sourceHashes, audioHashes, musicHash, inputFingerprint};
 }
 
-async function maybeReuseRendered(runDir: string, outputPath: string, timing: V5TimingResult,
+/** V5 drops the spoken "Tell Me Whyyyy" channel sting by default so the payoff loops straight into the hook. */
+export function v5RenderScenes<T extends {id: string}>(scenes: T[], keepChannelOutro = false): T[] {
+  return keepChannelOutro ? scenes : scenes.filter(scene => scene.id !== 'channel-outro');
+}
+
+export function renderedDurationSec(scenes: readonly {durationSeconds: number}[], fps = 30): number {
+  return scenes.reduce((frames, scene) => frames + Math.round(scene.durationSeconds * fps), 0) / fps;
+}
+
+async function maybeReuseRendered(runDir: string, outputPath: string, timing: {actualDurationSec: number},
   state: Awaited<ReturnType<typeof captureInputState>>, probe: V5Deps['probe']): Promise<{
   outputPath: string;
   manifest: Record<string, unknown>;
@@ -249,12 +260,14 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     bindings = await deps.validateAssets(promptPack, voiced.timedPlan, bindings) ?? bindings;
     await save('scene-assets.json', bindings);
     setStage('resolved');
-    const scenes = bindV5Scenes(voiced.timedPlan, voiced.manifest, promptPack, bindings);
+    const scenes = v5RenderScenes(bindV5Scenes(voiced.timedPlan, voiced.manifest, promptPack, bindings),
+      deps.keepChannelOutro);
+    const renderTiming = {actualDurationSec: renderedDurationSec(scenes)};
     const video: ResolvedVideo = {engineVersion: 'v5', runId, title: plan.title, fps: 30, width: 1080, height: 1920,
-      backgroundMusicPath: deps.backgroundMusicPath, scenes};
+      backgroundMusicPath: deps.backgroundMusicPath, loopEnding: !deps.keepChannelOutro, scenes};
     await save('resolved.json', video);
     const inputState = await captureInputState(bindings, voiced, promptPack, deps.backgroundMusicPath);
-    const reused = await maybeReuseRendered(runDir, outputPath, timing, inputState, deps.probe);
+    const reused = await maybeReuseRendered(runDir, outputPath, renderTiming, inputState, deps.probe);
     if (reused) {
       await save('generation-manifest.json', reused.manifest);
       await save('run.json', reused.manifest);
@@ -270,7 +283,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     setStage('verify-mp4');
     const media = await deps.probe(outputPath);
     if (media.durationSec > 30 || media.width !== 1080 || media.height !== 1920 || Math.abs(media.fps - 30) > 0.01 ||
-      Math.abs(media.durationSec - timing.actualDurationSec) > 0.1)
+      Math.abs(media.durationSec - renderTiming.actualDurationSec) > 0.1)
       throw new ContentHold(['Encoded MP4 duration or format does not match the accepted timeline']);
     const outputHash = await hashFile(outputPath);
     const rendered = {...summary('rendered'), actualDurationSec: media.durationSec, media, outputPath,

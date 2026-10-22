@@ -69,3 +69,16 @@ describe('punchInScale', () => {
     expect(cutTransform(45, 30, 2.5)).toMatch(/^scale\(1\.\d+\) translate\(-?\d+%, -?\d+%\)$/);
   });
 });
+
+describe('v5 reframes are visible', () => {
+  it('each framing change is a clear push or pan, not a subtle nudge', async () => {
+    const {CUT_FRAMINGS} = await import('../../src/remotion/Scene');
+    for (let i = 0; i < CUT_FRAMINGS.length; i++) {
+      const a = CUT_FRAMINGS[i];
+      const b = CUT_FRAMINGS[(i + 1) % CUT_FRAMINGS.length];
+      const scaleJump = Math.abs(a.scale - b.scale);
+      const panJump = Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+      expect(scaleJump >= 0.15 || panJump >= 12).toBe(true);
+    }
+  });
+});

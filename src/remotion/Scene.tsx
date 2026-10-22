@@ -36,9 +36,9 @@ const clamped = {
 /** Reframes cycled inside one clip: scale plus a pan offset (% of frame) so each cut reads as a new shot. */
 export const CUT_FRAMINGS = [
   {scale: 1, x: 0, y: 0},
-  {scale: 1.16, x: -4, y: -3},
-  {scale: 1.08, x: 3, y: 2},
-  {scale: 1.2, x: 4, y: -4},
+  {scale: 1.35, x: -10, y: -8},
+  {scale: 1.2, x: 8, y: 6},
+  {scale: 1.4, x: 10, y: -10},
 ] as const;
 const FIRST_CUT_SEC = 1.5;
 export type CutFraming = {scale: number; x: number; y: number};

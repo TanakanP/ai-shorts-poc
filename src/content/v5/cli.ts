@@ -73,6 +73,7 @@ export function createV5ProductionDeps(config: AppConfig, research: string,
   return {
     channel: {brand: config.channelBrand, signoff: config.channelSignoff},
     voiceProvider: config.voiceProvider, backgroundMusicPath: config.backgroundMusicPath,
+    keepChannelOutro: process.env.V5_CHANNEL_OUTRO === '1',
     createRunDirectory, persistJson, resume: false,
     stage: stage => log(`[v5] ${stage}`),
     loadBrief: topic => loadV5Brief(topic, research, config.contentBriefPath, {

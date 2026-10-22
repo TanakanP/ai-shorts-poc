@@ -3,7 +3,8 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {expect, it, vi} from 'vitest';
 import {keyFor, loadV5RewriteCount, parseV5Resume, v5BriefIdentity, withV5Checkpoints, writeCheckpoint} from '../../../src/content/v5/checkpoints';
-import {createShortV5, type V5Deps} from '../../../src/pipeline/create-short-v5';
+import {createShortV5, renderedDurationSec, type V5Deps} from '../../../src/pipeline/create-short-v5';
+let renderedSec: number | undefined;
 import {persistJson} from '../../../src/pipeline/persist-json';
 import {brief, contentPlan, pack, promptPack, voiced, writeBindings, writeVoice} from './fixtures';
 
@@ -108,11 +109,12 @@ it('resumes after a render failure without repeating approvals, prompts or compl
         return {status: 'ready' as const, bindings: values};
       }),
       validateAssets: vi.fn(async () => {}),
-      render: vi.fn().mockRejectedValueOnce(new Error('render failed')).mockImplementation(async (_v, outputPath) => {
+      render: vi.fn().mockRejectedValueOnce(new Error('render failed')).mockImplementation(async (video, outputPath) => {
+        renderedSec = renderedDurationSec(video.scenes);
         await writeFile(outputPath, 'mp4');
       }),
       probe: async (path: string) => path.endsWith('output.mp4')
-        ? {durationSec: 28, width: 1080, height: 1920, fps: 30} : {durationSec: 6, width: 1080, height: 1920, fps: 30},
+        ? {durationSec: renderedSec ?? 28, width: 1080, height: 1920, fps: 30} : {durationSec: 6, width: 1080, height: 1920, fps: 30},
       channel: {brand: 'Tell Me Why', signoff: 'Look closer every day.'},
       voiceProvider: 'xai', backgroundMusicPath: join(dir, 'music.mp3'), resume: true,
     };

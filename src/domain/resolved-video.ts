@@ -26,5 +26,7 @@ export type ResolvedVideo = {
   width: 1080;
   height: 1920;
   backgroundMusicPath?: string;
+  /** Loop-friendly ending: music plays at full level to the last frame so the end flows into the start. */
+  loopEnding?: boolean;
   scenes: ResolvedScene[];
 };

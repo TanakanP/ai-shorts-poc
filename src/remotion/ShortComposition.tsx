@@ -39,7 +39,7 @@ const clamped = {
   extrapolateRight: 'clamp',
 } as const;
 
-export const backgroundMusicVolume = (frame: number, durationInFrames: number): number => {
+export const backgroundMusicVolume = (frame: number, durationInFrames: number, loopEnding = false): number => {
   if (durationInFrames <= BACKGROUND_MUSIC_FADE_FRAMES * 2) return BACKGROUND_MUSIC_VOLUME;
   const fadeIn = interpolate(frame, [0, BACKGROUND_MUSIC_FADE_FRAMES], [0, BACKGROUND_MUSIC_VOLUME], clamped);
   const fadeOut = interpolate(
@@ -48,7 +48,7 @@ export const backgroundMusicVolume = (frame: number, durationInFrames: number): 
     [BACKGROUND_MUSIC_VOLUME, 0],
     clamped,
   );
-  return Math.min(fadeIn, fadeOut);
+  return loopEnding ? fadeIn : Math.min(fadeIn, fadeOut);
 };
 
 export const createVoiceTimeline = (video: ResolvedVideo): SceneTimelineItem[] => {
@@ -97,7 +97,7 @@ export const ShortComposition = ({video, assetBaseUrl, localAssetPaths}: ShortCo
         <Html5Audio
           src={getVideoSource(video.backgroundMusicPath, assetBaseUrl, localAssetPaths)}
           loop
-          volume={backgroundMusicVolume(frame, durationInFrames)}
+          volume={backgroundMusicVolume(frame, durationInFrames, video.loopEnding)}
         />
       ) : null}
 

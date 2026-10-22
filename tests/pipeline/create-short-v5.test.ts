@@ -6,7 +6,8 @@ import {z} from 'zod';
 import {ContentHold, V5StoryRevisionNeeded, VOICED_BEATS} from '../../src/content/v5/contracts';
 import {withV5Checkpoints} from '../../src/content/v5/checkpoints';
 import {planV5Story} from '../../src/content/v5/plan';
-import {createShortV5, type V5Deps} from '../../src/pipeline/create-short-v5';
+import {createShortV5, renderedDurationSec, type V5Deps} from '../../src/pipeline/create-short-v5';
+let renderedSec: number | undefined;
 import {persistJson} from '../../src/pipeline/persist-json';
 import {ProviderError} from '../../src/domain/provider-error';
 import {CHANNEL, brief, contentPlan, promptPack, voiced, writeBindings, writeVoice} from '../content/v5/fixtures';
@@ -37,9 +38,12 @@ async function setup(dir: string, resume = false) {
       return {status: 'ready' as const, bindings};
     }),
     validateAssets: vi.fn(async () => {}),
-    render: vi.fn(async (_v, outputPath) => {order.push('render'); await writeFile(outputPath, 'mp4');}),
+    render: vi.fn(async (video, outputPath) => {
+      order.push('render'); renderedSec = renderedDurationSec(video.scenes); await writeFile(outputPath, 'mp4');
+    }),
+    // The encoded file matches what was rendered (the default V5 render drops the channel sting).
     probe: async (path: string) => path.endsWith('output.mp4')
-      ? {durationSec: 28, width: 1080, height: 1920, fps: 30} : {durationSec: 6, width: 1080, height: 1920, fps: 30},
+      ? {durationSec: renderedSec ?? 28, width: 1080, height: 1920, fps: 30} : {durationSec: 6, width: 1080, height: 1920, fps: 30},
     channel: {brand: 'Tell Me Why', signoff: 'Look closer every day.'},
     voiceProvider: 'xai', backgroundMusicPath: join(dir, 'music.mp3'), resume,
   };
@@ -114,7 +118,10 @@ it('resumes approved story, prompts and audio and binds imported clips', async (
     expect(deps.render).toHaveBeenCalledTimes(1);
     const resolved = JSON.parse(await readFile(join(dir, 'resolved.json'), 'utf8'));
     expect(resolved.engineVersion).toBe('v5');
-    expect(resolved.scenes[5].localVideoPath).toBe(resolved.scenes[0].localVideoPath);
+    // Default V5 render ends on the payoff (no channel sting) so it loops straight into the hook.
+    expect(resolved.scenes.map((s: {id: string}) => s.id)).not.toContain('channel-outro');
+    expect(resolved.loopEnding).toBe(true);
+    expect(resolved.scenes.every((s: {cutIntervalSec?: number}) => s.cutIntervalSec === 2.5)).toBe(true);
     expect(resolved.scenes[2].localVideoPath).toMatch(/Ptko4\.mp4$/);
     expect(resolved.scenes.every((s: {words: unknown[]; disableVideoZoom?: boolean}) => s.words.length && s.disableVideoZoom)).toBe(true);
     expect(resolved.backgroundMusicPath).toBe(join(dir, 'music.mp3'));
