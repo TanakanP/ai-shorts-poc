@@ -15,7 +15,8 @@ describe('v5 loop ending', () => {
     expect(renderedDurationSec(v5RenderScenes(scenes))).toBeCloseTo(7.5, 5);
   });
   it('keeps music at full level to the last frame when looping', () => {
-    expect(backgroundMusicVolume(749, 750, true)).toBe(BACKGROUND_MUSIC_VOLUME);
+    expect(backgroundMusicVolume(749, 750, true)).toBe(0);
+    expect(backgroundMusicVolume(734, 750, true)).toBe(BACKGROUND_MUSIC_VOLUME);
     expect(backgroundMusicVolume(749, 750)).toBe(0);
   });
 });

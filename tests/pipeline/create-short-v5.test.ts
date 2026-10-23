@@ -121,7 +121,7 @@ it('resumes approved story, prompts and audio and binds imported clips', async (
     // Default V5 render ends on the payoff (no channel sting) so it loops straight into the hook.
     expect(resolved.scenes.map((s: {id: string}) => s.id)).not.toContain('channel-outro');
     expect(resolved.loopEnding).toBe(true);
-    expect(resolved.scenes.every((s: {cutIntervalSec?: number}) => s.cutIntervalSec === 2.5)).toBe(true);
+    expect(resolved.scenes.every((s: {cutIntervalSec?: number}) => s.cutIntervalSec === undefined)).toBe(true);
     expect(resolved.scenes[2].localVideoPath).toMatch(/Ptko4\.mp4$/);
     expect(resolved.scenes.every((s: {words: unknown[]; disableVideoZoom?: boolean}) => s.words.length && s.disableVideoZoom)).toBe(true);
     expect(resolved.backgroundMusicPath).toBe(join(dir, 'music.mp3'));

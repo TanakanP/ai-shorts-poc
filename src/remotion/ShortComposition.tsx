@@ -33,6 +33,8 @@ export const createSceneTimeline = (video: ResolvedVideo): SceneTimelineItem[] =
 
 export const BACKGROUND_MUSIC_VOLUME = 0.15;
 export const BACKGROUND_MUSIC_FADE_FRAMES = 12;
+/** Loop ending: short 0.5s music fade so the Short doesn't hard-cut. */
+export const LOOP_MUSIC_FADE_FRAMES = 15;
 
 const clamped = {
   extrapolateLeft: 'clamp',
@@ -48,7 +50,10 @@ export const backgroundMusicVolume = (frame: number, durationInFrames: number, l
     [BACKGROUND_MUSIC_VOLUME, 0],
     clamped,
   );
-  return loopEnding ? fadeIn : Math.min(fadeIn, fadeOut);
+  if (!loopEnding) return Math.min(fadeIn, fadeOut);
+  const loopFadeOut = interpolate(frame, [durationInFrames - LOOP_MUSIC_FADE_FRAMES, durationInFrames - 1],
+    [BACKGROUND_MUSIC_VOLUME, 0], clamped);
+  return Math.min(fadeIn, loopFadeOut);
 };
 
 export const createVoiceTimeline = (video: ResolvedVideo): SceneTimelineItem[] => {

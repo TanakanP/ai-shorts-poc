@@ -70,7 +70,7 @@ export function bindV5Scenes(
     return {
       ...scene, selectedSearchQuery: '', sourcePageUrl: '', creatorName: 'Owner-generated animation', creatorUrl: '',
       localVideoPath: binding.localPath, videoTrimStartSec: binding.trimStartSec, videoCropPosition: binding.cropPosition,
-      disableVideoZoom: true, cutIntervalSec: V5_CUT_INTERVAL_SEC,
+      disableVideoZoom: true, cutIntervalSec: process.env.V5_REFRAMES === '1' ? V5_CUT_INTERVAL_SEC : undefined,
       generatedAsset: {
         provider: binding.provider, sceneId: binding.sceneId, sha256: binding.sha256, promptHash: binding.promptHash,
       },
