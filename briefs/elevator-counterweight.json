@@ -1,0 +1,41 @@
+{
+  "topicId": "elevator-counterweight",
+  "topic": "An Elevator Counterweight Balances the Car",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: What Really Lifts an Elevator?\nYouTube description seed: Look behind an elevator car sometime. Guess what's moving the other way. #TellMeWhyyyyyy #Shorts\nThe central fact: Traction elevators hang a counterweight on the other end of the ropes, so the motor only moves the imbalance.\nThe later surprise: The counterweight usually equals the empty car plus about 40-50% of rated load.\nThe very first frame shows an elevator car rising in a glass-sided shaft. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"This elevator motor barely works to lift you.\"; B (question) = \"What really lifts an elevator?\".\nFact boundaries: The motor still does the lifting; the counterweight only reduces the work. Applies to traction elevators, not hydraulic ones.",
+  "subjectAliases": [],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "In traction elevators, a counterweight on the opposite side of the hoist ropes balances the car so the motor needs less power.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/Elevator#Traction_elevators"
+      ]
+    },
+    {
+      "id": "sizing",
+      "statement": "The counterweight typically weighs the car plus about 40-50% of the rated load.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/Elevator#Traction_elevators"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "The motor still does the lifting; the counterweight only reduces the work.",
+    "Applies to traction elevators, not hydraulic ones."
+  ],
+  "titleSeed": "What Really Lifts an Elevator?",
+  "descriptionSeed": "Look behind an elevator car sometime. Guess what's moving the other way. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects, real locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Use accurate colors, markings, geometry and scale when they carry the fact. Vary shot scale, camera angle, setting, light and movement across the five scenes; never repeat one macro view or one slow zoom five times. The subject stays recognizable, while each scene has a different visual job. No mascot, cartoon, sketch, animation graphics, floating labels, fake brand marks, surreal morphing, glossy 3D render, dark wash, or cinematic disaster spectacle. Existing words and numbers printed on real objects may be visible; do not add captions or generated text. Generated realistic footage illustrates the source-backed explanation and must not be presented as documentary evidence of an event. Subject anchor: an elevator car rising in a glass-sided shaft.",
+  "lockedVoiceover": [
+    "This elevator motor barely works to lift you.",
+    "Look behind the car. Something heavy is going the other way.",
+    "A counterweight balances the car, so the motor only lifts the difference.",
+    "It's sized to the empty car plus about 40 to 50% of a full load.",
+    "So every ride up, a hidden weight is falling down, like..."
+  ],
+  "hookB": "What really lifts an elevator?",
+  "answerWords": [
+    "counterweight",
+    "balance"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "topicId": "tap-card-no-battery",
+  "topic": "A Tap-to-Pay Card Has No Battery",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: Where Does a Tap Card Get Its Power?\nYouTube description seed: Your card has no battery. Guess what powers it. #TellMeWhyyyyyy #Shorts\nThe central fact: Contactless cards are powered by the reader's magnetic field through a coil antenna in the card.\nThe later surprise: NFC only works within about 4 cm.\nThe very first frame shows a bank card moving toward a card reader at a shop counter. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"This card has no battery, but it runs a tiny computer.\"; B (question) = \"Where does a tap card get its power?\".\nFact boundaries: Show the loop via X-ray or teardown shot, not by holding a card to a light. Do not show real card numbers.",
+  "subjectAliases": [],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Passive NFC tags and contactless cards have no battery; they draw power from the reader's field through magnetic induction in a loop antenna.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/Near-field_communication"
+      ]
+    },
+    {
+      "id": "range",
+      "statement": "NFC works over about 4 cm or less.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/Near-field_communication"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Show the loop via X-ray or teardown shot, not by holding a card to a light.",
+    "Do not show real card numbers."
+  ],
+  "titleSeed": "Where Does a Tap Card Get Its Power?",
+  "descriptionSeed": "Your card has no battery. Guess what powers it. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects, real locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Use accurate colors, markings, geometry and scale when they carry the fact. Vary shot scale, camera angle, setting, light and movement across the five scenes; never repeat one macro view or one slow zoom five times. The subject stays recognizable, while each scene has a different visual job. No mascot, cartoon, sketch, animation graphics, floating labels, fake brand marks, surreal morphing, glossy 3D render, dark wash, or cinematic disaster spectacle. Existing words and numbers printed on real objects may be visible; do not add captions or generated text. Generated realistic footage illustrates the source-backed explanation and must not be presented as documentary evidence of an event. Subject anchor: a bank card moving toward a card reader at a shop counter.",
+  "lockedVoiceover": [
+    "This card has no battery, but it runs a tiny computer.",
+    "Under the plastic, a wire loop runs around the edge.",
+    "The reader makes a magnetic field. The loop turns it into power for the chip.",
+    "That's why it only works within about 4 cm. Further away, there's not enough power.",
+    "So the moment you tap, the reader brings it to life, and..."
+  ],
+  "hookB": "Where does a tap card get its power?",
+  "answerWords": [
+    "antenna",
+    "field",
+    "power",
+    "induction"
+  ]
+}
