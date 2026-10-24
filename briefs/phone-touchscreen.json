@@ -53,7 +53,7 @@
     "This glove can press hard. The phone ignores it.",
     "Glove off, and the lightest touch works. Pressure isn't the point.",
     "Your finger changes the charge on the screen's tiny grid. That's what it feels.",
-    "That's why a spoon or a hot dog can tap it, but wool gloves can't.",
+    "That's why a spoon in your hand can tap it, but wool gloves can't.",
     "So when your phone ignores you, check what's on your finger, like this..."
   ],
   "answerWords": [
@@ -62,5 +62,17 @@
     "capacitive",
     "conduct",
     "skin"
+  ],
+  "motionPrompts": [
+    "Slow push-in toward a gloved fingertip pressing a lit phone screen; the app icons stay unlit and unselected. Only the camera moves. Glove and phone stay still. No text.",
+    "Gentle slow pan across a bare fingertip lightly touching one app icon, which is highlighted as selected. Only the camera moves. Hand and phone stay still. Screen brightness and any lit icon stay constant, no flicker. No text.",
+    "Very slow push-in on a macro view of the fingertip on the screen's glass. Only the camera moves. Nothing passes through the glass. No text.",
+    "Slow sideways slide past a hand holding a metal spoon by its handle, the spoon tip touching an app icon that is highlighted as selected, with a wool glove lying flat beside the phone. Only the camera moves. Screen brightness and any lit icon stay constant, no flicker. No text.",
+    "Slow pull-back from the gloved fingertip on the screen, ending on the same framing as scene 1 so the loop matches. Only the camera moves. Screen brightness and any lit icon stay constant, no flicker. No text."
+  ],
+  "stillNotes": [
+    "Scene 1 still: gloved finger on screen, no icon highlighted.",
+    "Scene 2 still: bare finger on one icon, that icon visibly highlighted.",
+    "Scene 4 still: hand holding spoon handle, tip on a highlighted icon; wool glove beside phone."
   ]
 }

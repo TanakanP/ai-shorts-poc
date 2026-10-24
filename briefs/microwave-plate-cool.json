@@ -1,14 +1,26 @@
 {
   "topicId": "microwave-plate-cool",
   "topic": "The Microwave Plate Stays Cooler Than the Food",
-  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: Why Doesn't the Plate Get as Hot as the Food?\nYouTube description seed: Food boiling, plate cool. Guess where the plate's heat comes from. #TellMeWhyyyyyy #Shorts\nThe central fact: Microwaves mainly heat water in food; most glass and ceramic absorb little.\nThe later surprise: A warm plate is mostly heated by conduction from the food.\nThe very first frame shows a bowl of soup bubbling on a turning microwave plate. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"The food is boiling. The plate is cool.\"; B (question) = \"Why doesn't the plate get as hot as the food?\".\nFact boundaries: Some ceramics and glazes do heat up; say 'most'. Never show metal in the microwave.",
-  "subjectAliases": [],
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: Why Doesn't the Plate Get as Hot as the Food?\nYouTube description seed: Food boiling, plate cool. Guess where the plate's heat comes from. #TellMeWhyyyyyy #Shorts\nThe central fact: Microwaves mainly heat water in food; most glass and ceramic absorb little.\nThe later surprise: A warm plate is mostly heated by conduction from the food.\nThe very first frame shows a bowl of soup bubbling on a turning microwave plate. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"The food is boiling. The plate is cool.\"; B (question) = \"Why doesn't the plate get as hot as the food?\".\nFact boundaries: Some ceramics and glazes do heat up; say 'most'. Never show metal in the microwave. The main reveal lands in scene 4.",
+  "subjectAliases": [
+    "microwave",
+    "microwave plate",
+    "turntable"
+  ],
   "facts": [
     {
       "id": "mechanism",
       "statement": "Microwave ovens heat food mainly by making water molecules rotate; many glass and ceramic dishes absorb little microwave energy.",
       "sourceUrls": [
         "https://en.wikipedia.org/wiki/Microwave_oven"
+      ]
+    },
+    {
+      "id": "plate-heat",
+      "statement": "A dish in a microwave mostly warms by heat conducted from the hot food it holds, not from absorbing microwaves.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/Microwave_oven",
+        "https://en.wikipedia.org/wiki/Thermal_conduction"
       ]
     }
   ],
@@ -29,6 +41,8 @@
   "hookB": "Why doesn't the plate get as hot as the food?",
   "answerWords": [
     "water",
-    "molecules"
+    "molecules",
+    "conduction",
+    "soaking"
   ]
 }

@@ -1,8 +1,12 @@
 {
   "topicId": "elevator-counterweight",
   "topic": "An Elevator Counterweight Balances the Car",
-  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: What Really Lifts an Elevator?\nYouTube description seed: Look behind an elevator car sometime. Guess what's moving the other way. #TellMeWhyyyyyy #Shorts\nThe central fact: Traction elevators hang a counterweight on the other end of the ropes, so the motor only moves the imbalance.\nThe later surprise: The counterweight usually equals the empty car plus about 40-50% of rated load.\nThe very first frame shows an elevator car rising in a glass-sided shaft. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"This elevator motor barely works to lift you.\"; B (question) = \"What really lifts an elevator?\".\nFact boundaries: The motor still does the lifting; the counterweight only reduces the work. Applies to traction elevators, not hydraulic ones.",
-  "subjectAliases": [],
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: What Really Lifts an Elevator?\nYouTube description seed: Look behind an elevator car sometime. Guess what's moving the other way. #TellMeWhyyyyyy #Shorts\nThe central fact: Traction elevators hang a counterweight on the other end of the ropes, so the motor only moves the imbalance.\nThe later surprise: The counterweight usually equals the empty car plus about 40-50% of rated load.\nThe very first frame shows an elevator car rising in a glass-sided shaft. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"This elevator motor barely works to lift you.\"; B (question) = \"What really lifts an elevator?\".\nFact boundaries: The motor still does the lifting; the counterweight only reduces the work. Applies to traction elevators, not hydraulic ones. The main reveal lands in scene 4.",
+  "subjectAliases": [
+    "elevator",
+    "lift",
+    "counterweight"
+  ],
   "facts": [
     {
       "id": "mechanism",
@@ -36,6 +40,8 @@
   "hookB": "What really lifts an elevator?",
   "answerWords": [
     "counterweight",
-    "balance"
+    "balance",
+    "weight",
+    "pulley"
   ]
 }

@@ -1,8 +1,12 @@
 {
   "topicId": "traffic-light-loop",
   "topic": "Many Traffic Lights Sense Cars With a Wire Loop",
-  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: How Does a Red Light Know You're Waiting?\nYouTube description seed: Ever noticed the cut lines at a stop line? Guess what's inside. #TellMeWhyyyyyy #Shorts\nThe central fact: An inductive loop of wire buried in the road detects the metal of a car above it.\nThe later surprise: Small bikes may not have enough metal to trigger it.\nThe very first frame shows a car rolling up to a red light and stopping on sealed saw-cut lines in the asphalt. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"This traffic light knows you're waiting.\"; B (question) = \"How does a red light know a car is there?\".\nFact boundaries: Say 'many' lights; others use cameras or radar. Do not say bikes never trigger them.",
-  "subjectAliases": [],
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: How Does a Red Light Know You're Waiting?\nYouTube description seed: Ever noticed the cut lines at a stop line? Guess what's inside. #TellMeWhyyyyyy #Shorts\nThe central fact: An inductive loop of wire buried in the road detects the metal of a car above it.\nThe later surprise: Small bikes may not have enough metal to trigger it.\nThe very first frame shows a car rolling up to a red light and stopping on sealed saw-cut lines in the asphalt. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"This traffic light knows you're waiting.\"; B (question) = \"How does a red light know a car is there?\".\nFact boundaries: Say 'many' lights; others use cameras or radar. Do not say bikes never trigger them. The main reveal lands in scene 4.",
+  "subjectAliases": [
+    "traffic light",
+    "traffic signal",
+    "inductive loop"
+  ],
   "facts": [
     {
       "id": "mechanism",

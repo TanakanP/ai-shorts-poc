@@ -1,8 +1,12 @@
 {
   "topicId": "qr-code-torn",
   "topic": "A Torn QR Code Still Scans",
-  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: How Does a Torn QR Code Still Scan?\nYouTube description seed: How much of a QR code can you rip off? Take a guess. #TellMeWhyyyyyy #Shorts\nThe central fact: QR codes store extra error-correction data so missing parts can be rebuilt; the three corner squares are only for locating the code.\nThe later surprise: At the highest error-correction level, about 30% of the code can be damaged and still be read.\nThe very first frame shows a printed QR code on paper with a corner torn off, a phone camera scanning it. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"Part of this QR code is torn off. It still scans.\"; B (question) = \"How does a torn QR code still scan?\".\nFact boundaries: Do not say any tear works; it depends on how much and where. Damage to the corner finder squares can stop it scanning.",
-  "subjectAliases": [],
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: How Does a Torn QR Code Still Scan?\nYouTube description seed: How much of a QR code can you rip off? Take a guess. #TellMeWhyyyyyy #Shorts\nThe central fact: QR codes store extra error-correction data so missing parts can be rebuilt; the three corner squares are only for locating the code.\nThe later surprise: At the highest error-correction level, about 30% of the code can be damaged and still be read.\nThe very first frame shows a printed QR code on paper with a corner torn off, a phone camera scanning it. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"Part of this QR code is torn off. It still scans.\"; B (question) = \"How does a torn QR code still scan?\".\nFact boundaries: Do not say any tear works; it depends on how much and where. Damage to the corner finder squares can stop it scanning. The main reveal lands in scene 4.",
+  "subjectAliases": [
+    "QR code",
+    "QR",
+    "barcode"
+  ],
   "facts": [
     {
       "id": "finder",
@@ -37,6 +41,7 @@
   "answerWords": [
     "error correction",
     "backup",
-    "repair"
+    "repair",
+    "rebuilds"
   ]
 }
