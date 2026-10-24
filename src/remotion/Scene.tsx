@@ -33,6 +33,33 @@ const clamped = {
   extrapolateRight: 'clamp',
 } as const;
 
+/** Reframes cycled inside one clip: scale plus a pan offset (% of frame) so each cut reads as a new shot. */
+export const CUT_FRAMINGS = [
+  {scale: 1, x: 0, y: 0},
+  {scale: 1.35, x: -10, y: -8},
+  {scale: 1.2, x: 8, y: 6},
+  {scale: 1.4, x: 10, y: -10},
+] as const;
+const FIRST_CUT_SEC = 1.5;
+export type CutFraming = {scale: number; x: number; y: number};
+
+/** Framing for a frame: first cut by 1.5s, then a new framing every interval, so a 6s clip never holds one shot. */
+export function cutFraming(frame: number, fps: number, intervalSec: number): CutFraming {
+  if (!(intervalSec > 0)) return CUT_FRAMINGS[0];
+  const t = frame / fps;
+  const segment = t < FIRST_CUT_SEC ? 0 : 1 + Math.floor((t - FIRST_CUT_SEC) / intervalSec);
+  return CUT_FRAMINGS[segment % CUT_FRAMINGS.length];
+}
+
+export function punchInScale(frame: number, fps: number, intervalSec: number): number {
+  return cutFraming(frame, fps, intervalSec).scale;
+}
+
+export function cutTransform(frame: number, fps: number, intervalSec: number): string {
+  const f = cutFraming(frame, fps, intervalSec);
+  return `scale(${f.scale}) translate(${f.x}%, ${f.y}%)`;
+}
+
 export const sceneOpacity = (
   frame: number,
   durationInFrames: number,
@@ -117,7 +144,9 @@ export const Scene = ({
           height: '100%',
           objectFit: 'cover',
           objectPosition: scene.videoCropPosition ?? 'center center',
-          transform: `scale(${scene.proofAssetId || scene.disableVideoZoom ? 1 : videoScale})`,
+          transform: scene.cutIntervalSec
+            ? cutTransform(frame, fps, scene.cutIntervalSec)
+            : `scale(${scene.proofAssetId || scene.disableVideoZoom ? 1 : videoScale})`,
         }}
       />
 

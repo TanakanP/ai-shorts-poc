@@ -8,7 +8,8 @@ export const captionTimeMs = (frame: number, fps: number): number =>
   Math.round((frame / fps) * 1000);
 
 export const WORD_CAPTION_JUSTIFY = 'flex-end' as const;
-export const WORD_CAPTION_PADDING = '0 86px 520px';
+// Bottom edge at 1920-700 = 1220px (~64% from top): clear of the bottom ~20% Shorts UI zone.
+export const WORD_CAPTION_PADDING = '0 86px 700px';
 
 export const CAPTION_FILL = '#f5f5f5';
 export const CAPTION_KARAOKE_FILL = '#ffe14d';

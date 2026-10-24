@@ -1,0 +1,46 @@
+{
+  "topicId": "smoke-detector-americium",
+  "topic": "Many Smoke Alarms Have Radioactive Material Inside",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: What's Hiding Inside Your Smoke Alarm?\nYouTube description seed: That alarm on your ceiling has a secret. Guess what it is. #TellMeWhyyyyyy #Shorts\nThe central fact: Ionization smoke alarms use a tiny americium-241 source to ionize air; smoke disrupts the current and triggers the alarm.\nThe later surprise: The sealed source is considered safe under normal use.\nThe very first frame shows a white smoke alarm on a ceiling as a wisp of smoke drifts toward it. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"Many smoke alarms have radioactive material inside.\"; B (question) = \"What's hiding inside your smoke alarm?\".\nFact boundaries: Only ionization alarms; photoelectric ones have none. Never suggest opening an alarm; use stock footage of the inside. The main reveal lands in scene 4.",
+  "subjectAliases": [
+    "smoke detector",
+    "smoke alarm"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Ionization smoke detectors contain a small americium-241 source that ionizes air in a chamber; smoke reduces the current and sets off the alarm.",
+      "sourceUrls": [
+        "https://www.nrc.gov/reading-rm/doc-collections/fact-sheets/smoke-detectors.html"
+      ]
+    },
+    {
+      "id": "safety",
+      "statement": "The radiation dose from an ionization smoke detector in normal use is very small.",
+      "sourceUrls": [
+        "https://www.nrc.gov/reading-rm/doc-collections/fact-sheets/smoke-detectors.html"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Only ionization alarms; photoelectric ones have none.",
+    "Never suggest opening an alarm; use stock footage of the inside."
+  ],
+  "titleSeed": "What's Hiding Inside Some Smoke Alarms?",
+  "descriptionSeed": "That alarm on your ceiling has a secret. Guess what it is. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects, real locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Use accurate colors, markings, geometry and scale when they carry the fact. Vary shot scale, camera angle, setting, light and movement across the five scenes; never repeat one macro view or one slow zoom five times. The subject stays recognizable, while each scene has a different visual job. No mascot, cartoon, sketch, animation graphics, floating labels, fake brand marks, surreal morphing, glossy 3D render, dark wash, or cinematic disaster spectacle. Existing words and numbers printed on real objects may be visible; do not add captions or generated text. Generated realistic footage illustrates the source-backed explanation and must not be presented as documentary evidence of an event. Subject anchor: a white smoke alarm on a ceiling as a wisp of smoke drifts toward it.",
+  "lockedVoiceover": [
+    "Some smoke alarms hide a speck of material made in nuclear reactors.",
+    "Inside this type, there's a small metal can.",
+    "A tiny bit of americium charges the air, so a small current flows.",
+    "Smoke blocks that current, and the drop sets off the alarm.",
+    "It's safe behind the casing. So the thing that keeps you safe is..."
+  ],
+  "hookB": "What's hiding inside some smoke alarms?",
+  "answerWords": [
+    "americium",
+    "radiation",
+    "ionization",
+    "current"
+  ]
+}

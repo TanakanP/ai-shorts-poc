@@ -8,6 +8,7 @@ import type {SynthesizeSceneVoicesResult} from '../voice/synthesize-scene-voices
 import {attachChannelOutro} from './attach-channel-outro';
 import {readCheckpoint, writeCheckpoint} from '../content/v4/checkpoints';
 import {countSpokenWords} from '../content/v4/rules';
+import {lintVoiceover} from '../content/v5/vo-lint';
 import {loadV5RewriteCount} from '../content/v5/checkpoints';
 import {
   ContentHold, V5StoryRevisionNeeded, VOICED_BEATS, mediaInfoSchema, type GeneratedBinding, type PromptPack,
@@ -46,6 +47,8 @@ export type V5Deps = {
   render: V4Deps['render']; probe: V4Deps['probe'];
   channel: V4Deps['channel']; voiceProvider: V4Deps['voiceProvider'];
   backgroundMusicPath: string; stage?: (name: string) => void;
+  /** Opt back into the spoken channel sting at the end (V5_CHANNEL_OUTRO=1). Off by default so the Short loops. */
+  keepChannelOutro?: boolean;
   resume: boolean;
 };
 
@@ -85,7 +88,16 @@ async function captureInputState(bindings: GeneratedBinding[], voiced: Synthesiz
   return {sourceHashes, audioHashes, musicHash, inputFingerprint};
 }
 
-async function maybeReuseRendered(runDir: string, outputPath: string, timing: V5TimingResult,
+/** V5 drops the spoken "Tell Me Whyyyy" channel sting by default so the payoff loops straight into the hook. */
+export function v5RenderScenes<T extends {id: string}>(scenes: T[], keepChannelOutro = false): T[] {
+  return keepChannelOutro ? scenes : scenes.filter(scene => scene.id !== 'channel-outro');
+}
+
+export function renderedDurationSec(scenes: readonly {durationSeconds: number}[], fps = 30): number {
+  return scenes.reduce((frames, scene) => frames + Math.round(scene.durationSeconds * fps), 0) / fps;
+}
+
+async function maybeReuseRendered(runDir: string, outputPath: string, timing: {actualDurationSec: number},
   state: Awaited<ReturnType<typeof captureInputState>>, probe: V5Deps['probe']): Promise<{
   outputPath: string;
   manifest: Record<string, unknown>;
@@ -143,7 +155,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     requiredFramesByScene: timing?.requiredFramesByScene,
     title: plan?.title, description: plan?.description,
     metadataSeeds: brief ? {title: brief.titleSeed, description: brief.descriptionSeed} : undefined,
-    spokenWordCount: plan ? countSpokenWords(`${plan.beats.map(b => b.spokenText).join(' ')} ${deps.channel.brand} ${deps.channel.signoff}`) : undefined,
+    spokenWordCount: plan ? countSpokenWords(`${plan.beats.map(b => b.spokenText).join(' ')} ${deps.channel.brand}`) : undefined,
     targetBeats: plan?.beats.map(({id, targetStartSec, targetEndSec}) => ({id, targetStartSec, targetEndSec})),
   });
   const saveTimedPlan = async (voiced: SynthesizeSceneVoicesResult) => {
@@ -186,9 +198,15 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     if (storyRewritten) rewriteCount = 1;
     if (!await deps.approveStory(plan)) throw new ContentHold(['Story or factual review declined']);
     if (storyRewritten) await persistRewriteCount(1);
-    const voicedPlan = () => attachChannelOutro(videoPlanFromV5(plan!), deps.channel.brand, deps.channel.signoff,
+    // V5 drops the spoken like/subscribe sign-off so the payoff loops straight back into the hook.
+    const voicedPlan = () => attachChannelOutro(videoPlanFromV5(plan!), deps.channel.brand, '',
       {slowWhy: deps.voiceProvider !== 'elevenlabs'});
+    const assertCleanVoiceover = () => {
+      const issues = lintVoiceover(plan!.beats, deps.channel.brand);
+      if (issues.length) throw new ContentHold(issues, 'revise');
+    };
     setStage('voice');
+    assertCleanVoiceover();
     let voiced = await deps.synthesize(voicedPlan(), runDir);
     timing = evaluateV5Timing(voiced.timedPlan, voiced.manifest);
     await save('voice.json', voiced.manifest);
@@ -201,6 +219,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
       rewriteCount = 1;
       if (!await deps.approveStory(plan)) throw new ContentHold(['Revised story not approved']);
       await persistRewriteCount(1);
+      assertCleanVoiceover();
       voiced = await deps.synthesize(voicedPlan(), runDir, voiced);
       timing = evaluateV5Timing(voiced.timedPlan, voiced.manifest);
       await save('voice.json', voiced.manifest);
@@ -241,12 +260,14 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     bindings = await deps.validateAssets(promptPack, voiced.timedPlan, bindings) ?? bindings;
     await save('scene-assets.json', bindings);
     setStage('resolved');
-    const scenes = bindV5Scenes(voiced.timedPlan, voiced.manifest, promptPack, bindings);
+    const scenes = v5RenderScenes(bindV5Scenes(voiced.timedPlan, voiced.manifest, promptPack, bindings),
+      deps.keepChannelOutro);
+    const renderTiming = {actualDurationSec: renderedDurationSec(scenes)};
     const video: ResolvedVideo = {engineVersion: 'v5', runId, title: plan.title, fps: 30, width: 1080, height: 1920,
-      backgroundMusicPath: deps.backgroundMusicPath, scenes};
+      backgroundMusicPath: deps.backgroundMusicPath, loopEnding: !deps.keepChannelOutro, scenes};
     await save('resolved.json', video);
     const inputState = await captureInputState(bindings, voiced, promptPack, deps.backgroundMusicPath);
-    const reused = await maybeReuseRendered(runDir, outputPath, timing, inputState, deps.probe);
+    const reused = await maybeReuseRendered(runDir, outputPath, renderTiming, inputState, deps.probe);
     if (reused) {
       await save('generation-manifest.json', reused.manifest);
       await save('run.json', reused.manifest);
@@ -262,7 +283,7 @@ export async function createShortV5(topic: string, deps: V5Deps): Promise<V5Resu
     setStage('verify-mp4');
     const media = await deps.probe(outputPath);
     if (media.durationSec > 30 || media.width !== 1080 || media.height !== 1920 || Math.abs(media.fps - 30) > 0.01 ||
-      Math.abs(media.durationSec - timing.actualDurationSec) > 0.1)
+      Math.abs(media.durationSec - renderTiming.actualDurationSec) > 0.1)
       throw new ContentHold(['Encoded MP4 duration or format does not match the accepted timeline']);
     const outputHash = await hashFile(outputPath);
     const rendered = {...summary('rendered'), actualDurationSec: media.durationSec, media, outputPath,

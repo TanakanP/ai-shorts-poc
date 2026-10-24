@@ -33,13 +33,15 @@ export const createSceneTimeline = (video: ResolvedVideo): SceneTimelineItem[] =
 
 export const BACKGROUND_MUSIC_VOLUME = 0.15;
 export const BACKGROUND_MUSIC_FADE_FRAMES = 12;
+/** Loop ending: short 0.5s music fade so the Short doesn't hard-cut. */
+export const LOOP_MUSIC_FADE_FRAMES = 15;
 
 const clamped = {
   extrapolateLeft: 'clamp',
   extrapolateRight: 'clamp',
 } as const;
 
-export const backgroundMusicVolume = (frame: number, durationInFrames: number): number => {
+export const backgroundMusicVolume = (frame: number, durationInFrames: number, loopEnding = false): number => {
   if (durationInFrames <= BACKGROUND_MUSIC_FADE_FRAMES * 2) return BACKGROUND_MUSIC_VOLUME;
   const fadeIn = interpolate(frame, [0, BACKGROUND_MUSIC_FADE_FRAMES], [0, BACKGROUND_MUSIC_VOLUME], clamped);
   const fadeOut = interpolate(
@@ -48,7 +50,10 @@ export const backgroundMusicVolume = (frame: number, durationInFrames: number): 
     [BACKGROUND_MUSIC_VOLUME, 0],
     clamped,
   );
-  return Math.min(fadeIn, fadeOut);
+  if (!loopEnding) return Math.min(fadeIn, fadeOut);
+  const loopFadeOut = interpolate(frame, [durationInFrames - LOOP_MUSIC_FADE_FRAMES, durationInFrames - 1],
+    [BACKGROUND_MUSIC_VOLUME, 0], clamped);
+  return Math.min(fadeIn, loopFadeOut);
 };
 
 export const createVoiceTimeline = (video: ResolvedVideo): SceneTimelineItem[] => {
@@ -97,7 +102,7 @@ export const ShortComposition = ({video, assetBaseUrl, localAssetPaths}: ShortCo
         <Html5Audio
           src={getVideoSource(video.backgroundMusicPath, assetBaseUrl, localAssetPaths)}
           loop
-          volume={backgroundMusicVolume(frame, durationInFrames)}
+          volume={backgroundMusicVolume(frame, durationInFrames, video.loopEnding)}
         />
       ) : null}
 

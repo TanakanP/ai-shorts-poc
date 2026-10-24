@@ -11,6 +11,8 @@ export type VideoScene = {
   videoCropPosition?: string;
   proofAssetId?: string;
   disableVideoZoom?: boolean;
+  /** Alternate punch-in crops every N seconds so one source clip reads as several cuts. */
+  cutIntervalSec?: number;
   id: string;
   role: BeatRole;
   durationSeconds: number;

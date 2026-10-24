@@ -12,8 +12,9 @@ export function evaluateHookRules(text: string, brief: Pick<TopicBrief, 'subject
   const normalized = comparable(plain);
   const violations: string[] = [];
   if (!normalized) violations.push('Empty hook');
-  if (plain.includes('?')) violations.push('Question mark');
-  if (/^(why|how|what|who|when|where)\b/u.test(normalized)) violations.push('Question-led opening');
+  const isQuestion = plain.includes('?');
+  if (isQuestion && countSpokenWords(text) > 9) violations.push('Question hook over 9 words');
+  if (/^(why|how|what|who|when|where)\b/u.test(normalized) && !isQuestion) violations.push('Question opener without question');
   if (/\b(did you know|have you ever wondered|ever wonder|ever notice|today we will|in this video|welcome to)\b/u.test(normalized))
     violations.push('Generic setup phrase');
   if (countSpokenWords(text) > 12) violations.push('Hook exceeds 12 words');
