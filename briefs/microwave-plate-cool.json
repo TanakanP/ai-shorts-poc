@@ -44,5 +44,31 @@
     "molecules",
     "conduction",
     "soaking"
+  ],
+  "scenePropAllowlist": [
+    [
+      "microwave",
+      "turntable plate",
+      "bowl of soup"
+    ],
+    [
+      "microwave",
+      "turntable plate",
+      "empty glass bowl"
+    ],
+    [
+      "microwave",
+      "turntable plate",
+      "bowl of soup"
+    ],
+    [
+      "turntable plate",
+      "bowl of soup"
+    ],
+    [
+      "microwave",
+      "turntable plate",
+      "bowl of soup"
+    ]
   ]
 }

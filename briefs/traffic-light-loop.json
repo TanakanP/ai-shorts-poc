@@ -43,5 +43,30 @@
     "magnetic",
     "sensor",
     "loop"
+  ],
+  "scenePropAllowlist": [
+    [
+      "car",
+      "traffic light",
+      "road saw-cut lines"
+    ],
+    [
+      "road saw-cut lines",
+      "asphalt"
+    ],
+    [
+      "inductive loop wire",
+      "road",
+      "car"
+    ],
+    [
+      "small bicycle",
+      "road saw-cut lines"
+    ],
+    [
+      "car",
+      "traffic light",
+      "road saw-cut lines"
+    ]
   ]
 }

@@ -43,5 +43,32 @@
     "wheel",
     "comb",
     "flat"
+  ],
+  "scenePropAllowlist": [
+    [
+      "escalator steps",
+      "handrail",
+      "top landing"
+    ],
+    [
+      "escalator steps",
+      "step edges",
+      "comb plate"
+    ],
+    [
+      "escalator step",
+      "step wheels",
+      "tracks"
+    ],
+    [
+      "escalator step",
+      "tracks",
+      "comb plate"
+    ],
+    [
+      "escalator steps",
+      "handrail",
+      "top landing"
+    ]
   ]
 }

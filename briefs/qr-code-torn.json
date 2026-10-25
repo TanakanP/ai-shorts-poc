@@ -43,5 +43,27 @@
     "backup",
     "repair",
     "rebuilds"
+  ],
+  "scenePropAllowlist": [
+    [
+      "printed QR code",
+      "phone"
+    ],
+    [
+      "printed QR code",
+      "finder squares"
+    ],
+    [
+      "printed QR code",
+      "phone"
+    ],
+    [
+      "printed QR code",
+      "torn piece"
+    ],
+    [
+      "printed QR code",
+      "phone"
+    ]
   ]
 }

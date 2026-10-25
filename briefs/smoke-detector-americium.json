@@ -42,5 +42,29 @@
     "radiation",
     "ionization",
     "current"
+  ],
+  "scenePropAllowlist": [
+    [
+      "smoke alarm",
+      "ceiling",
+      "smoke wisp"
+    ],
+    [
+      "opened smoke alarm",
+      "ionization chamber"
+    ],
+    [
+      "ionization chamber",
+      "smoke alarm"
+    ],
+    [
+      "smoke alarm",
+      "smoke wisp"
+    ],
+    [
+      "smoke alarm",
+      "ceiling",
+      "smoke wisp"
+    ]
   ]
 }

@@ -43,5 +43,32 @@
     "field",
     "power",
     "induction"
+  ],
+  "scenePropAllowlist": [
+    [
+      "bank card",
+      "card reader",
+      "counter"
+    ],
+    [
+      "bank card",
+      "antenna loop",
+      "chip"
+    ],
+    [
+      "card reader",
+      "bank card",
+      "chip"
+    ],
+    [
+      "bank card",
+      "card reader",
+      "ruler"
+    ],
+    [
+      "bank card",
+      "card reader",
+      "counter"
+    ]
   ]
 }

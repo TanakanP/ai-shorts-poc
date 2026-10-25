@@ -43,5 +43,31 @@
     "balance",
     "weight",
     "pulley"
+  ],
+  "scenePropAllowlist": [
+    [
+      "elevator car",
+      "glass shaft"
+    ],
+    [
+      "elevator car",
+      "counterweight",
+      "hoist ropes"
+    ],
+    [
+      "counterweight",
+      "elevator car",
+      "hoist ropes",
+      "pulley"
+    ],
+    [
+      "counterweight",
+      "elevator car"
+    ],
+    [
+      "elevator car",
+      "counterweight",
+      "glass shaft"
+    ]
   ]
 }
