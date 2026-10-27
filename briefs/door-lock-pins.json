@@ -51,9 +51,9 @@
   "lockedVoiceover": [
     "Why does only one of these keys turn?",
     "Inside the lock, every bump on your key is pushing on something.",
-    "Each cut lifts a tiny split pin. When every split lines up, the lock turns.",
+    "Each cut lifts a split pin until every split lines up.",
     "A wrong key leaves pins crossing the line, so the plug stays stuck.",
-    "Get every one right, and the plug turns, just like when the key slides in..."
+    "Get them all right and it turns, just as the key slides in..."
   ],
   "answerWords": [
     "pin",
