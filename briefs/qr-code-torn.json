@@ -17,7 +17,14 @@
     },
     {
       "id": "repair",
-      "statement": "QR codes use Reed-Solomon error correction; level H can restore about 30% of damaged data.",
+      "statement": "QR codes store extra Reed-Solomon error-correction data so damaged or missing parts can be rebuilt.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/QR_code#Error_correction"
+      ]
+    },
+    {
+      "id": "level-h",
+      "statement": "At the highest error-correction level (H), about 30% of the code can be damaged and still be read.",
       "sourceUrls": [
         "https://en.wikipedia.org/wiki/QR_code#Error_correction"
       ]
