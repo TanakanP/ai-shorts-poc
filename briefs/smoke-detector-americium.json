@@ -42,7 +42,7 @@
     "Some smoke alarms never see the smoke at all.",
     "Inside this type is a tiny chamber of charged air.",
     "A small current flows. Smoke blocks it, and the alarm sounds.",
-    "What charges it? A speck of americium, with a very small dose.",
+    "What charges it? A speck of americium. The dose is very small.",
     "So that speck is why some smoke alarms..."
   ],
   "hookB": "How do some smoke alarms sense smoke?",
