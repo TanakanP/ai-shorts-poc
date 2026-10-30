@@ -4,7 +4,11 @@
   "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: What's Hiding Inside Your Smoke Alarm?\nYouTube description seed: That alarm on your ceiling has a secret. Guess what it is. #TellMeWhyyyyyy #Shorts\nThe central fact: Ionization smoke alarms use a tiny americium-241 source to ionize air; smoke disrupts the current and triggers the alarm.\nThe later surprise: The sealed source is considered safe under normal use.\nThe very first frame shows a white smoke alarm on a ceiling as a wisp of smoke drifts toward it. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"Many smoke alarms have radioactive material inside.\"; B (question) = \"What's hiding inside your smoke alarm?\".\nFact boundaries: Only ionization alarms; photoelectric ones have none. Never suggest opening an alarm; use stock footage of the inside. The main reveal lands in scene 4.",
   "subjectAliases": [
     "smoke detector",
-    "smoke alarm"
+    "smoke alarm",
+    "smoke alarms",
+    "smoke detectors",
+    "smoke alarms",
+    "smoke detectors"
   ],
   "facts": [
     {
