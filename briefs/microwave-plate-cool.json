@@ -1,0 +1,75 @@
+{
+  "topicId": "microwave-plate-cool",
+  "topic": "The Microwave Plate Stays Cooler Than the Food",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: Why Doesn't the Plate Get as Hot as the Food?\nYouTube description seed: Food boiling, plate cool. Guess where the plate's heat comes from. #TellMeWhyyyyyy #Shorts\nThe central fact: Microwaves mainly heat water in food; most glass and ceramic absorb little.\nThe later surprise: A warm plate is mostly heated by conduction from the food.\nThe very first frame shows a bowl of soup bubbling on a turning microwave plate. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"The food is boiling. The plate is cool.\"; B (question) = \"Why doesn't the plate get as hot as the food?\".\nFact boundaries: Some ceramics and glazes do heat up; say 'most'. Never show metal in the microwave. The main reveal lands in scene 4.",
+  "subjectAliases": [
+    "microwave",
+    "microwave plate",
+    "turntable",
+    "food"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Microwave ovens heat food mainly by making water molecules rotate; many glass and ceramic dishes absorb little microwave energy.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/Microwave_oven"
+      ]
+    },
+    {
+      "id": "plate-heat",
+      "statement": "A dish in a microwave mostly warms by heat conducted from the hot food it holds, not from absorbing microwaves.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/Microwave_oven",
+        "https://en.wikipedia.org/wiki/Thermal_conduction"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Some ceramics and glazes do heat up; say 'most'.",
+    "Never show metal in the microwave."
+  ],
+  "titleSeed": "Why Doesn't the Plate Get as Hot as the Food?",
+  "descriptionSeed": "Food boiling, plate cool. Guess where the plate's heat comes from. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects, real locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Use accurate colors, markings, geometry and scale when they carry the fact. Vary shot scale, camera angle, setting, light and movement across the five scenes; never repeat one macro view or one slow zoom five times. The subject stays recognizable, while each scene has a different visual job. No mascot, cartoon, sketch, animation graphics, floating labels, fake brand marks, surreal morphing, glossy 3D render, dark wash, or cinematic disaster spectacle. Existing words and numbers printed on real objects may be visible; do not add captions or generated text. Generated realistic footage illustrates the source-backed explanation and must not be presented as documentary evidence of an event. Subject anchor: a bowl of soup bubbling on a turning microwave plate.",
+  "lockedVoiceover": [
+    "The food is boiling. The plate is cool.",
+    "Microwaves pass through most glass and ceramic almost untouched.",
+    "They shake water molecules, and food is full of water.",
+    "If the plate gets hot, that's mostly heat soaking in from the food.",
+    "So the heat starts in the food, not the plate. The food..."
+  ],
+  "hookB": "Why doesn't the plate get as hot as the food?",
+  "answerWords": [
+    "water",
+    "molecules",
+    "conduction",
+    "soaking"
+  ],
+  "scenePropAllowlist": [
+    [
+      "microwave",
+      "turntable plate",
+      "bowl of soup"
+    ],
+    [
+      "microwave",
+      "turntable plate",
+      "empty glass bowl"
+    ],
+    [
+      "microwave",
+      "turntable plate",
+      "bowl of soup"
+    ],
+    [
+      "turntable plate",
+      "bowl of soup"
+    ],
+    [
+      "microwave",
+      "turntable plate",
+      "bowl of soup"
+    ]
+  ]
+}

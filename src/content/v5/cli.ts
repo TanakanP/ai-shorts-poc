@@ -69,10 +69,11 @@ export function createV5ProductionDeps(config: AppConfig, research: string,
   ask: (question: string) => Promise<string>, log: (value: string) => void): V5Deps {
   const providers = createProviders(config);
   const yes = async (question: string) => /^(y|yes)$/iu.test((await ask(`${question} [y/N] `)).trim());
-  const outro = `${config.channelBrand}. ${config.channelSignoff}`;
+  const outro = `${config.channelBrand}.`; // V5: no spoken CTA sign-off; the payoff loops into the hook
   return {
     channel: {brand: config.channelBrand, signoff: config.channelSignoff},
     voiceProvider: config.voiceProvider, backgroundMusicPath: config.backgroundMusicPath,
+    keepChannelOutro: process.env.V5_CHANNEL_OUTRO === '1',
     createRunDirectory, persistJson, resume: false,
     stage: stage => log(`[v5] ${stage}`),
     loadBrief: topic => loadV5Brief(topic, research, config.contentBriefPath, {

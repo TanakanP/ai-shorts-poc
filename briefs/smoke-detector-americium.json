@@ -1,0 +1,79 @@
+{
+  "topicId": "smoke-detector-americium",
+  "topic": "Many Smoke Alarms Have Radioactive Material Inside",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: What's Hiding Inside Some Smoke Alarms?\nYouTube description seed: That alarm on your ceiling has a secret. Guess what it is. #TellMeWhyyyyyy #Shorts\nThe central fact: Ionization smoke alarms ionize air in a small chamber so a small current flows; smoke reduces the current and triggers the alarm.\nThe later surprise: The air is ionized by a tiny amount of radioactive americium-241, and the dose in normal use is very small.\nThe very first frame shows a white smoke alarm on a ceiling as a wisp of smoke drifts toward it. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"Some smoke alarms never see the smoke at all.\"; B (question) = \"How do some smoke alarms sense smoke?\".\nFact boundaries: Only ionization alarms; photoelectric ones work differently. Never suggest opening an alarm. Scenes 1-3 do not name americium. The main reveal lands in scene 4.",
+  "subjectAliases": [
+    "smoke detector",
+    "smoke alarm",
+    "smoke alarms",
+    "smoke detectors"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Ionization smoke detectors ionize the air in a small chamber so a small current flows; smoke reduces the current and sets off the alarm.",
+      "sourceUrls": [
+        "https://www.nrc.gov/reading-rm/doc-collections/fact-sheets/smoke-detectors.html"
+      ]
+    },
+    {
+      "id": "source",
+      "statement": "The air in an ionization smoke detector's chamber is ionized by a tiny amount of radioactive americium-241.",
+      "sourceUrls": [
+        "https://www.nrc.gov/reading-rm/doc-collections/fact-sheets/smoke-detectors.html"
+      ]
+    },
+    {
+      "id": "safety",
+      "statement": "The radiation dose from an ionization smoke detector in normal use is very small.",
+      "sourceUrls": [
+        "https://www.nrc.gov/reading-rm/doc-collections/fact-sheets/smoke-detectors.html"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Only ionization alarms; photoelectric ones work differently.",
+    "Never suggest opening an alarm."
+  ],
+  "titleSeed": "What's Hiding Inside Some Smoke Alarms?",
+  "descriptionSeed": "That alarm on your ceiling has a secret. Guess what it is. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects, real locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Use accurate colors, markings, geometry and scale when they carry the fact. Vary shot scale, camera angle, setting, light and movement across the five scenes; never repeat one macro view or one slow zoom five times. The subject stays recognizable, while each scene has a different visual job. No mascot, cartoon, sketch, animation graphics, floating labels, fake brand marks, surreal morphing, glossy 3D render, dark wash, or cinematic disaster spectacle. Existing words and numbers printed on real objects may be visible; do not add captions or generated text. Generated realistic footage illustrates the source-backed explanation and must not be presented as documentary evidence of an event. Subject anchor: a white smoke alarm on a ceiling as a wisp of smoke drifts toward it.",
+  "lockedVoiceover": [
+    "Some smoke alarms never see the smoke at all.",
+    "Inside this type is a tiny chamber.",
+    "A tiny current flows inside. Smoke reduces it, and the alarm sounds.",
+    "What makes that current? A speck of americium. The dose is very small.",
+    "So that speck is why some smoke alarms..."
+  ],
+  "hookB": "How do some smoke alarms sense smoke?",
+  "answerWords": [
+    "americium",
+    "radiation",
+    "ionization",
+    "current"
+  ],
+  "scenePropAllowlist": [
+    [
+      "smoke alarm",
+      "ceiling",
+      "smoke wisp"
+    ],
+    [
+      "opened smoke alarm",
+      "ionization chamber"
+    ],
+    [
+      "ionization chamber",
+      "smoke alarm"
+    ],
+    [
+      "smoke alarm",
+      "smoke wisp"
+    ],
+    [
+      "smoke alarm",
+      "ceiling",
+      "smoke wisp"
+    ]
+  ]
+}

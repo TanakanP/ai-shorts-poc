@@ -41,3 +41,44 @@ describe('V5 clip presentation', () => {
     expect(SCENE_WASH_OPACITY).toBe(0);
   });
 });
+
+describe('punchInScale', () => {
+  it('cuts by 1.5s, then changes framing every interval', async () => {
+    const {punchInScale} = await import('../../src/remotion/Scene');
+    expect(punchInScale(0, 30, 2.5)).toBe(1);
+    expect(punchInScale(45, 30, 2.5)).toBeGreaterThan(1);
+    expect(punchInScale(120, 30, 2.5)).not.toBe(punchInScale(45, 30, 2.5));
+    expect(punchInScale(60, 30, 0)).toBe(1);
+  });
+
+  it('never holds one framing for more than 2.5s across a 6s clip, and stays inside the frame', async () => {
+    const {cutFraming, cutTransform, CUT_FRAMINGS} = await import('../../src/remotion/Scene');
+    let last = JSON.stringify(cutFraming(0, 30, 2.5));
+    let held = 0;
+    for (let f = 1; f < 180; f++) {
+      const now = JSON.stringify(cutFraming(f, 30, 2.5));
+      held = now === last ? held + 1 : 0;
+      last = now;
+      expect(held).toBeLessThanOrEqual(75);
+    }
+    for (const {scale, x, y} of CUT_FRAMINGS) {
+      const margin = (scale - 1) / 2 * 100;
+      expect(Math.abs(x) * scale).toBeLessThanOrEqual(margin + 1e-9);
+      expect(Math.abs(y) * scale).toBeLessThanOrEqual(margin + 1e-9);
+    }
+    expect(cutTransform(45, 30, 2.5)).toMatch(/^scale\(1\.\d+\) translate\(-?\d+%, -?\d+%\)$/);
+  });
+});
+
+describe('v5 reframes are visible', () => {
+  it('each framing change is a clear push or pan, not a subtle nudge', async () => {
+    const {CUT_FRAMINGS} = await import('../../src/remotion/Scene');
+    for (let i = 0; i < CUT_FRAMINGS.length; i++) {
+      const a = CUT_FRAMINGS[i];
+      const b = CUT_FRAMINGS[(i + 1) % CUT_FRAMINGS.length];
+      const scaleJump = Math.abs(a.scale - b.scale);
+      const panJump = Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
+      expect(scaleJump >= 0.15 || panJump >= 12).toBe(true);
+    }
+  });
+});

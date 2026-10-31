@@ -1,0 +1,74 @@
+{
+  "topicId": "escalator-steps-flatten",
+  "topic": "Escalator Steps Flatten Out at the Top",
+  "creativeBrief": "Pattern: CONTRADICTION_REVEAL_V4. Five voiced scenes of 6s each: contradiction, clue, mechanism, second_reveal, payoff. Target 25-29s. Visible change every 2-3s. Opening frame already moving. Mechanism by ~5s. Reveal in scene 4. Scene 5 ends on the same framing as scene 1 so it loops. Use lockedVoiceover word for word.\nYouTube title seed: Why Do Escalator Stairs Vanish at the Top?\nYouTube description seed: Ever watched where the steps go? Guess what happens underneath. #TellMeWhyyyyyy #Shorts\nThe central fact: Each escalator step has two sets of wheels on two separate tracks; where the tracks come level, the step flattens.\nThe later surprise: The flat step slides under the comb plate and loops back underneath.\nThe very first frame shows escalator steps rising toward the top landing, seen from just beside the handrail. Nothing in the first second gives the answer away.\nHook test: A (statement) = \"These stairs flatten out right under your feet.\"; B (question) = \"Why do escalator stairs vanish at the top?\".\nFact boundaries: Do not show anyone touching the comb plate or moving parts. Do not say the steps disappear or fold up physically; they lie flat. The main reveal lands in scene 4.",
+  "subjectAliases": [
+    "escalator",
+    "moving stairs",
+    "escalator step"
+  ],
+  "facts": [
+    {
+      "id": "mechanism",
+      "statement": "Escalator steps run on two tracks, one for each pair of wheels; changing the gap between the tracks makes the steps form stairs or lie flat.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/Escalator"
+      ]
+    },
+    {
+      "id": "loop",
+      "statement": "At the landing the steps pass under a comb plate and travel back along the underside in a continuous loop.",
+      "sourceUrls": [
+        "https://en.wikipedia.org/wiki/Escalator"
+      ]
+    }
+  ],
+  "factBoundaries": [
+    "Do not show anyone touching the comb plate or moving parts.",
+    "Do not say the steps disappear or fold up physically; they lie flat."
+  ],
+  "titleSeed": "Why Do Escalator Stairs Vanish at the Top?",
+  "descriptionSeed": "Ever watched where the steps go? Guess what happens underneath. #TellMeWhyyyyyy #Shorts",
+  "visualStyle": "Photorealistic 9:16 live-action footage with the believable look of carefully shot stock video: real objects, real locations, natural materials, practical lighting, physically plausible motion, and restrained documentary camera work. Use accurate colors, markings, geometry and scale when they carry the fact. Vary shot scale, camera angle, setting, light and movement across the five scenes; never repeat one macro view or one slow zoom five times. The subject stays recognizable, while each scene has a different visual job. No mascot, cartoon, sketch, animation graphics, floating labels, fake brand marks, surreal morphing, glossy 3D render, dark wash, or cinematic disaster spectacle. Existing words and numbers printed on real objects may be visible; do not add captions or generated text. Generated realistic footage illustrates the source-backed explanation and must not be presented as documentary evidence of an event. Subject anchor: escalator steps rising toward the top landing, seen from just beside the handrail.",
+  "lockedVoiceover": [
+    "Watch these stairs. They vanish right under your feet.",
+    "Watch the step edges as they reach the top.",
+    "Each step rides on two wheels, on two separate tracks.",
+    "At the top the tracks level out, so the step lies flat and slides under the comb.",
+    "Then it flips underneath and heads back down, to rise again like this..."
+  ],
+  "hookB": "Why do escalator stairs vanish at the top?",
+  "answerWords": [
+    "track",
+    "wheel",
+    "comb",
+    "flat"
+  ],
+  "scenePropAllowlist": [
+    [
+      "escalator steps",
+      "handrail",
+      "top landing"
+    ],
+    [
+      "escalator steps",
+      "step edges",
+      "comb plate"
+    ],
+    [
+      "escalator step",
+      "step wheels",
+      "tracks"
+    ],
+    [
+      "escalator step",
+      "tracks",
+      "comb plate"
+    ],
+    [
+      "escalator steps",
+      "handrail",
+      "top landing"
+    ]
+  ]
+}
